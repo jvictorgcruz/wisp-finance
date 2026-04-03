@@ -46,4 +46,22 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * The workspaces that belong to the user.
+     */
+    public function workspaces(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Workspace::class, 'workspace_user')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get the current active workspace for the user.
+     */
+    public function currentWorkspace(): ?Workspace
+    {
+        return $this->workspaces()->first();
+    }
 }

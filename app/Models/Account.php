@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Models;
+
+use App\Enums\AccountStatus;
+use App\Enums\AccountType;
+use App\Traits\HasWorkspace;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Account extends Model
+{
+    /** @use HasFactory */
+    use HasFactory, SoftDeletes, HasWorkspace;
+
+    protected $fillable = [
+        'workspace_id',
+        'name',
+        'type',
+        'status',
+        'is_system',
+    ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'type' => AccountType::class,
+            'status' => AccountStatus::class,
+            'is_system' => 'boolean',
+        ];
+    }
+}
