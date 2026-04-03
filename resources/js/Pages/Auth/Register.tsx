@@ -3,8 +3,10 @@ import { useForm, Link } from '@inertiajs/react';
 import AuthLayout from '@/Components/Auth/AuthLayout';
 import TextField from '@/Components/Common/TextField';
 import { User, Mail, Lock, UserPlus } from 'lucide-react';
+import { useTranslation } from '@/Hooks/useTranslation';
 
 export default function Register() {
+    const { t, locale } = useTranslation();
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
@@ -19,22 +21,27 @@ export default function Register() {
         });
     };
 
+    /**
+     * Helper for guest links with locale prefix
+     */
+    const localeLink = (path: string) => `/${locale}${path}`;
+
     return (
         <AuthLayout 
-            title="Comece agora" 
-            subtitle="Crie sua conta para organizar sua vida financeira com clareza."
+            title={t('auth.start_now')} 
+            subtitle={t('auth.register_subtitle')}
         >
             <form onSubmit={submit} className="space-y-6">
                 <TextField
                     id="name"
                     name="name"
-                    label="Nome Completo"
+                    label={t('auth.full_name')}
                     value={data.name}
                     autoComplete="name"
                     onChange={(val) => setData('name', val)}
                     error={errors.name}
                     icon={<User className="w-4 h-4" />}
-                    placeholder="João Silva"
+                    placeholder="John Doe"
                     required
                 />
 
@@ -42,13 +49,13 @@ export default function Register() {
                     id="email"
                     type="email"
                     name="email"
-                    label="E-mail"
+                    label={t('auth.email')}
                     value={data.email}
                     autoComplete="username"
                     onChange={(val) => setData('email', val)}
                     error={errors.email}
                     icon={<Mail className="w-4 h-4" />}
-                    placeholder="seu@email.com"
+                    placeholder="your@email.com"
                     required
                 />
 
@@ -56,7 +63,7 @@ export default function Register() {
                     id="password"
                     type="password"
                     name="password"
-                    label="Senha"
+                    label={t('auth.password')}
                     value={data.password}
                     autoComplete="new-password"
                     onChange={(val) => setData('password', val)}
@@ -70,7 +77,7 @@ export default function Register() {
                     id="password_confirmation"
                     type="password"
                     name="password_confirmation"
-                    label="Confirmar Senha"
+                    label={t('auth.confirm_password')}
                     value={data.password_confirmation}
                     autoComplete="new-password"
                     onChange={(val) => setData('password_confirmation', val)}
@@ -95,18 +102,18 @@ export default function Register() {
                     ) : (
                         <>
                             <UserPlus className="w-4 h-4" />
-                            Cadastrar
+                            {t('auth.register_btn')}
                         </>
                     )}
                 </button>
 
                 <p className="text-center text-sm text-slate-500">
-                    Já tem uma conta?{' '}
+                    {t('auth.already_registered')}{' '}
                     <Link
-                        href="/login"
+                        href={localeLink('/login')}
                         className="font-semibold text-brand hover:text-brand/80 transition-colors underline underline-offset-4 decoration-brand/30"
                     >
-                        Entrar agora
+                        {t('auth.login_now')}
                     </Link>
                 </p>
             </form>

@@ -1,15 +1,7 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi, Mock } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 import { useForm } from '@inertiajs/react';
 import Login from './Login';
-
-// Mock do Inertia-react
-vi.mock('@inertiajs/react', () => ({
-    useForm: vi.fn(),
-    Link: ({ children, href }: { children: React.ReactNode, href: string }) => <a href={href}>{children}</a>,
-    Head: ({ title }: { title: string }) => <title>{title}</title>,
-}));
 
 describe('Login Page', () => {
     const useFormMock = vi.mocked(useForm);
@@ -26,9 +18,10 @@ describe('Login Page', () => {
 
         render(<Login />);
         
-        expect(screen.getByLabelText(/e-mail/i)).toBeInTheDocument();
-        expect(screen.getByLabelText(/senha/i)).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /entrar/i })).toBeInTheDocument();
+        // We use translation keys as placeholders or labels now
+        expect(screen.getByLabelText(/auth.email/i)).toBeInTheDocument();
+        expect(screen.getByLabelText(/auth.password/i)).toBeInTheDocument();
+        expect(screen.getByRole('button')).toBeInTheDocument();
     });
 
     it('should display validation errors when provided', () => {
@@ -37,13 +30,13 @@ describe('Login Page', () => {
             setData: vi.fn(),
             post: vi.fn(),
             processing: false,
-            errors: { email: 'E-mail inválido' },
+            errors: { email: 'Invalid Email' },
             reset: vi.fn(),
         } as any);
 
         render(<Login />);
         
-        expect(screen.getByText('E-mail inválido')).toBeInTheDocument();
+        expect(screen.getByText('Invalid Email')).toBeInTheDocument();
     });
 
     it('should show loading spinner when processing', () => {
@@ -67,7 +60,7 @@ describe('Login Page', () => {
         const postMock = vi.fn();
         const resetMock = vi.fn();
         
-        // Estado local para rastrear as mudanças como o useForm real faria
+        // Local state to track changes as real useForm would
         const formData = { email: '', password: '', remember: false };
         
         const setDataMock = vi.fn((key, value) => {
@@ -90,23 +83,22 @@ describe('Login Page', () => {
         const emailInput = screen.getByTestId('input-email');
         const passwordInput = screen.getByTestId('input-password');
 
-        // Simular preenchimento
+        // Simulate user input
         fireEvent.input(emailInput, { target: { value: 'user@example.com' } });
         fireEvent.input(passwordInput, { target: { value: 'secret123' } });
 
-        // Simular clique de login
-        const form = screen.getByRole('button', { name: /entrar/i }).closest('form');
+        // Simulate form submission
+        const form = screen.getByRole('button').closest('form');
         fireEvent.submit(form!);
 
-        // Validação CRÍTICA: O post foi chamado?
+        // CRITICAL Validation: Was post called?
         expect(postMock).toHaveBeenCalledWith('/login', expect.any(Object));
 
-        // Validação de DADOS: O estado do formulário no momento do post era o correto?
-        // Como passamos a referência de formData para o mock, as chamadas de setData alteraram o objeto original
+        // DATA Validation: Was form state correct at post time?
         expect(formData.email).toBe('user@example.com');
         expect(formData.password).toBe('secret123');
         
-        // Verificar se setData foi chamado corretamente (Interação UI -> Hook)
+        // Verify setData connectivity (UI -> Hook interaction)
         expect(setDataMock).toHaveBeenCalledWith('email', 'user@example.com');
         expect(setDataMock).toHaveBeenCalledWith('password', 'secret123');
     });

@@ -3,7 +3,7 @@
 use Inertia\Testing\AssertableInertia as Assert;
 
 test('landing page is accessible and renders home component', function () {
-    $this->get('/')
+    $this->get('/en/home')
         ->assertStatus(200)
         ->assertInertia(fn (Assert $page) => $page
             ->component('Home')
@@ -16,7 +16,7 @@ test('landing page shows dashboard button when authenticated', function () {
     $user->ledgers()->attach($ledger, ['role' => 'owner']);
 
     $this->actingAs($user)
-        ->get('/')
+        ->get('/en/home')
         ->assertStatus(200)
         ->assertInertia(fn (Assert $page) => $page
             ->component('Home')

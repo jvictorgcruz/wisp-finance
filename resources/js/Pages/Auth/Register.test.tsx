@@ -1,15 +1,7 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { useForm } from '@inertiajs/react';
 import Register from './Register';
-
-// Mock do Inertia-react
-vi.mock('@inertiajs/react', () => ({
-    useForm: vi.fn(),
-    Link: ({ children, href }: { children: React.ReactNode, href: string }) => <a href={href}>{children}</a>,
-    Head: ({ title }: { title: string }) => <title>{title}</title>,
-}));
 
 describe('Register Page', () => {
     const useFormMock = vi.mocked(useForm);
@@ -26,11 +18,11 @@ describe('Register Page', () => {
 
         render(<Register />);
         
-        expect(screen.getByLabelText(/nome completo/i)).toBeInTheDocument();
-        expect(screen.getByLabelText(/e-mail/i)).toBeInTheDocument();
-        expect(screen.getByLabelText(/^senha$/i)).toBeInTheDocument();
-        expect(screen.getByLabelText(/confirmar senha/i)).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /cadastrar/i })).toBeInTheDocument();
+        expect(screen.getByLabelText('auth.full_name')).toBeInTheDocument();
+        expect(screen.getByLabelText('auth.email')).toBeInTheDocument();
+        expect(screen.getByLabelText(/^auth.password$/i)).toBeInTheDocument();
+        expect(screen.getByLabelText('auth.confirm_password')).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'auth.register_btn' })).toBeInTheDocument();
     });
 
     it('should display validation errors when provided by backend', () => {
@@ -107,7 +99,7 @@ describe('Register Page', () => {
         expect(formData.password_confirmation).toBe('password123');
 
         // Simular envio
-        const form = screen.getByRole('button', { name: /cadastrar/i }).closest('form');
+        const form = screen.getByRole('button', { name: 'auth.register_btn' }).closest('form');
         fireEvent.submit(form!);
 
         // Validação do Post

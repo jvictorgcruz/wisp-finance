@@ -28,10 +28,11 @@ class RegisterUserAction
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
+                'locale' => app()->getLocale(),
             ]);
 
             $ledger = Ledger::create([
-                'name' => "Carteira de " . $user->name,
+                'name' => __('accounts.default_ledger_name', ['name' => $user->name]),
                 'slug' => Str::slug($user->name . '-' . Str::random(5)),
             ]);
 

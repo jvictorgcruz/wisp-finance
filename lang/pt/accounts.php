@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'opening_balance' => 'Saldo Inicial',
+    'cash' => 'Dinheiro',
+    'bank' => 'Banco',
+    'credit_card' => 'Cartão de Crédito',
+    'loans' => 'Empréstimos',
+    'investments' => 'Investimentos',
+    'savings' => 'Poupança',
+    'fixed_income' => 'Renda Fixa',
+    'variable_income' => 'Renda Variável',
+    'salary' => 'Salário',
+    'base_salary' => 'Salário Base',
+    'overtime' => 'Horas Extras',
+    'thirteenth_salary' => 'Décimo Terceiro',
+    'vacation' => 'Férias',
+    'food_voucher' => 'Vale Alimentação/Refeição',
+    'dividends' => 'Dividendos',
+    'jcp_interest' => 'Juros JCP',
+    'fii_earnings' => 'Rendimentos FII',
+    'freelance' => 'Vendas/Freelance',
+    'personal' => 'Pessoal',
+    'services' => 'Serviços',
+    'other_expenses' => 'Outras Despesas',
+    'default_ledger_name' => 'Carteira de :name',
+];

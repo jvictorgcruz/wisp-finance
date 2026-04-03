@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'opening_balance' => 'Opening Balance',
+    'cash' => 'Cash',
+    'bank' => 'Bank',
+    'credit_card' => 'Credit Card',
+    'loans' => 'Loans',
+    'investments' => 'Investments',
+    'savings' => 'Savings',
+    'fixed_income' => 'Fixed Income',
+    'variable_income' => 'Variable Income',
+    'salary' => 'Salary',
+    'base_salary' => 'Base Salary',
+    'overtime' => 'Overtime',
+    'thirteenth_salary' => 'Thirteenth Salary',
+    'vacation' => 'Vacation',
+    'food_voucher' => 'Food/Meal Voucher',
+    'dividends' => 'Dividends',
+    'jcp_interest' => 'Interest on Equity',
+    'fii_earnings' => 'REIT Income',
+    'freelance' => 'Sales/Freelance',
+    'personal' => 'Personal',
+    'services' => 'Services',
+    'other_expenses' => 'Other Expenses',
+    'default_ledger_name' => ':name\'s Wallet',
+];

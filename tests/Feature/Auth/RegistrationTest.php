@@ -19,7 +19,7 @@ test('new users can register', function () {
     $this->assertAuthenticated();
 });
 
-test('registration creates a ledger named Carteira de [Name]', function () {
+test('registration creates a ledger with localized name', function () {
     $this->post('/register', [
         'name' => 'John Doe',
         'email' => 'john@example.com',
@@ -31,11 +31,12 @@ test('registration creates a ledger named Carteira de [Name]', function () {
     $ledger = $user->ledgers()->first();
 
     expect($ledger)->not->toBeNull();
-    expect($ledger->name)->toBe('Carteira de John Doe');
+    // Use __ helper to match the localized name generated in English
+    expect($ledger->name)->toBe(__('accounts.default_ledger_name', ['name' => 'John Doe']));
     expect(session('current_ledger_id'))->toBe($ledger->id);
 });
 
-test('registration seeds default hierarchical accounts', function () {
+test('registration seeds default hierarchical accounts with translations', function () {
     $this->post('/register', [
         'name' => 'Alice',
         'email' => 'alice@example.com',
@@ -46,30 +47,31 @@ test('registration seeds default hierarchical accounts', function () {
     $user = User::where('email', 'alice@example.com')->first();
     $ledger = $user->ledgers()->first();
 
-    // Check for some top-level accounts
+    // Check for some top-level accounts in English (default for /en prefix)
     $topLevelAccounts = Account::withoutGlobalScopes()
         ->where('ledger_id', $ledger->id)
         ->whereNull('parent_id')
         ->get();
 
     $topLevelNames = $topLevelAccounts->pluck('name');
-    expect($topLevelNames)->toContain('Dinheiro');
-    expect($topLevelNames)->toContain('Salário');
-    expect($topLevelNames)->toContain('Moradia');
+    expect($topLevelNames)->toContain(__('accounts.cash'));
+    expect($topLevelNames)->toContain(__('accounts.salary'));
+    expect($topLevelNames)->toContain(__('categories.housing'));
 
     // Check for nested accounts
-    $moradia = Account::withoutGlobalScopes()
+    $housingCategoryName = __('categories.housing');
+    $housing = Account::withoutGlobalScopes()
         ->where('ledger_id', $ledger->id)
-        ->where('name', 'Moradia')
+        ->where('name', $housingCategoryName)
         ->first();
 
-    $moradiaChildren = Account::withoutGlobalScopes()
-        ->where('parent_id', $moradia->id)
+    $housingChildren = Account::withoutGlobalScopes()
+        ->where('parent_id', $housing->id)
         ->get();
 
-    $moradiaNames = $moradiaChildren->pluck('name');
-    expect($moradiaNames)->toContain('Aluguel');
-    expect($moradiaNames)->toContain('Luz');
+    $housingChildrenNames = $housingChildren->pluck('name');
+    expect($housingChildrenNames)->toContain(__('categories.rent'));
+    expect($housingChildrenNames)->toContain(__('categories.electricity'));
 });
 
 test('registration is atomic and rolls back on failure', function () {

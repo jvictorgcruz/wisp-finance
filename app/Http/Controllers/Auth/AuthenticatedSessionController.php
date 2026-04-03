@@ -29,8 +29,13 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // Set current ledger in session
+        // Set current state in session
         $user = Auth::user();
+
+        if ($user->locale) {
+            session(['locale' => $user->locale]);
+        }
+
         $ledger = $user->currentLedger();
         if ($ledger) {
             session(['current_ledger_id' => $ledger->id]);

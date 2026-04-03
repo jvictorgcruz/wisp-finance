@@ -3,8 +3,10 @@ import { useForm, Link } from '@inertiajs/react';
 import AuthLayout from '@/Components/Auth/AuthLayout';
 import TextField from '@/Components/Common/TextField';
 import { Mail, Lock, LogIn } from 'lucide-react';
+import { useTranslation } from '@/Hooks/useTranslation';
 
 export default function Login() {
+    const { t, locale } = useTranslation();
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
@@ -18,23 +20,28 @@ export default function Login() {
         });
     };
 
+    /**
+     * Helper for guest links with locale prefix
+     */
+    const localeLink = (path: string) => `/${locale}${path}`;
+
     return (
         <AuthLayout 
-            title="Bem-vindo de volta" 
-            subtitle="Entre com suas credenciais para gerenciar seu patrimônio"
+            title={t('auth.welcome_back')} 
+            subtitle={t('auth.login_subtitle')}
         >
             <form onSubmit={submit} className="space-y-6">
                 <TextField
                     id="email"
                     type="email"
                     name="email"
-                    label="E-mail"
+                    label={t('auth.email')}
                     value={data.email}
                     autoComplete="username"
                     onChange={(val) => setData('email', val)}
                     error={errors.email}
                     icon={<Mail className="w-4 h-4" />}
-                    placeholder="seu@email.com"
+                    placeholder="your@email.com"
                     required
                 />
 
@@ -42,7 +49,7 @@ export default function Login() {
                     id="password"
                     type="password"
                     name="password"
-                    label="Senha"
+                    label={t('auth.password')}
                     value={data.password}
                     autoComplete="current-password"
                     onChange={(val) => setData('password', val)}
@@ -62,7 +69,7 @@ export default function Login() {
                             className="w-4 h-4 rounded border-slate-300 text-brand focus:ring-brand"
                         />
                         <span className="text-sm text-slate-500 group-hover:text-slate-700 transition-colors">
-                            Lembrar-me
+                            {t('auth.remember_me')}
                         </span>
                     </label>
 
@@ -70,7 +77,7 @@ export default function Login() {
                         href="#"
                         className="text-sm font-medium text-brand hover:text-brand/80 transition-colors"
                     >
-                        Esqueceu a senha?
+                        {t('auth.forgot_password')}
                     </Link>
                 </div>
 
@@ -89,18 +96,18 @@ export default function Login() {
                     ) : (
                         <>
                             <LogIn className="w-4 h-4" />
-                            Entrar
+                            {t('auth.login')}
                         </>
                     )}
                 </button>
 
                 <p className="text-center text-sm text-slate-500">
-                    Não tem uma conta?{' '}
+                    {t('auth.dont_have_account')}{' '}
                     <Link
-                        href="/register"
+                        href={localeLink('/register')}
                         className="font-semibold text-brand hover:text-brand/80 transition-colors underline underline-offset-4 decoration-brand/30"
                     >
-                        Crie agora
+                        {t('auth.create_now')}
                     </Link>
                 </p>
             </form>

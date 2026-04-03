@@ -1,0 +1,30 @@
+<?php
+
+return [
+    'title' => 'Your finances,',
+    'title_highlight' => 'organized.',
+    'subtitle' => 'Control your accounts, cards and expenses in one place. No complicated terms, just the clarity you need.',
+    'cta' => 'Get started now',
+    'nav' => [
+        'login' => 'Login',
+        'register' => 'Register',
+        'go_to_app' => 'Go to App',
+        'dashboard' => 'Dashboard',
+        'accounts' => 'Accounts',
+        'transactions' => 'Transactions',
+        'cards' => 'Cards',
+        'logout' => 'Logout',
+    ],
+    'sidebar' => [
+        'current_ledger' => 'Current Ledger',
+        'loading' => 'Loading...',
+    ],
+    'features_title' => 'Everything in one place',
+    'features_subtitle' => 'A tool made for you to understand exactly where your money is going, without complications.',
+    'feature_1_title' => 'Straight to the point',
+    'feature_1_desc' => 'No boring or complicated reports. We only show what you need to know now.',
+    'feature_2_title' => 'Ready in seconds',
+    'feature_2_desc' => 'Logging an expense is as fast as an instant transfer. Simple as that.',
+    'feature_3_title' => 'Clear vision',
+    'feature_3_desc' => 'Track your assets directly, without noise or unnecessary complexity.',
+];

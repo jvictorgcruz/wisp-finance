@@ -1,18 +1,21 @@
 import AppLayout from '@/Layouts/AppLayout';
 import { Plus, Wallet } from 'lucide-react';
+import { useTranslation } from '@/Hooks/useTranslation';
 
 export default function Accounts() {
+    const { t } = useTranslation();
+
     return (
-        <AppLayout title="Contas e Categorias">
+        <AppLayout title={t('accounts_page.title')}>
             <div className="flex items-center justify-between">
                 <div className="space-y-1">
                     <p className="text-sm text-slate-500 font-medium leading-none">
-                        Gerencie seu plano de contas e categorias financeiras.
+                        {t('accounts_page.subtitle')}
                     </p>
                 </div>
                 <button className="bg-brand text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-brand/90 transition-all shadow-lg shadow-brand/20">
                     <Plus className="w-4 h-4" />
-                    Nova Conta
+                    {t('accounts_page.create_btn')}
                 </button>
             </div>
 
@@ -24,9 +27,9 @@ export default function Accounts() {
                             <Wallet className="w-8 h-8 text-slate-300" />
                         </div>
                         <div className="space-y-2">
-                            <h3 className="text-lg font-bold text-slate-900">Nenhuma conta encontrada</h3>
+                            <h3 className="text-lg font-bold text-slate-900">{t('accounts_page.empty_title')}</h3>
                             <p className="text-sm text-slate-500 max-w-xs mx-auto">
-                                Comece criando sua primeira conta real ou use as contas de sistema geradas no setup.
+                                {t('accounts_page.empty_desc')}
                             </p>
                         </div>
                     </div>
@@ -35,10 +38,10 @@ export default function Accounts() {
                 <div className="space-y-6">
                     {/* Placeholder para Resumo Lateral */}
                     <div className="bg-slate-900 text-white rounded-4xl p-8 shadow-xl shadow-slate-200">
-                        <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Patrimônio Total</h4>
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">{t('accounts_page.total_assets')}</h4>
                         <div className="text-3xl font-black tracking-tight">R$ 0,00</div>
                         <div className="mt-6 p-4 bg-white/10 rounded-2xl border border-white/10 text-[10px] font-bold uppercase tracking-widest">
-                            Contexto de Precisão Ativado
+                            {t('accounts_page.precision_context')}
                         </div>
                     </div>
                 </div>

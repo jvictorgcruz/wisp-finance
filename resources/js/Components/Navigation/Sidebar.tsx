@@ -9,9 +9,11 @@ import {
     LogOut,
     Menu,
     X,
-    User
+    User,
+    Globe
 } from 'lucide-react';
 import logo from '@images/logo.png';
+import { useTranslation } from '@/Hooks/useTranslation';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -46,13 +48,14 @@ const NavLink = ({ href, active, children, icon: Icon }: NavLinkProps) => (
 
 export default function Sidebar() {
     const { auth } = usePage<any>().props;
+    const { t, locale } = useTranslation();
     const [isOpen, setIsOpen] = React.useState(false);
 
     const navLinks = [
-        { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, active: false },
-        { name: 'Contas', href: '/accounts', icon: Wallet, active: false },
-        { name: 'Transações', href: '/transactions', icon: ArrowLeftRight, active: false },
-        { name: 'Cartões', href: '/cards', icon: CreditCard, active: false },
+        { name: t('home.nav.dashboard'), href: '/dashboard', icon: LayoutDashboard, active: false },
+        { name: t('home.nav.accounts'), href: '/accounts', icon: Wallet, active: false },
+        { name: t('home.nav.transactions'), href: '/transactions', icon: ArrowLeftRight, active: false },
+        { name: t('home.nav.cards'), href: '/cards', icon: CreditCard, active: false },
     ];
 
     return (
@@ -79,17 +82,18 @@ export default function Sidebar() {
                 </div>
 
                 {/* Ledger Switcher Placeholder */}
+                {auth.ledgers?.length > 1 && (
                 <div className="px-4 mb-6">
                     <button className="w-full h-14 px-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between group hover:border-brand/30 transition-all text-left">
                         <div className="flex flex-col">
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Contexto Atual</span>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('home.sidebar.current_ledger')}</span>
                             <span className="text-sm font-semibold text-slate-700 truncate max-w-[120px]">
-                                {auth.ledgers?.find((l: any) => l.id === auth.current_ledger_id)?.name || 'Carregando...'}
+                                {auth.ledgers?.find((l: any) => l.id === auth.current_ledger_id)?.name || t('home.sidebar.loading')}
                             </span>
                         </div>
                         <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-brand transition-colors" />
                     </button>
-                </div>
+                </div>)}
 
                 {/* Navigation */}
                 <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
@@ -100,16 +104,44 @@ export default function Sidebar() {
                     ))}
                 </nav>
 
-                {/* Footer User Profile */}
-                <div className="p-4 mt-auto">
+                {/* Footer User Profile & Language Switcher */}
+                <div className="p-4 mt-auto space-y-4">
+                    {/* Language Switcher */}
+                    <div className="flex items-center justify-center gap-2 p-1.5 rounded-2xl bg-slate-50 border border-slate-100">
+                        <Link 
+                            href={`/language/en`} 
+                            method="post" 
+                            as="button"
+                            disabled={locale == 'en'}
+                            className={cn(
+                                "flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-xs font-bold transition-all",
+                                locale === 'en' ? "bg-white shadow-sm text-slate-900" : "text-slate-400 hover:text-slate-600"
+                            )}
+                        >
+                            <span className="text-sm leading-none">🇺🇸</span> EN
+                        </Link>
+                        <Link 
+                            href={`/language/pt`} 
+                            method="post" 
+                            as="button"
+                            disabled={locale == 'pt'}
+                            className={cn(
+                                "flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-xs font-bold transition-all",
+                                locale === 'pt' ? "bg-white shadow-sm text-slate-900" : "text-slate-400 hover:text-slate-600"
+                            )}
+                        >
+                            <span className="text-sm leading-none">🇧🇷</span> PT
+                        </Link>
+                    </div>
+
                     <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 space-y-3">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-slate-200 rounded-xl flex items-center justify-center border-2 border-white shadow-sm overflow-hidden">
                                 <User className="w-6 h-6 text-slate-500" />
                             </div>
                             <div className="flex flex-col min-w-0">
-                                <span className="text-sm font-bold text-slate-900 truncate">{auth.user.name}</span>
-                                <span className="text-[10px] text-slate-400 truncate">{auth.user.email}</span>
+                                <span className="text-sm font-bold text-slate-900 truncate">{auth.user?.name}</span>
+                                <span className="text-[10px] text-slate-400 truncate">{auth.user?.email}</span>
                             </div>
                         </div>
 
@@ -122,7 +154,7 @@ export default function Sidebar() {
                             className="w-full flex items-center gap-2 py-1.5 px-2 text-sm text-slate-500 hover:text-red-600 transition-colors group"
                         >
                             <LogOut className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                            <span>Sair da conta</span>
+                            <span>{t('home.nav.logout')}</span>
                         </Link>
                     </div>
                 </div>

@@ -37,7 +37,11 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        // Set current ledger in session
+        // Set current state in session
+        if ($user->locale) {
+            session(['locale' => $user->locale]);
+        }
+
         $ledger = $user->currentLedger();
         if ($ledger) {
             session(['current_ledger_id' => $ledger->id]);

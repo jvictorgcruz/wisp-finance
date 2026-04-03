@@ -4,6 +4,7 @@ import {
     Target
 } from 'lucide-react';
 import logo from '@images/logo.png';
+import { useTranslation } from '@/Hooks/useTranslation';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -23,10 +24,14 @@ const FeatureCard = ({ icon: Icon, title, description }: { icon: any, title: str
 
 export default function Home() {
     const { auth } = usePage<any>().props;
+    const { t, locale } = useTranslation();
+
+    // Helper for guest links with locale prefix
+    const localeLink = (path: string) => `/${locale}${path}`;
 
     return (
         <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-brand/20">
-            <Head title="Controle financeiro simples e direto" />
+            <Head title={t('home.title') + " " + t('home.title_highlight')} />
 
             {/* Navigation Header */}
             <nav className="h-24 flex items-center justify-between px-8 lg:px-20 max-w-7xl mx-auto">
@@ -41,21 +46,21 @@ export default function Home() {
                             href="/accounts"
                             className="bg-slate-900 text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-slate-800 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-slate-200"
                         >
-                            Ir para o App
+                            {t('home.nav.go_to_app')}
                         </Link>
                     ) : (
                         <>
                             <Link 
-                                href="/login" 
+                                href={localeLink('/login')} 
                                 className="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors"
                             >
-                                Entrar
+                                {t('home.nav.login')}
                             </Link>
                             <Link 
-                                href="/register" 
+                                href={localeLink('/register')} 
                                 className="bg-brand text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-brand/90 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-brand/20"
                             >
-                                Criar conta
+                                {t('home.nav.register')}
                             </Link>
                         </>
                     )}
@@ -67,20 +72,20 @@ export default function Home() {
                 <div className="grid lg:grid-cols-2 gap-20 items-center">
                     <div className="space-y-10 relative z-10">
                         <h1 className="text-4xl lg:text-6xl font-black tracking-tighter leading-[0.9] animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                            Suas finanças, <br />
-                            <span className="text-brand">organizadas.</span>
+                            {t('home.title')} <br />
+                            <span className="text-brand">{t('home.title_highlight')}</span>
                         </h1>
 
                         <p className="text-lg lg:text-xl text-slate-500 max-w-md leading-relaxed font-medium animate-in fade-in slide-in-from-bottom-12 duration-1200 delay-150">
-                            Controle suas contas, cartões e despesas em um só lugar. Sem termos complicados, apenas a clareza que você precisa.
+                            {t('home.subtitle')}
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 pt-4 animate-in fade-in slide-in-from-bottom-12 duration-1500 delay-300">
                             <Link 
-                                href="/register" 
+                                href={localeLink('/register')} 
                                 className="h-16 px-10 bg-slate-900 text-white rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-slate-800 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-slate-200 group"
                             >
-                                Começar agora
+                                {t('home.cta')}
                                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                             </Link>
                         </div>
@@ -111,25 +116,25 @@ export default function Home() {
             <section className="bg-white py-32 px-8 lg:px-20 border-t border-slate-100">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center space-y-4 mb-20">
-                        <h2 className="text-3xl lg:text-5xl font-black tracking-tight text-slate-900">Tudo em um só lugar</h2>
-                        <p className="text-slate-500 font-medium max-w-lg mx-auto">Uma ferramenta feita para você entender exatamente para onde o seu dinheiro está indo, sem complicação.</p>
+                        <h2 className="text-3xl lg:text-5xl font-black tracking-tight text-slate-900">{t('home.features_title')}</h2>
+                        <p className="text-slate-500 font-medium max-w-lg mx-auto">{t('home.features_subtitle')}</p>
                     </div>
 
                     <div className="grid md:grid-cols-3 gap-8">
                         <FeatureCard 
                             icon={Target}
-                            title="Direto ao Ponto"
-                            description="Sem relatórios chatos ou complicados. Mostramos apenas o que você precisa saber agora."
+                            title={t('home.feature_1_title')}
+                            description={t('home.feature_1_desc')}
                         />
                         <FeatureCard 
                             icon={Zap}
-                            title="Pronto em Segundos"
-                            description="Lançar uma despesa é tão rápido quanto fazer um PIX. Simples assim."
+                            title={t('home.feature_2_title')}
+                            description={t('home.feature_2_desc')}
                         />
                         <FeatureCard 
                             icon={Maximize2}
-                            title="Visão Clara"
-                            description="Acompanhe seu patrimônio de forma direta, sem ruídos ou complexidades desnecessárias."
+                            title={t('home.feature_3_title')}
+                            description={t('home.feature_3_desc')}
                         />
                     </div>
                 </div>

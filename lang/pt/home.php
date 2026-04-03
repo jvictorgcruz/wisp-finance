@@ -1,0 +1,30 @@
+<?php
+
+return [
+    'title' => 'Suas finanças,',
+    'title_highlight' => 'organizadas.',
+    'subtitle' => 'Controle suas contas, cartões e despesas em um só lugar. Sem termos complicados, apenas a clareza que você precisa.',
+    'cta' => 'Começar agora',
+    'nav' => [
+        'login' => 'Entrar',
+        'register' => 'Criar conta',
+        'go_to_app' => 'Ir para o App',
+        'dashboard' => 'Dashboard',
+        'accounts' => 'Contas',
+        'transactions' => 'Transações',
+        'cards' => 'Cartões',
+        'logout' => 'Sair da conta',
+    ],
+    'sidebar' => [
+        'current_ledger' => 'Carteira Atual',
+        'loading' => 'Carregando...',
+    ],
+    'features_title' => 'Tudo em um só lugar',
+    'features_subtitle' => 'Uma ferramenta feita para você entender exatamente para onde o seu dinheiro está indo, sem complicação.',
+    'feature_1_title' => 'Direto ao Ponto',
+    'feature_1_desc' => 'Sem relatórios chatos ou complicados. Mostramos apenas o que você precisa saber agora.',
+    'feature_2_title' => 'Pronto em Segundos',
+    'feature_2_desc' => 'Lançar uma despesa é tão rápido quanto fazer um PIX. Simples assim.',
+    'feature_3_title' => 'Visão Clara',
+    'feature_3_desc' => 'Acompanhe seu patrimônio de forma direta, sem ruídos ou complexidades desnecessárias.',
+];

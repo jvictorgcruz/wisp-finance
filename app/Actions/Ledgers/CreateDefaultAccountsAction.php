@@ -44,154 +44,155 @@ class CreateDefaultAccountsAction
 
     /**
      * Define the default chart of accounts hierarchy.
+     * All names are localized using Laravel's translation engine.
      */
     protected function getAccountDefinitions(): array
     {
         return [
-            ['name' => 'Saldo Inicial', 'type' => AccountType::EQUITY],
-            ['name' => 'Dinheiro', 'type' => AccountType::ASSET],
-            ['name' => 'Banco', 'type' => AccountType::ASSET],
-            ['name' => 'Cartão de Crédito', 'type' => AccountType::LIABILITY],
-            ['name' => 'Empréstimos', 'type' => AccountType::LIABILITY],
+            ['name' => __('accounts.opening_balance'), 'type' => AccountType::EQUITY],
+            ['name' => __('accounts.cash'), 'type' => AccountType::ASSET],
+            ['name' => __('accounts.bank'), 'type' => AccountType::ASSET],
+            ['name' => __('accounts.credit_card'), 'type' => AccountType::LIABILITY],
+            ['name' => __('accounts.loans'), 'type' => AccountType::LIABILITY],
             
             [
-                'name' => 'Investimentos', 
+                'name' => __('accounts.investments'), 
                 'type' => AccountType::ASSET,
                 'children' => [
-                    ['name' => 'Poupança', 'type' => AccountType::ASSET],
-                    ['name' => 'Renda Fixa', 'type' => AccountType::ASSET],
-                    ['name' => 'Renda Variável', 'type' => AccountType::ASSET],
+                    ['name' => __('accounts.savings'), 'type' => AccountType::ASSET],
+                    ['name' => __('accounts.fixed_income'), 'type' => AccountType::ASSET],
+                    ['name' => __('accounts.variable_income'), 'type' => AccountType::ASSET],
                 ]
             ],
 
             [
-                'name' => 'Salário',
+                'name' => __('accounts.salary'),
                 'type' => AccountType::REVENUE,
                 'children' => [
-                    ['name' => 'Salário Base', 'type' => AccountType::REVENUE],
-                    ['name' => 'Horas Extras', 'type' => AccountType::REVENUE],
-                    ['name' => 'Décimo Terceiro', 'type' => AccountType::REVENUE],
-                    ['name' => 'Férias', 'type' => AccountType::REVENUE],
-                    ['name' => 'Vale Alimentação/Refeição', 'type' => AccountType::REVENUE],
+                    ['name' => __('accounts.base_salary'), 'type' => AccountType::REVENUE],
+                    ['name' => __('accounts.overtime'), 'type' => AccountType::REVENUE],
+                    ['name' => __('accounts.thirteenth_salary'), 'type' => AccountType::REVENUE],
+                    ['name' => __('accounts.vacation'), 'type' => AccountType::REVENUE],
+                    ['name' => __('accounts.food_voucher'), 'type' => AccountType::REVENUE],
                 ]
             ],
 
             [
-                'name' => 'Rendimentos',
+                'name' => __('accounts.investments'), // Shared name with assets, but context is revenue
                 'type' => AccountType::REVENUE,
                 'children' => [
-                    ['name' => 'Dividendos', 'type' => AccountType::REVENUE],
-                    ['name' => 'Juros JCP', 'type' => AccountType::REVENUE],
-                    ['name' => 'Rendimentos FII', 'type' => AccountType::REVENUE],
+                    ['name' => __('accounts.dividends'), 'type' => AccountType::REVENUE],
+                    ['name' => __('accounts.jcp_interest'), 'type' => AccountType::REVENUE],
+                    ['name' => __('accounts.fii_earnings'), 'type' => AccountType::REVENUE],
                 ]
             ],
 
-            ['name' => 'Vendas/Freelance', 'type' => AccountType::REVENUE],
+            ['name' => __('accounts.freelance'), 'type' => AccountType::REVENUE],
 
             [
-                'name' => 'Moradia',
+                'name' => __('categories.housing'),
                 'type' => AccountType::EXPENSE,
                 'children' => [
-                    ['name' => 'Aluguel', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Condomínio', 'type' => AccountType::EXPENSE],
-                    ['name' => 'IPTU', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Seguro Fiança', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Luz', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Água', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Gás', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Internet/Tel', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Manutenção Casa', 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.rent'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.condo_fee'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.property_tax'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.fianza_insurance'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.electricity'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.water'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.gas'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.internet_tel'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.home_maintenance'), 'type' => AccountType::EXPENSE],
                 ]
             ],
 
              [
-                'name' => 'Alimentação',
+                'name' => __('categories.food'),
                 'type' => AccountType::EXPENSE,
                 'children' => [
-                    ['name' => 'Mercado', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Hortifruti', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Padaria', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Restaurantes', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Delivery', 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.market'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.vegetables'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.bakery'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.restaurants'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.delivery'), 'type' => AccountType::EXPENSE],
                 ]
             ],
 
             [
-                'name' => 'Transporte',
+                'name' => __('categories.transport'),
                 'type' => AccountType::EXPENSE,
                 'children' => [
-                    ['name' => 'Combustível', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Estacionamento', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Pedágio', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Seguro Carro', 'type' => AccountType::EXPENSE],
-                    ['name' => 'IPVA', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Aplicativos (Uber/99)', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Transporte Público', 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.fuel'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.parking'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.toll'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.car_insurance'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.car_tax'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.ride_sharing'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.public_transport'), 'type' => AccountType::EXPENSE],
                 ]
             ],
 
             [
-                'name' => 'Saúde',
+                'name' => __('categories.health'),
                 'type' => AccountType::EXPENSE,
                 'children' => [
-                    ['name' => 'Médico', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Dentista', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Psicólogo', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Exames', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Farmácia', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Plano de Saúde', 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.doctor'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.dentist'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.psychologist'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.exams'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.pharmacy'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.health_insurance'), 'type' => AccountType::EXPENSE],
                 ]
             ],
 
             [
-                'name' => 'Lazer',
+                'name' => __('categories.entertainment'),
                 'type' => AccountType::EXPENSE,
                 'children' => [
-                    ['name' => 'Show', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Festas/Eventos', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Cinema', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Viagens', 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.shows'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.events'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.cinema'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.travel'), 'type' => AccountType::EXPENSE],
                 ]
             ],
 
              [
-                'name' => 'Pessoal',
+                'name' => __('accounts.personal'),
                 'type' => AccountType::EXPENSE,
                 'children' => [
-                    ['name' => 'Salão', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Barbeiro', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Vestuário', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Cosméticos', 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.beauty_salon'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.barber'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.clothing'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.cosmetics'), 'type' => AccountType::EXPENSE],
                 ]
             ],
 
             [
-                'name' => 'Educação',
+                'name' => __('categories.education'),
                 'type' => AccountType::EXPENSE,
                 'children' => [
-                    ['name' => 'Mensalidade', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Cursos Online', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Livros', 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.tuition'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.online_courses'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.books'), 'type' => AccountType::EXPENSE],
                 ]
             ],
 
              [
-                'name' => 'Serviços',
+                'name' => __('accounts.services'),
                 'type' => AccountType::EXPENSE,
                 'children' => [
-                    ['name' => 'Advogado', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Contador', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Tarifas Bancárias', 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.lawyer'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.accountant'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.bank_fees'), 'type' => AccountType::EXPENSE],
                 ]
             ],
 
             [
-                'name' => 'Outras Despesas',
+                'name' => __('accounts.other_expenses'),
                 'type' => AccountType::EXPENSE,
                 'children' => [
-                    ['name' => 'Assinaturas', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Imprevistos', 'type' => AccountType::EXPENSE],
-                    ['name' => 'Presentes', 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.subscriptions'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.emergencies'), 'type' => AccountType::EXPENSE],
+                    ['name' => __('categories.gifts'), 'type' => AccountType::EXPENSE],
                 ]
             ],
         ];
