@@ -7,6 +7,8 @@ use App\Enums\AccountType;
 use App\Traits\HasLedger;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Account extends Model
@@ -16,6 +18,7 @@ class Account extends Model
 
     protected $fillable = [
         'ledger_id',
+        'parent_id',
         'name',
         'type',
         'status',
@@ -34,5 +37,21 @@ class Account extends Model
             'status' => AccountStatus::class,
             'is_system' => 'boolean',
         ];
+    }
+
+    /**
+     * Get the parent account.
+     */
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(Account::class, 'parent_id');
+    }
+
+    /**
+     * Get the children accounts.
+     */
+    public function children(): HasMany
+    {
+        return $this->hasMany(Account::class, 'parent_id');
     }
 }
