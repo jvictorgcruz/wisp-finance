@@ -35,9 +35,20 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+        $currentLedgerId = session('current_ledger_id');
+
+        // Se não houver ledger na sessão mas o usuário estiver logado, 
+        // tentamos pegar o primeiro disponível.
+        if (!$currentLedgerId && $user) {
+            $currentLedgerId = $user->currentLedger()?->id;
+        }
+
         return array_merge(parent::share($request), [
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user,
+                'ledgers' => $user ? $user->ledgers : [],
+                'current_ledger_id' => $currentLedgerId,
             ],
             'flash' => [
                 'success' => $request->session()->get('success'),

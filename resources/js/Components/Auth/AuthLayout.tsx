@@ -1,5 +1,6 @@
-import React, { PropsWithChildren } from 'react';
+import { PropsWithChildren } from 'react';
 import { Head, Link } from '@inertiajs/react';
+import logo from '@images/logo.png';
 
 interface Props {
     title: string;
@@ -14,21 +15,7 @@ export default function AuthLayout({ title, subtitle, children }: PropsWithChild
             <div className="w-full sm:max-w-md mt-6 px-8 py-10 bg-white border border-slate-100 shadow-soft rounded-xl animate-in fade-in zoom-in-95 duration-500">
                 <div className="mb-10 flex flex-col items-center gap-3">
                     <Link href="/">
-                        <div className="w-12 h-12 bg-brand rounded-xl flex items-center justify-center shadow-lg shadow-brand/20">
-                            <svg 
-                                className="w-7 h-7 text-white" 
-                                fill="none" 
-                                viewBox="0 0 24 24" 
-                                stroke="currentColor"
-                            >
-                                <path 
-                                    strokeLinecap="round" 
-                                    strokeLinejoin="round" 
-                                    strokeWidth={2} 
-                                    d="M13 10V3L4 14h7v7l9-11h-7z" 
-                                />
-                            </svg>
-                        </div>
+                        <img src={logo} alt="Wisp Logo" className="w-12 h-12 object-contain hover:scale-110 transition-transform" />
                     </Link>
                     
                     <div className="text-center">
@@ -48,7 +35,7 @@ export default function AuthLayout({ title, subtitle, children }: PropsWithChild
             
             <div className="mt-8 text-center sm:max-w-md w-full">
                 <p className="text-sm text-slate-400 font-medium">
-                    &copy; {new Date().getFullYear()} Wisp Finance. Precision Minimalism.
+                    &copy; {new Date().getFullYear()} Wisp Finance.
                 </p>
             </div>
         </div>
