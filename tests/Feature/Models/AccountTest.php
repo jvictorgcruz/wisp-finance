@@ -1,15 +1,15 @@
 <?php
 
 use App\Models\Account;
-use App\Models\Workspace;
+use App\Models\Ledger;
 use App\Enums\AccountType;
 use App\Enums\AccountStatus;
 
 test('it can create an account with enums', function () {
-    $workspace = Workspace::factory()->create();
+    $ledger = Ledger::factory()->create();
     
     $account = Account::create([
-        'workspace_id' => $workspace->id,
+        'ledger_id' => $ledger->id,
         'name' => 'Cash in Hand',
         'type' => AccountType::ASSET,
         'status' => AccountStatus::ACTIVE,
@@ -19,8 +19,8 @@ test('it can create an account with enums', function () {
     expect($account->type)->toBe(AccountType::ASSET);
 });
 
-test('it belongs to a workspace', function () {
+test('it belongs to a ledger', function () {
     $account = Account::factory()->create();
     
-    expect($account->workspace)->toBeInstanceOf(Workspace::class);
+    expect($account->ledger)->toBeInstanceOf(Ledger::class);
 });

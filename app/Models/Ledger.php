@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Workspace extends Model
+class Ledger extends Model
 {
     /** @use HasFactory */
     use HasFactory;
@@ -18,17 +18,17 @@ class Workspace extends Model
     ];
 
     /**
-     * The users that belong to the workspace.
+     * The users that belong to the ledger.
      */
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'workspace_user')
+        return $this->belongsToMany(User::class, 'ledger_user')
             ->withPivot('role')
             ->withTimestamps();
     }
 
     /**
-     * Get the accounts for the workspace.
+     * Get the accounts for the ledger.
      */
     public function accounts(): HasMany
     {

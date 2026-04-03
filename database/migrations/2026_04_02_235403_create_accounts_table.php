@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('workspace_id')->constrained()->onDelete('cascade');
+            $table->foreignId('ledger_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->string('type'); // asset, liability, etc.
             $table->string('status')->default('active'); // active, inactive

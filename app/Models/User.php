@@ -48,20 +48,20 @@ class User extends Authenticatable
     }
 
     /**
-     * The workspaces that belong to the user.
+     * The ledgers that belong to the user.
      */
-    public function workspaces(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function ledgers(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsToMany(Workspace::class, 'workspace_user')
+        return $this->belongsToMany(Ledger::class, 'ledger_user')
             ->withPivot('role')
             ->withTimestamps();
     }
 
     /**
-     * Get the current active workspace for the user.
+     * Get the current active ledger for the user.
      */
-    public function currentWorkspace(): ?Workspace
+    public function currentLedger(): ?Ledger
     {
-        return $this->workspaces()->first();
+        return $this->ledgers()->first();
     }
 }

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Enums\AccountStatus;
 use App\Enums\AccountType;
-use App\Traits\HasWorkspace;
+use App\Traits\HasLedger;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,10 +12,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Account extends Model
 {
     /** @use HasFactory */
-    use HasFactory, SoftDeletes, HasWorkspace;
+    use HasFactory, SoftDeletes, HasLedger;
 
     protected $fillable = [
-        'workspace_id',
+        'ledger_id',
         'name',
         'type',
         'status',

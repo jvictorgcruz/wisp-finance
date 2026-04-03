@@ -35,14 +35,14 @@ O sistema centraliza as regras de negócio no backend Laravel, entregando interf
 - **Web:** Via Inertia.js (sem API REST — dados trafegam como props)
 - **API Mobile (Futuro):** Via `routes/api.php` com JSON puro (Eloquent API Resources + Sanctum tokens)
 
-### 2.2. Multi-Tenancy: Workspaces
+### 2.2. Multi-Tenancy: Ledgers
 
-O isolamento de dados **não é feito diretamente pelo `user_id`**, mas sim por um **Workspace** (tenant lógico). Isso permite, em versões futuras, o compartilhamento de um workspace entre múltiplos usuários (ex: casal, família).
+O isolamento de dados **não é feito diretamente pelo `user_id`**, mas sim por um **Ledger** (tenant lógico). Isso permite, em versões futuras, o compartilhamento de um ledger entre múltiplos usuários (ex: casal, família).
 
-- `users` ↔ `workspaces` é uma relação **N:N** via tabela pivot `workspace_user`.
-- Toda entidade de domínio (`accounts`, `transactions`, etc.) pertence a um `workspace_id`.
+- `users` ↔ `ledgers` é uma relação **N:N** via tabela pivot `ledger_user`.
+- Toda entidade de domínio (`accounts`, `transactions`, etc.) pertence a um `ledger_id`.
 - As transações também registram `created_by_user_id` para auditoria.
-- No MVP, cada usuário terá exatamente **1 workspace** criado automaticamente no onboarding. A UI de gerenciamento de múltiplos workspaces é backlog.
+- No MVP, cada usuário terá exatamente **1 ledger** criado automaticamente no onboarding. A UI de gerenciamento de múltiplos ledgers é backlog.
 
 ### 2.3. Isolamento de Domínio: Action Pattern
 
@@ -165,7 +165,7 @@ Conta Corrente (ASSET, raiz sistema, is_system=true)
 ### 4.1. Backend (API + Domínio)
 
 1. **Autenticação** — Registro, login, logout via Laravel Sanctum (sessão web + token API).
-2. **Onboarding de Workspace** — Criação automática de workspace + plano de contas padrão via Seeder ao registrar usuário.
+2. **Onboarding de Ledger** — Criação automática de ledger + plano de contas padrão via Seeder ao registrar usuário.
 3. **CRUD de Contas/Categorias** — Com validação de profundidade máxima de 2 níveis.
 4. **CRUD de Cartões** — Gerenciamento de contas LIABILITY com metadados de cartão (`credit_card_details`).
 5. **Motor de Lançamento** — Actions para os 6 tipos de transação definidos na seção 3.1.
@@ -202,7 +202,7 @@ A decisão de implementar ou não um app mobile será tomada ao longo do desenvo
 ## 6. Backlog (Futuramente)
 
 1. **Orçamentos e Metas (Budgeting)** — Limites por categoria com consolidação mensal.
-2. **Compartilhamento de Workspace** — UI para convidar membros (infra de N:N já prevista no modelo).
+2. **Compartilhamento de Ledger** — UI para convidar membros (infra de N:N já prevista no modelo).
 3. **Dashboard Avançado** — Balanço Patrimonial e DRE (modo avançado, acessível via menu).
 4. **Interface GnuCash-style** — Data Grid reativo para lançamento manual de débitos/créditos (para power users).
 5. **Arquitetura Offline-First (Mobile Sync)** — SQLite local no app mobile com sincronização via outbox pattern.

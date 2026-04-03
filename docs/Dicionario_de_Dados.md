@@ -8,8 +8,8 @@
 | Tabela | Camada | Descrição |
 |---|---|---|
 | `users` | Auth | Identidade e acesso |
-| `workspaces` | Tenant | Unidade de isolamento de dados (tenant) |
-| `workspace_user` | Tenant (pivot) | Relação N:N entre usuários e workspaces |
+| `ledgers` | Tenant | Unidade de isolamento de dados (tenant) |
+| `ledger_user` | Tenant (pivot) | Relação N:N entre usuários e ledgers |
 | `accounts` | Domínio Contábil | Plano de contas unificado (contas + categorias) |
 | `credit_card_details` | Domínio Contábil | Metadados específicos de cartão de crédito |
 | `credit_card_invoices` | Domínio Contábil | Faturas mensais do cartão (entidade própria) |
@@ -37,10 +37,10 @@ Tabela padrão do ecossistema Laravel. Representa a identidade de autenticação
 
 ---
 
-### `workspaces`
-O **tenant lógico** do sistema. Todo dado financeiro pertence a um workspace, não diretamente a um usuário. Isso viabiliza o compartilhamento futuro entre múltiplos usuários (ex: casal, família) sem alteração de schema.
+### `ledgers`
+O **tenant lógico** do sistema. Todo dado financeiro pertence a um ledger, não diretamente a um usuário. Isso viabiliza o compartilhamento futuro entre múltiplos usuários (ex: casal, família) sem alteração de schema.
 
-No MVP, cada usuário terá exatamente 1 workspace criado automaticamente no onboarding.
+No MVP, cada usuário terá exatamente 1 ledger criado automaticamente no onboarding.
 
 | Coluna | Tipo | Restrições / Notas |
 |:---|:---|:---|
@@ -51,18 +51,18 @@ No MVP, cada usuário terá exatamente 1 workspace criado automaticamente no onb
 
 ---
 
-### `workspace_user` (Pivot)
-Relação N:N entre `users` e `workspaces`. Armazena o papel do usuário dentro do workspace.
+### `ledger_user` (Pivot)
+Relação N:N entre `users` e `ledgers`. Armazena o papel do usuário dentro do ledger.
 
 | Coluna | Tipo | Restrições / Notas |
 |:---|:---|:---|
-| `workspace_id` | BigInt (Unsigned) | FK -> `workspaces(id)`. ON DELETE CASCADE |
+| `ledger_id` | BigInt (Unsigned) | FK -> `ledgers(id)`. ON DELETE CASCADE |
 | `user_id` | BigInt (Unsigned) | FK -> `users(id)`. ON DELETE CASCADE |
-| `role` | Enum | `OWNER`, `MEMBER`. O criador do workspace é `OWNER` |
+| `role` | Enum | `OWNER`, `MEMBER`. O criador do ledger é `OWNER` |
 | `created_at` | Timestamp | |
 | `updated_at` | Timestamp | |
 
-> **PK Composta:** (`workspace_id`, `user_id`)
+> **PK Composta:** (`ledger_id`, `user_id`)
 
 ---
 
@@ -78,7 +78,7 @@ O **Plano de Contas unificado**. Atua como árvore recursiva, englobando:
 | Coluna | Tipo | Restrições / Notas |
 |:---|:---|:---|
 | `id` | BigInt (Unsigned) | PK, Auto-increment |
-| `workspace_id` | BigInt (Unsigned) | FK -> `workspaces(id)`. ON DELETE CASCADE |
+| `ledger_id` | BigInt (Unsigned) | FK -> `ledgers(id)`. ON DELETE CASCADE |
 | `parent_id` | BigInt (Unsigned) | FK -> `accounts(id)`. Nullable. Nível 1 = nó raiz; Nível 2 = filho |
 | `name` | Varchar(255) | Ex: "Conta Corrente Itaú", "iFood" |
 | `type` | Enum | `ASSET`, `LIABILITY`, `EQUITY`, `REVENUE`, `EXPENSE` |
@@ -125,7 +125,7 @@ Representa a **fatura mensal** de um cartão de crédito como uma entidade próp
 | Coluna | Tipo | Restrições / Notas |
 |:---|:---|:---|
 | `id` | BigInt (Unsigned) | PK, Auto-increment |
-| `workspace_id` | BigInt (Unsigned) | FK -> `workspaces(id)` |
+| `ledger_id` | BigInt (Unsigned) | FK -> `ledgers(id)` |
 | `account_id` | BigInt (Unsigned) | FK -> `accounts(id)`. A conta LIABILITY do cartão |
 | `reference_month` | Date | Primeiro dia do mês de referência (ex: `2025-08-01` para "Fatura Ago/25"). **Unique** por (`account_id`, `reference_month`) |
 | `closing_date` | Date | Data de fechamento calculada automaticamente |
@@ -143,7 +143,7 @@ O **Fato Gerador** — cabeçalho do evento financeiro. Agrupa as linhas de lan�
 | Coluna | Tipo | Restrições / Notas |
 |:---|:---|:---|
 | `id` | BigInt (Unsigned) | PK, Auto-increment |
-| `workspace_id` | BigInt (Unsigned) | FK -> `workspaces(id)` |
+| `ledger_id` | BigInt (Unsigned) | FK -> `ledgers(id)` |
 | `created_by_user_id` | BigInt (Unsigned) | FK -> `users(id)`. Auditoria: quem registrou |
 | `description` | Varchar(255) | Descrição dada pelo usuário (ex: "Compra Mercado") |
 | `date` | Date | Data de Competência (quando o fato ocorreu) |
@@ -187,7 +187,7 @@ Tabela derivada (projeção). Criada junto à inserção no Ledger. Representa *
 | Coluna | Tipo | Restrições / Notas |
 |:---|:---|:---|
 | `id` | BigInt (Unsigned) | PK, Auto-increment |
-| `workspace_id` | BigInt (Unsigned) | FK -> `workspaces(id)` |
+| `ledger_id` | BigInt (Unsigned) | FK -> `ledgers(id)` |
 | `transaction_id` | BigInt (Unsigned) | FK -> `transactions(id)`. Origem do evento |
 | `account_id` | BigInt (Unsigned) | FK -> `accounts(id)`. Conta de liquidação (o cartão ou conta a receber) |
 | `credit_card_invoice_id` | BigInt (Unsigned) | FK -> `credit_card_invoices(id)`. Nullable. Preenchido apenas para despesas de cartão |
@@ -205,7 +205,7 @@ Tabela derivada (projeção). Criada junto à inserção no Ledger. Representa *
 ## 4. Resumo de Relacionamentos (ER)
 
 ```
-users (N) ──── workspace_user ──── (N) workspaces
+users (N) ──── ledger_user ──── (N) ledgers
                                          │
               ┌──────────────────────────┤
               │                          │
@@ -226,12 +226,12 @@ credit_card_invoices (1) ── (N) expected_cash_flows
 
 | Relação | Cardinalidade | Notas |
 |---|---|---|
-| `users` ↔ `workspaces` | N:N via `workspace_user` | Um usuário pode ter múltiplos workspaces; um workspace pode ter múltiplos usuários |
-| `workspaces` → `accounts` | 1:N | Plano de contas completo por workspace |
+| `users` ↔ `ledgers` | N:N via `ledger_user` | Um usuário pode ter múltiplos ledgers; um ledger pode ter múltiplos usuários |
+| `ledgers` → `accounts` | 1:N | Plano de contas completo por ledger |
 | `accounts` → `accounts` | 1:N (auto) | Hierarquia pai-filho; máximo 2 níveis em código |
 | `accounts` → `credit_card_details` | 1:1 | Apenas contas LIABILITY de cartão |
 | `accounts` → `credit_card_invoices` | 1:N | Uma conta-cartão tem muitas faturas mensais |
-| `workspaces` → `transactions` | 1:N | Todos os eventos financeiros do workspace |
+| `ledgers` → `transactions` | 1:N | Todos os eventos financeiros do ledger |
 | `transactions` → `journal_entries` | 1:N | Mínimo 2 linhas por transaction (Débito + Crédito) |
 | `transactions` → `expected_cash_flows` | 1:N | Apenas compras a prazo/cartão geram projeções |
 | `transactions` ↔ `transactions` | 1:1 (auto) | Par estorno/original via `reversed_by_id` / `reverses_id` |
@@ -248,4 +248,4 @@ credit_card_invoices (1) ── (N) expected_cash_flows
 | **Soft Delete** | Apenas `accounts` usa Soft Delete (só permitida sem histórico) e `status`. Demais tabelas são imutáveis ou controladas por `status` |
 | **Imutabilidade** | `journal_entries` é append-only. Nunca recebe UPDATE ou DELETE direto |
 | **Chaves Estrangeiras** | Todas as FKs devem ter índices. `ON DELETE CASCADE` apenas onde a deleção do pai torna o filho sem sentido (ex: `journal_entries` → `transactions`) |
-| **Tenant** | Toda query de domínio deve incluir `WHERE workspace_id = ?`. Usar Global Scope do Eloquent para enforçar isso automaticamente |
+| **Tenant** | Toda query de domínio deve incluir `WHERE ledger_id = ?`. Usar Global Scope do Eloquent para enforçar isso automaticamente |

@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('workspace_user', function (Blueprint $table) {
+        Schema::create('ledgers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('workspace_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('role')->default('member'); // owner, member
+            $table->string('name');
+            $table->string('slug')->unique();
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('workspace_user');
+        Schema::dropIfExists('ledgers');
     }
 };
