@@ -23,6 +23,7 @@ class Account extends Model
         'type',
         'status',
         'is_system',
+        'ui_metadata',
     ];
 
     /**
@@ -36,6 +37,7 @@ class Account extends Model
             'type' => AccountType::class,
             'status' => AccountStatus::class,
             'is_system' => 'boolean',
+            'ui_metadata' => 'array',
         ];
     }
 

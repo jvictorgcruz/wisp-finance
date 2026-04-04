@@ -1,7 +1,8 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Transition } from '@headlessui/react';
-import { ChevronRight, Wallet, Landmark, TrendingUp, TrendingDown, Coins } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import LucideIcon from '@/Components/Common/LucideIcon';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -13,6 +14,10 @@ export interface Account {
     type: 'asset' | 'liability' | 'revenue' | 'expense' | 'equity';
     status: 'active' | 'inactive';
     balance: number;
+    ui_metadata?: {
+        icon?: string;
+        color?: string;
+    };
     children?: Account[];
 }
 
@@ -30,17 +35,22 @@ const formatCurrency = (amount: number) => {
 
 const getTypeIcon = (type: string) => {
     switch (type) {
-        case 'asset': return Wallet;
-        case 'liability': return Landmark;
-        case 'revenue': return TrendingUp;
-        case 'expense': return TrendingDown;
-        default: return Coins;
+        case 'asset': return 'Wallet';
+        case 'liability': return 'Landmark';
+        case 'revenue': return 'TrendingUp';
+        case 'expense': return 'TrendingDown';
+        default: return 'Coins';
     }
 };
 
 export default function AccountRow({ account, isChild = false }: AccountRowProps) {
-    const Icon = getTypeIcon(account.type);
     const hasChildren = account.children && account.children.length > 0;
+    
+    // Custom color from metadata or type-based default
+    const customColor = account.ui_metadata?.color;
+    const typeColorClass = account.type === 'asset' || account.type === 'revenue' 
+        ? "bg-emerald-50 text-emerald-600" 
+        : "bg-rose-50 text-rose-600";
 
     const content = (
         <div className={cn(
@@ -54,11 +64,17 @@ export default function AccountRow({ account, isChild = false }: AccountRowProps
                     <div className="w-4" />
                 )}
                 
-                <div className={cn(
-                    "p-2 rounded-xl flex items-center justify-center",
-                    account.type === 'asset' ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"
-                )}>
-                    <Icon className="w-4 h-4" />
+                <div 
+                    className={cn("p-2 rounded-xl flex items-center justify-center transition-colors", typeColorClass)}
+                    style={customColor ? { 
+                        backgroundColor: `${customColor}15`, // Add transparency (approx 10%)
+                        color: customColor 
+                    } : undefined}
+                >
+                    <LucideIcon 
+                        name={account.ui_metadata?.icon || getTypeIcon(account.type)} 
+                        className="w-4 h-4" 
+                    />
                 </div>
                 
                 <div>

@@ -22,6 +22,7 @@ class GetAccountTreeAction
         $accounts = Account::with('children')
             ->whereNull('parent_id')
             ->whereIn('type', [AccountType::ASSET, AccountType::LIABILITY])
+            ->orderBy('type', 'ASC')
             ->get()
             ->map(function ($account) {
                 // Map children with their balances and runtime translation
@@ -31,6 +32,7 @@ class GetAccountTreeAction
                         'name' => $child->is_system ? __($child->name) : $child->name,
                         'type' => $child->type,
                         'status' => $child->status,
+                        'ui_metadata' => $child->ui_metadata,
                         'balance' => $this->balanceAction->execute($child),
                     ];
                 });
@@ -43,6 +45,7 @@ class GetAccountTreeAction
                     'name' => $account->is_system ? __($account->name) : $account->name,
                     'type' => $account->type,
                     'status' => $account->status,
+                    'ui_metadata' => $account->ui_metadata,
                     'balance' => $aggregatedBalance,
                     'children' => $mappedChildren,
                 ];

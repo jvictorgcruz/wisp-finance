@@ -78,7 +78,7 @@ describe('Accounts Index Page', () => {
     it('renders total assets and liabilities correctly', () => {
         render(<Accounts accounts={mockAccounts} totals={mockTotals} />);
         
-        expect(screen.getByText('accounts_page.total_assets')).toBeInTheDocument();
+        expect(screen.getByText('accounts.page.total_assets')).toBeInTheDocument();
         expect(screen.getAllByText('R$ 50,00').length).toBeGreaterThan(0);
     });
 });

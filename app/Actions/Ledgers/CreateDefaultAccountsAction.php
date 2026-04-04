@@ -27,15 +27,24 @@ class CreateDefaultAccountsAction
      */
     protected function createAccountRecursive(Ledger $ledger, array $definition, ?int $parentId = null): void
     {
-        $account = Account::firstOrCreate([
+        $lookupData = [
             'ledger_id' => $ledger->id,
             'name' => $definition['name'],
             'parent_id' => $parentId,
             'type' => $definition['type'],
             'is_system' => true,
-        ], [
+        ];
+
+        $extraData = [
             'status' => AccountStatus::ACTIVE,
-        ]);
+        ];
+
+        if (isset($definition['metadata'])) {
+            $extraData['ui_metadata'] = $definition['metadata'];
+        }
+
+        // We use firstOrCreate with distinct search criteria to avoid duplication
+        $account = Account::firstOrCreate($lookupData, $extraData);
 
         if (isset($definition['children'])) {
             foreach ($definition['children'] as $childDefinition) {

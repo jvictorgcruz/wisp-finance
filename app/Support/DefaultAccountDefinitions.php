@@ -9,19 +9,41 @@ class DefaultAccountDefinitions
     /**
      * Get the default chart of accounts hierarchy.
      * Storing raw translation keys instead of localized strings.
+     * Metadata 'icon' now uses Lucide React icon names.
      */
     public static function get(): array
     {
         return [
-            ['name' => 'accounts.opening_balance', 'type' => AccountType::EQUITY],
-            ['name' => 'accounts.cash', 'type' => AccountType::ASSET],
-            ['name' => 'accounts.bank', 'type' => AccountType::ASSET],
-            ['name' => 'accounts.credit_card', 'type' => AccountType::LIABILITY],
-            ['name' => 'accounts.loans', 'type' => AccountType::LIABILITY],
+            [
+                'name' => 'accounts.opening_balance', 
+                'type' => AccountType::EQUITY,
+                'metadata' => ['icon' => 'Scale', 'color' => '#64748b']
+            ],
+            [
+                'name' => 'accounts.cash', 
+                'type' => AccountType::ASSET,
+                'metadata' => ['icon' => 'Banknote', 'color' => '#10b981']
+            ],
+            [
+                'name' => 'accounts.bank', 
+                'type' => AccountType::ASSET,
+                'metadata' => ['icon' => 'Building2', 'color' => '#3b82f6']
+            ],
+            [
+                'name' => 'accounts.credit_card', 
+                'type' => AccountType::LIABILITY,
+                'metadata' => ['icon' => 'CreditCard', 'color' => '#f43f5e']
+            ],
+            [
+                'name' => 'accounts.loans', 
+                'type' => AccountType::LIABILITY,
+                'metadata' => ['icon' => 'TrendingDown', 'color' => '#f43f5e']
+            ],
             
             [
                 'name' => 'accounts.investments', 
                 'type' => AccountType::ASSET,
+                'metadata' => ['icon' => 'TrendingUp', 'color' => '#8b5cf6'],
                 'children' => [
                     ['name' => 'accounts.savings', 'type' => AccountType::ASSET],
                     ['name' => 'accounts.fixed_income', 'type' => AccountType::ASSET],
@@ -32,6 +54,7 @@ class DefaultAccountDefinitions
             [
                 'name' => 'accounts.salary',
                 'type' => AccountType::REVENUE,
+                'metadata' => ['icon' => 'Coins', 'color' => '#f59e0b'],
                 'children' => [
                     ['name' => 'accounts.base_salary', 'type' => AccountType::REVENUE],
                     ['name' => 'accounts.overtime', 'type' => AccountType::REVENUE],
@@ -44,6 +67,7 @@ class DefaultAccountDefinitions
             [
                 'name' => 'accounts.investments', 
                 'type' => AccountType::REVENUE,
+                'metadata' => ['icon' => 'Gem', 'color' => '#8b5cf6'],
                 'children' => [
                     ['name' => 'accounts.dividends', 'type' => AccountType::REVENUE],
                     ['name' => 'accounts.jcp_interest', 'type' => AccountType::REVENUE],
@@ -51,11 +75,12 @@ class DefaultAccountDefinitions
                 ]
             ],
 
-            ['name' => 'accounts.freelance', 'type' => AccountType::REVENUE],
+            ['name' => 'accounts.freelance', 'type' => AccountType::REVENUE, 'metadata' => ['icon' => 'Tag', 'color' => '#10b981']],
 
             [
                 'name' => 'categories.housing',
                 'type' => AccountType::EXPENSE,
+                'metadata' => ['icon' => 'Home', 'color' => '#0ea5e9'],
                 'children' => [
                     ['name' => 'categories.rent', 'type' => AccountType::EXPENSE],
                     ['name' => 'categories.condo_fee', 'type' => AccountType::EXPENSE],
@@ -69,9 +94,10 @@ class DefaultAccountDefinitions
                 ]
             ],
 
-             [
+            [
                 'name' => 'categories.food',
                 'type' => AccountType::EXPENSE,
+                'metadata' => ['icon' => 'Utensils', 'color' => '#f43f5e'],
                 'children' => [
                     ['name' => 'categories.market', 'type' => AccountType::EXPENSE],
                     ['name' => 'categories.vegetables', 'type' => AccountType::EXPENSE],
@@ -84,6 +110,7 @@ class DefaultAccountDefinitions
             [
                 'name' => 'categories.transport',
                 'type' => AccountType::EXPENSE,
+                'metadata' => ['icon' => 'Car', 'color' => '#334155'],
                 'children' => [
                     ['name' => 'categories.fuel', 'type' => AccountType::EXPENSE],
                     ['name' => 'categories.parking', 'type' => AccountType::EXPENSE],
@@ -98,6 +125,7 @@ class DefaultAccountDefinitions
             [
                 'name' => 'categories.health',
                 'type' => AccountType::EXPENSE,
+                'metadata' => ['icon' => 'Activity', 'color' => '#ef4444'],
                 'children' => [
                     ['name' => 'categories.doctor', 'type' => AccountType::EXPENSE],
                     ['name' => 'categories.dentist', 'type' => AccountType::EXPENSE],
@@ -111,6 +139,7 @@ class DefaultAccountDefinitions
             [
                 'name' => 'categories.entertainment',
                 'type' => AccountType::EXPENSE,
+                'metadata' => ['icon' => 'MasksTheater', 'color' => '#ec4899'],
                 'children' => [
                     ['name' => 'categories.shows', 'type' => AccountType::EXPENSE],
                     ['name' => 'categories.events', 'type' => AccountType::EXPENSE],
@@ -122,6 +151,7 @@ class DefaultAccountDefinitions
              [
                 'name' => 'accounts.personal',
                 'type' => AccountType::EXPENSE,
+                'metadata' => ['icon' => 'Sparkles', 'color' => '#8b5cf6'],
                 'children' => [
                     ['name' => 'categories.beauty_salon', 'type' => AccountType::EXPENSE],
                     ['name' => 'categories.barber', 'type' => AccountType::EXPENSE],
@@ -133,6 +163,7 @@ class DefaultAccountDefinitions
             [
                 'name' => 'categories.education',
                 'type' => AccountType::EXPENSE,
+                'metadata' => ['icon' => 'GraduationCap', 'color' => '#6366f1'],
                 'children' => [
                     ['name' => 'categories.tuition', 'type' => AccountType::EXPENSE],
                     ['name' => 'categories.online_courses', 'type' => AccountType::EXPENSE],
@@ -143,6 +174,7 @@ class DefaultAccountDefinitions
              [
                 'name' => 'accounts.services',
                 'type' => AccountType::EXPENSE,
+                'metadata' => ['icon' => 'Gavel', 'color' => '#64748b'],
                 'children' => [
                     ['name' => 'categories.lawyer', 'type' => AccountType::EXPENSE],
                     ['name' => 'categories.accountant', 'type' => AccountType::EXPENSE],
@@ -153,6 +185,7 @@ class DefaultAccountDefinitions
             [
                 'name' => 'accounts.other_expenses',
                 'type' => AccountType::EXPENSE,
+                'metadata' => ['icon' => 'Package', 'color' => '#94a3b8'],
                 'children' => [
                     ['name' => 'categories.subscriptions', 'type' => AccountType::EXPENSE],
                     ['name' => 'categories.emergencies', 'type' => AccountType::EXPENSE],

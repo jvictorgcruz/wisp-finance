@@ -25,7 +25,7 @@ return [
     'other_expenses' => 'Other Expenses',
     'default_ledger_name' => ':name\'s Wallet',
     'page' => [
-        'title' => 'Accounts & Categories',
+        'title' => 'Accounts',
         'subtitle' => 'Manage your financial assets and liabilities history.',
         'create_btn' => 'New Account',
         'total_assets' => 'Total Assets',

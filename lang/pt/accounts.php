@@ -25,7 +25,7 @@ return [
     'other_expenses' => 'Outras Despesas',
     'default_ledger_name' => 'Carteira de :name',
     'page' => [
-        'title' => 'Contas e Categorias',
+        'title' => 'Contas',
         'subtitle' => 'Gerencie seu histórico de ativos e passivos financeiros.',
         'create_btn' => 'Nova Conta',
         'total_assets' => 'Ativos Totais',

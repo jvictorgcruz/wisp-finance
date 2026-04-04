@@ -37,7 +37,7 @@ test('i18n is correctly applied to accounts page for authenticated users', funct
             ->component('Accounts/Index')
             ->where('locale', 'en')
             ->where('translations.home.nav.accounts', 'Accounts')
-            ->where('translations.accounts.page.title', 'Accounts & Categories')
+            ->where('translations.accounts.page.title', 'Accounts')
         );
 });
 
