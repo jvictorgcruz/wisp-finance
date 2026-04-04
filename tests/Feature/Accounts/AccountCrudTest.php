@@ -1,0 +1,168 @@
+<?php
+
+
+use App\Models\User;
+use App\Models\Ledger;
+use App\Models\Account;
+use App\Enums\AccountType;
+use App\Enums\AccountStatus;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
+
+uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    /** @var \Tests\TestCase $this */
+    $this->user = User::factory()->create();
+    $this->ledger = Ledger::factory()->create();
+    $this->ledger->users()->attach($this->user, ['role' => 'owner']);
+    
+    Auth::login($this->user);
+    session(['current_ledger_id' => $this->ledger->id]);
+});
+
+test('it can list accounts', function () {
+    Account::create([
+        'name' => 'Test Asset',
+        'type' => AccountType::ASSET,
+        'status' => AccountStatus::ACTIVE,
+    ]);
+
+    $response = $this->get(route('accounts.index'));
+    
+    $response->assertStatus(200);
+    $response->assertInertia(fn ($page) => $page
+        ->component('Accounts/Index')
+        ->has('accounts')
+    );
+});
+
+test('it can create an account', function () {
+    $response = $this->post(route('accounts.store'), [
+        'name' => 'New Savings',
+        'type' => 'asset',
+    ]);
+
+    $response->assertRedirect(route('accounts.index'));
+    $this->assertDatabaseHas('accounts', [
+        'name' => 'New Savings',
+        'type' => 'asset',
+        'ledger_id' => $this->ledger->id,
+    ]);
+});
+
+test('it validates account name length', function () {
+    $response = $this->post(route('accounts.store'), [
+        'name' => 'A', // Too short (min:2)
+        'type' => 'asset',
+    ]);
+
+    $response->assertSessionHasErrors(['name']);
+});
+
+test('it validates account type enum', function () {
+    $response = $this->post(route('accounts.store'), [
+        'name' => 'Valid Name',
+        'type' => 'invalid-type',
+    ]);
+
+    $response->assertSessionHasErrors(['type']);
+});
+
+test('it validates account type matching with parent', function () {
+    $parent = Account::create([
+        'name' => 'Parent Asset',
+        'type' => AccountType::ASSET,
+        'status' => AccountStatus::ACTIVE,
+    ]);
+
+    // Try to create an EXPENSE child for an ASSET parent
+    $response = $this->post(route('accounts.store'), [
+        'name' => 'Invalid Child',
+        'type' => 'expense',
+        'parent_id' => $parent->id,
+    ]);
+
+    $response->assertSessionHasErrors(['parent_id']);
+});
+
+test('it prevents using a parent_id from another ledger', function () {
+    $otherLedger = Ledger::factory()->create();
+    $otherAccount = Account::withoutGlobalScopes()->create([
+        'ledger_id' => $otherLedger->id,
+        'name' => 'Other Ledger Account',
+        'type' => AccountType::ASSET,
+        'status' => AccountStatus::ACTIVE,
+    ]);
+
+    $response = $this->post(route('accounts.store'), [
+        'name' => 'Stealing Parent',
+        'type' => 'asset',
+        'parent_id' => $otherAccount->id,
+    ]);
+
+    $response->assertSessionHasErrors(['parent_id']);
+});
+
+test('it can update an account', function () {
+    $account = Account::create([
+        'name' => 'Old Name',
+        'type' => AccountType::ASSET,
+        'status' => AccountStatus::ACTIVE,
+    ]);
+
+    $response = $this->put(route('accounts.update', $account), [
+        'name' => 'Updated Name',
+        'type' => 'asset',
+    ]);
+
+    $response->assertRedirect(route('accounts.index'));
+    expect($account->fresh()->name)->toBe('Updated Name');
+});
+
+test('it cannot delete a system account', function () {
+    $account = Account::create([
+        'name' => 'System Account',
+        'type' => AccountType::ASSET,
+        'status' => AccountStatus::ACTIVE,
+        'is_system' => true,
+    ]);
+
+    $response = $this->delete(route('accounts.destroy', $account));
+
+    $response->assertSessionHasErrors(['id']);
+    $this->assertDatabaseHas('accounts', ['id' => $account->id]);
+});
+
+test('it cannot delete an account with children', function () {
+    $parent = Account::create([
+        'name' => 'Parent',
+        'type' => AccountType::ASSET,
+        'status' => AccountStatus::ACTIVE,
+    ]);
+
+    Account::create([
+        'name' => 'Child',
+        'type' => AccountType::ASSET,
+        'status' => AccountStatus::ACTIVE,
+        'parent_id' => $parent->id,
+    ]);
+
+    $response = $this->delete(route('accounts.destroy', $parent));
+
+    $response->assertSessionHasErrors(['id']);
+    $this->assertDatabaseHas('accounts', ['id' => $parent->id]);
+});
+
+test('it can delete a regular account', function () {
+    $account = Account::create([
+        'name' => 'To Be Deleted',
+        'type' => AccountType::ASSET,
+        'status' => AccountStatus::ACTIVE,
+    ]);
+
+    $response = $this->delete(route('accounts.destroy', $account));
+
+    $response->assertRedirect(route('accounts.index'));
+    $this->assertSoftDeleted('accounts', ['id' => $account->id]);
+});

@@ -58,7 +58,7 @@ Route::middleware('guest')->group(function () {
 
 // Authenticated routes
 Route::middleware('auth')->group(function () {
-    Route::get('accounts', fn() => Inertia::render('Accounts/Index'))->name('accounts.index');
+    Route::resource('accounts', \App\Http\Controllers\AccountController::class)->only(['index', 'store', 'update', 'destroy']);
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
     
