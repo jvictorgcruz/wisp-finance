@@ -7,6 +7,7 @@ use App\Enums\AccountType;
 use App\Enums\AccountStatus;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Support\DefaultAccountDefinitions;
 
 uses(RefreshDatabase::class);
 
@@ -22,7 +23,6 @@ test('users can only see accounts from their own ledger', function () {
     $ledgerB->users()->attach($userB, ['role' => 'owner']);
 
     // Create accounts in different ledgers
-    // Using withoutGlobalScopes to ensure the factory is not filtered if the state doesn't match
     Account::withoutGlobalScopes()->create([
         'ledger_id' => $ledgerA->id,
         'name' => 'Account A',
@@ -40,15 +40,17 @@ test('users can only see accounts from their own ledger', function () {
     // Act as User A
     Auth::login($userA);
     $accountsA = Account::all();
-    expect($accountsA)->toHaveCount(1);
-    expect($accountsA->first()->name)->toBe('Account A');
+    expect($accountsA->where('is_system', true))->toHaveCount(DefaultAccountDefinitions::count());
+    expect($accountsA->where('is_system', false))->toHaveCount(1);
+    expect($accountsA->where('is_system', false)->first()->name)->toBe('Account A');
     Auth::logout();
 
     // Act as User B
     Auth::login($userB);
     $accountsB = Account::all();
-    expect($accountsB)->toHaveCount(1);
-    expect($accountsB->first()->name)->toBe('Account B');
+    expect($accountsB->where('is_system', true))->toHaveCount(DefaultAccountDefinitions::count());
+    expect($accountsB->where('is_system', false))->toHaveCount(1);
+    expect($accountsB->where('is_system', false)->first()->name)->toBe('Account B');
 });
 
 test('it automatically injects ledger_id when creating models', function () {

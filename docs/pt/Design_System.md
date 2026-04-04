@@ -1,96 +1,103 @@
-# 🎨 Wisp Finance - Design System & Guia de Interface
+# 🎨 Wisp Finance - Design System & Guia Editorial
 
-Este documento define a linguagem visual e os padrões de interface do **Wisp Finance**. Ele serve como guia para desenvolvedores e IAs garantirem a consistência estética "Premium" e a funcionalidade técnica exigida pelo projeto.
+Este documento define a linguagem visual **Personal Finance Editorial** do **Wisp Finance**. Ele foca no "Minimalismo de Precisão", transformando a gestão financeira em uma experiência de clareza e autoridade estética.
 
 ---
 
-## 1. Norte Criativo: "Minimalismo de Alta Precisão"
+## 1. Norte Criativo: "Minimalismo de Precisão"
 
-O design do Wisp centra-se na **Clareza Financeira**. 
-- **Objetivo:** Reduzir a carga cognitiva. O usuário deve sentir que o aplicativo é uma ferramenta de precisão, não um brinquedo decorado.
-- **Velocidade:** O registro de uma transação deve ser a ação mais rápida e fluida do app.
-- **Estética:** "Clean & Premium" — uso de espaços em branco generosos, tipografia nítida e micro-interações que tragam feedback tátil.
+Diferente de aplicativos genéricos, adotamos uma estética **Editorial de Alta Gama** (High-End).
+- **Respirabilidade:** Espaçamento generoso é um elemento ativo de design. Se parecer "vazio demais", provavelmente está correto.
+- **Autoridade Visual:** Hierarquia baseada em camadas tonais e tipografias assertivas.
+- **Nesting de Superfícies:** A profundidade é sentida através de contrastes sutis, não de bordas físicas.
 
 ---
 
 ## 2. Fundamentos Visuais (Tokens)
 
-### 2.1 Paleta de Cores (Tailwind v4)
-A interface utiliza uma base predominantemente clara com suporte nativo a dark mode via variáveis CSS no `@theme`.
+### 2.1 A Regra do "No-Line" (Sem Linhas)
+**Está terminantemente proibido o uso de bordas sólidas de 1px para separar seções.** A estrutura da interface deve ser definida exclusivamente por mudanças sutis no valor tonal do fundo ou alinhamento rigoroso.
 
-- **Primary (Action):** Indigo `#4F46E5` (Vibrant Indigo). Usado para ações principais e estados ativos.
-- **Surface/Background:**
-  - Light: `#F8FAFC` (Slate 50)
-  - Dark: `#0F172A` (Slate 900)
+### 2.2 Cores e Camadas Tonais
+A paleta é baseada na serenidade dos tons acinzentados com acentos de autoridade.
+
+- **Primary (Authority):** `#24389C` (Índigo Profundo).
 - **Cores Semânticas:**
-  - **Success (Income):** Emerald `#10B981`
-  - **Danger (Expense):** Rose `#F43F5E`
-  - **Warning:** Amber `#F59E0B`
-- **Neutros:** Textos em Slate (`#1E293B` para primário) e bordas sutis em Slate 200/800.
+  - **Income (Growth):** `#006D37` (Esmeralda Profundo).
+  - **Expense (Clarity):** `#8B0203` (Vermelho Sofisticado).
+- **Hierarquia de Superfícies (Light Mode):**
+  - **Surface (Base):** `#F8F9FA` (Ponto de partida).
+  - **Surface Container Low:** Conteúdo secundário.
+  - **Surface Container Lowest (#FFFFFF):** Peak focus (cards de saldo, botões principais).
+  - **Surface Container Highest:** Conteúdo agrupado de menor destaque.
 
-### 2.2 Tipografia
-- **Fonte:** `Inter` (Sans-serif) para legibilidade técnica.
-- **Escala de Pesos:**
-  - **Valores Monetários:** Semi-Bold ou Bold para destaque imediato.
-  - **Labels:** Medium, 12px (caps opcional para micro-categorias).
-  - **Corpo:** Regular, 14px ou 16px.
+### 2.3 Tipografia Editorial
+Utilizamos a **Inter** como elemento gráfico fundamental.
 
-### 2.3 Formas e Superfícies
-- **Border Radius:** `12px` (standard) para cards e botões. `8px` para inputs.
-- **Elevação:** Evitar sombras pesadas. Usar `ring-1` ou sombras "soft" (`shadow-sm`) para separar camadas.
-- **Micro-animações:** Transições de `150ms` (ease-in-out) para hover e focus.
+- **Saldos e Headlines:** `display-md` ou `headline-lg`.
+  - *Premium Touch:* Reduzir `letter-spacing` em **-2%** para títulos grandes.
+- **Labels e Metadados:** `label-md` ou `label-sm`.
+  - *Editorial Style:* Usar **All Caps** com `letter-spacing` aumentado em **+5%**.
+- **Corpo:** `body-md` para transações, focado em legibilidade máxima.
+
+### 2.4 Elevação e Sombras
+A elevação deve ser quase imperceptível (Sombras Ambientes).
+- **Especificação:** Blur de `24px` a `40px`, opacidade de `4%` a `6%`.
+- **Blur & Glass:** Para headers fixos, use `surface` com 80% de opacidade e `backdrop-filter: blur(12px)`.
 
 ---
 
-## 3. Especificações Técnicas (Stack Implementation)
+## 3. Guia de Implementação (Tailwind v4)
 
-### 3.1 Tailwind CSS v4 & CSS Variables
-Toda a estilização deve ser feita via classes utilitárias. Customizações de tema devem ser registradas no `app.css`:
+As variáveis de tema devem ser configuradas no `app.css` sob o bloco `@theme`:
 
 ```css
 @theme {
-  --color-brand: #4F46E5;
-  --radius-xl: 12px;
-  /* Variáveis semânticas dinâmicas */
+  --color-primary: #24389C;
+  --color-income: #006D37;
+  --color-expense: #8B0203;
+
+  --color-surface: #F8F9FA;
+  --color-surface-lowest: #FFFFFF;
+
+  --radius-editorial: 12px; /* 0.75rem habitual */
+
+  --letter-spacing-editorial-tight: -0.02em;
+  --letter-spacing-editorial-wide: 0.05em;
 }
 ```
 
-### 3.2 Componentização (Atomic Design)
-Os componentes devem ser construídos em React + TypeScript com tipagem estrita para Props.
-- **Base Components:** Localizados em `resources/js/Components/Common` (Button, TextField, Select).
-- **Layouts:** `AuthenticatedLayout.tsx` (Sidebar/Header) e `GuestLayout.tsx` (Auth).
+---
+
+## 4. Componentes e UX
+
+### 4.1 Botões (Buttons)
+- **Primary:** Container em `primary`, texto em `surface-lowest`. Arredondamento fixo de `12px`. Padding horizontal generoso.
+- **Tertiary:** Apenas texto em `primary`, sem container.
+
+### 4.2 Cards e Listas
+- **Divisores:** Proibidos. Use o espaçamento da escala (ex: `gap-4`) para separar itens.
+- **Layout:** Use `surface-container-highest` para agrupar informações relacionadas.
+
+### 4.3 Iconografia
+- **Biblioteca:** **Lucide React**.
+- **Estilo:** Sempre em modo *Outlined* (traço fino) usando a cor `on_surface_variant`. Evite ícones excessivamente coloridos.
 
 ---
 
-## 4. Componentes Críticos de UX
+## 5. Do's and Don'ts
 
-### 4.1 A Calculadora de Valor (Modal)
-Acionada ao tocar em qualquer campo de entrada de valor monetário.
-- **Teclado numérico:** Otimizado para entrada rápida (botões grandes).
-- **Operadores:** `+ - * /` visíveis na lateral.
-- **Feedback:** O valor final é injetado no formulário via Inertia `useForm`.
+**✓ O que fazer (Do's):**
+- Use o espaço em branco para guiar o olhar.
+- Alinhamentos perfeitos compensam a ausência de linhas.
+- Mantenha o arredondamento de `12px` consistente.
 
-### 4.2 Lógica de Exibição de Transações
-- **Receitas:** Cor Success com prefixo `+`.
-- **Despesas:** Cor Danger com prefixo `-`.
-- **Contas/Categorias:** Exibição em árvore (máximo 2 níveis) com indicadores visuais de hierarquia.
-
-### 4.3 Formulário Dinâmico de Lançamento
-O campo "Tipo" (Despesa, Receita, Transferência) altera os campos visíveis:
-- **Transferência:** Exibe "Origem" e "Destino". Oculta "Categoria".
-- **Cartão de Crédito:** Exibe seleção de "Cartão" e "Parcelas".
-
----
-
-## 5. Regras para IAs e Desenvolvedores
-
-1.  **Idioma da UI:** Todos os textos visíveis ao usuário devem ser em **Português do Brasil**.
-2.  **Acessibilidade:** Todo input deve ter `id` único e `label` associado. Use `aria-labels` em ícones interativos.
-3.  **Estado de Carregamento:** Botões de `submit` devem exibir um spinner ou estado de `disabled` enquanto a request do Inertia estiver em `processing`.
-4.  **Erros de Validação:** Exibir mensagens de erro logo abaixo do campo afetado usando a prop `errors` do Inertia.
+**✕ O que evitar (Don'ts):**
+- Nunca use sombras "drop shadow" agressivas.
+- Não quebre a regra do No-Line (sem bordas 1px).
+- Evite cores "primárias" genéricas (vermelho puro, verde puro). Use a paleta editorial.
 
 ---
 
 > [!TIP]
-> Use componentes que reajam ao estado `hover` com sutileza (ex: `hover:bg-slate-100/50`) para dar vida à interface.
-
+> A sofisticação nasce da precisão dos detalhes. Se um elemento não tem utilidade ou peso estético real, remova-o.

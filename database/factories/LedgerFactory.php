@@ -23,4 +23,14 @@ class LedgerFactory extends Factory
             'slug' => Str::slug($name) . '-' . Str::random(5),
         ];
     }
+
+    /**
+     * Configure the model factory.
+     */
+    public function configure(): static
+    {
+        return $this->afterCreating(function (\App\Models\Ledger $ledger) {
+            app(\App\Actions\Ledgers\CreateDefaultAccountsAction::class)->execute($ledger);
+        });
+    }
 }

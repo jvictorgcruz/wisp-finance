@@ -13,7 +13,7 @@ export default function Accounts() {
                         {t('accounts_page.subtitle')}
                     </p>
                 </div>
-                <button className="bg-brand text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-brand/90 transition-all shadow-lg shadow-brand/20">
+                <button className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
                     <Plus className="w-4 h-4" />
                     {t('accounts_page.create_btn')}
                 </button>

@@ -2,6 +2,32 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect } from 'vitest';
 import { useForm } from '@inertiajs/react';
 import Login from './Login';
+import React from 'react';
+
+vi.mock('@inertiajs/react', () => ({
+    Head: ({ children }: any) => <>{children}</>,
+    Link: ({ children, href }: any) => <a href={href}>{children}</a>,
+    usePage: () => ({
+        url: '/en/login',
+        props: {
+            auth: { user: null },
+            locale: 'en',
+            locales: { en: 'English', pt: 'Português' },
+        }
+    }),
+    useForm: vi.fn(),
+    router: {
+        visit: vi.fn(),
+        post: vi.fn(),
+    }
+}));
+
+vi.mock('@/Hooks/useTranslation', () => ({
+    useTranslation: () => ({
+        t: (key: string) => key,
+        locale: 'en'
+    })
+}));
 
 describe('Login Page', () => {
     const useFormMock = vi.mocked(useForm);
@@ -21,7 +47,7 @@ describe('Login Page', () => {
         // We use translation keys as placeholders or labels now
         expect(screen.getByLabelText(/auth.email/i)).toBeInTheDocument();
         expect(screen.getByLabelText(/auth.password/i)).toBeInTheDocument();
-        expect(screen.getByRole('button')).toBeInTheDocument();
+        expect(screen.getByTestId('submit-button')).toBeInTheDocument();
     });
 
     it('should display validation errors when provided', () => {
@@ -51,7 +77,7 @@ describe('Login Page', () => {
 
         render(<Login />);
         
-        const button = screen.getByRole('button');
+        const button = screen.getByTestId('submit-button');
         expect(button).toBeDisabled();
         expect(button.querySelector('.animate-spin')).toBeDefined();
     });
@@ -88,7 +114,7 @@ describe('Login Page', () => {
         fireEvent.input(passwordInput, { target: { value: 'secret123' } });
 
         // Simulate form submission
-        const form = screen.getByRole('button').closest('form');
+        const form = screen.getByTestId('submit-button').closest('form');
         fireEvent.submit(form!);
 
         // CRITICAL Validation: Was post called?

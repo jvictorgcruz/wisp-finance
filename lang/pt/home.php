@@ -19,6 +19,7 @@ return [
         'current_ledger' => 'Carteira Atual',
         'loading' => 'Carregando...',
     ],
+    'search_placeholder' => 'Pesquisar...',
     'features_title' => 'Tudo em um só lugar',
     'features_subtitle' => 'Uma ferramenta feita para você entender exatamente para onde o seu dinheiro está indo, sem complicação.',
     'feature_1_title' => 'Direto ao Ponto',

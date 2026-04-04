@@ -19,4 +19,5 @@ return [
     'full_name' => 'Nome Completo',
     'register_btn' => 'Cadastrar',
     'login_now' => 'Entrar agora',
+    'back_to_home' => 'Voltar para Inicio',
 ];

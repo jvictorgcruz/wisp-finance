@@ -4,7 +4,6 @@ namespace App\Actions\Auth;
 
 use App\Models\User;
 use App\Models\Ledger;
-use App\Actions\Ledgers\CreateDefaultAccountsAction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -15,7 +14,6 @@ class RegisterUserAction
      * Create a new RegisterUserAction instance.
      */
     public function __construct(
-        protected CreateDefaultAccountsAction $createDefaultAccountsAction
     ) {}
 
     /**
@@ -37,8 +35,6 @@ class RegisterUserAction
             ]);
 
             $ledger->users()->attach($user, ['role' => 'owner']);
-
-            $this->createDefaultAccountsAction->execute($ledger);
 
             return $user;
         });

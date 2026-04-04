@@ -1,10 +1,11 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, usePage, router } from '@inertiajs/react';
 import {
     ArrowRight, Maximize2, Zap,
     Target
 } from 'lucide-react';
 import logo from '@images/logo.png';
 import { useTranslation } from '@/Hooks/useTranslation';
+import LanguageSelector from '@/Components/Navigation/LanguageSelector';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -14,8 +15,8 @@ function cn(...inputs: ClassValue[]) {
 
 const FeatureCard = ({ icon: Icon, title, description }: { icon: any, title: string, description: string }) => (
     <div className="bg-white p-8 rounded-4xl border border-slate-100 hover:shadow-xl hover:shadow-slate-200/40 transition-all duration-300 group hover:-translate-y-1">
-        <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-brand/10 transition-colors">
-            <Icon className="w-6 h-6 text-slate-400 group-hover:text-brand transition-colors" />
+        <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors">
+            <Icon className="w-6 h-6 text-slate-400 group-hover:text-primary transition-colors" />
         </div>
         <h3 className="text-lg font-bold text-slate-900 mb-2 truncate">{title}</h3>
         <p className="text-sm text-slate-500 leading-relaxed font-medium">{description}</p>
@@ -30,7 +31,7 @@ export default function Home() {
     const localeLink = (path: string) => `/${locale}${path}`;
 
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-brand/20">
+        <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-primary/20">
             <Head title={t('home.title') + " " + t('home.title_highlight')} />
 
             {/* Navigation Header */}
@@ -41,6 +42,10 @@ export default function Home() {
                 </div>
 
                 <div className="flex items-center gap-6">
+                    <LanguageSelector 
+                        className="w-48 hidden md:block" 
+                        onChange={(next) => router.visit(window.location.pathname.replace(/^\/(en|pt)/, `/${next}`) + window.location.search)}
+                    />
                     {auth.user ? (
                         <Link
                             href="/accounts"
@@ -58,7 +63,7 @@ export default function Home() {
                             </Link>
                             <Link 
                                 href={localeLink('/register')} 
-                                className="bg-brand text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-brand/90 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-brand/20"
+                                className="bg-primary text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-primary/90 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/20"
                             >
                                 {t('home.nav.register')}
                             </Link>
@@ -73,7 +78,7 @@ export default function Home() {
                     <div className="space-y-10 relative z-10">
                         <h1 className="text-4xl lg:text-6xl font-black tracking-tighter leading-[0.9] animate-in fade-in slide-in-from-bottom-8 duration-1000">
                             {t('home.title')} <br />
-                            <span className="text-brand">{t('home.title_highlight')}</span>
+                            <span className="text-primary">{t('home.title_highlight')}</span>
                         </h1>
 
                         <p className="text-lg lg:text-xl text-slate-500 max-w-md leading-relaxed font-medium animate-in fade-in slide-in-from-bottom-12 duration-1200 delay-150">
@@ -93,7 +98,7 @@ export default function Home() {
 
                     {/* Hero Visual Placeholder */}
                     <div className="relative animate-in fade-in zoom-in duration-1500">
-                        <div className="absolute inset-0 bg-brand/20 blur-[120px] rounded-full scale-110" />
+                        <div className="absolute inset-0 bg-primary/20 blur-[120px] rounded-full scale-110" />
                         <div className="relative bg-white aspect-4/3 rounded-[3rem] border border-white p-4 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] overflow-hidden">
                             <div className="w-full h-full bg-slate-50 rounded-4xl border border-slate-100 flex flex-col p-8 space-y-6">
                                 <div className="h-3 w-1/3 bg-slate-200 rounded-full" />

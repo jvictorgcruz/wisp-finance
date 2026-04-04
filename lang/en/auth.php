@@ -19,4 +19,5 @@ return [
     'full_name' => 'Full Name',
     'register_btn' => 'Sign up',
     'login_now' => 'Login now',
+    'back_to_home' => 'Back to Home',
 ];

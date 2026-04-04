@@ -11,16 +11,34 @@
     --font-sans: 'Inter', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
         'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
-    --color-brand: #4f46e5;
-    --color-background-light: #f8fafc;
-    --color-background-dark: #0f172a;
-
-    --color-success: #10b981;
-    --color-danger: #f43f5e;
+    /* Brand Editorial */
+    --color-primary: #24389c;
+    --color-income: #006d37;
+    --color-expense: #8b0203;
     --color-warning: #f59e0b;
 
+    /* Surfaces */
+    --color-surface: #f8f9fa;
+    --color-surface-low: #f1f3f5;
+    --color-surface-lowest: #ffffff;
+    --color-surface-highest: #e9ecef;
+
+    /* Radius */
+    --radius-editorial: 12px;
     --radius-xl: 12px;
     --radius-lg: 8px;
 
+    /* Typography Spacing */
+    --tracking-editorial-tight: -0.02em;
+    --tracking-editorial-wide: 0.05em;
+
+    /* Shadows */
+    --shadow-editorial: 0 8px 32px rgba(0, 0, 0, 0.05);
     --shadow-soft: 0 4px 24px rgba(0, 0, 0, 0.04);
+}
+
+@layer base {
+    *:focus {
+        @apply outline-primary;
+    }
 }

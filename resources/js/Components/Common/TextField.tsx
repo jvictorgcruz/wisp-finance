@@ -28,7 +28,7 @@ export default function TextField({
             
             <div className="relative group">
                 {icon && (
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand transition-colors">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">
                         {icon}
                     </div>
                 )}
@@ -40,7 +40,7 @@ export default function TextField({
                     className={`
                         w-full bg-white border border-slate-200 rounded-lg px-3 py-2.5 text-sm
                         placeholder:text-slate-400 outline-none transition-all
-                        focus:border-brand focus:ring-4 focus:ring-brand/5
+                        focus:border-primary focus:ring-4 focus:ring-primary/5
                         ${icon ? 'pl-10' : ''}
                         ${error ? 'border-danger focus:border-danger focus:ring-danger/5' : ''}
                     `}

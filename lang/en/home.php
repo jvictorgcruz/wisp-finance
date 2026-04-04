@@ -19,6 +19,7 @@ return [
         'current_ledger' => 'Current Ledger',
         'loading' => 'Loading...',
     ],
+    'search_placeholder' => 'Search...',
     'features_title' => 'Everything in one place',
     'features_subtitle' => 'A tool made for you to understand exactly where your money is going, without complications.',
     'feature_1_title' => 'Straight to the point',

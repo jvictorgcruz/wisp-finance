@@ -1,6 +1,9 @@
 import { PropsWithChildren } from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
+import { ArrowLeft } from 'lucide-react';
 import logo from '@images/logo.png';
+import LanguageSelector from '@/Components/Navigation/LanguageSelector';
+import { useTranslation } from '@/Hooks/useTranslation';
 
 interface Props {
     title: string;
@@ -8,11 +11,29 @@ interface Props {
 }
 
 export default function AuthLayout({ title, subtitle, children }: PropsWithChildren<Props>) {
+    const { t } = useTranslation();
+
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col sm:justify-center items-center pt-6 sm:pt-0 px-4">
+        <div className="min-h-screen bg-slate-50 flex flex-col sm:justify-center items-center pt-6 sm:pt-0 px-4 relative">
             <Head title={title} />
 
-            <div className="w-full sm:max-w-md mt-6 px-8 py-10 bg-white border border-slate-100 shadow-soft rounded-xl animate-in fade-in zoom-in-95 duration-500">
+            {/* Top Navigation */}
+            <div className="absolute top-8 md:top-12 left-8 right-8 flex justify-between items-center z-10 max-w-7xl mx-auto w-full px-4 lg:px-12">
+                <Link 
+                    href="/" 
+                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-editorial-wide text-slate-400 hover:text-primary transition-colors group"
+                >
+                    <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
+                    {t('auth.back_to_home') || 'Back to Home'}
+                </Link>
+                
+                <LanguageSelector 
+                    className="w-48" 
+                    onChange={(next) => router.visit(window.location.pathname.replace(/^\/(en|pt)/, `/${next}`) + window.location.search)}
+                />
+            </div>
+
+            <div className="w-full sm:max-w-md mt-20 sm:mt-6 px-8 py-10 bg-white border border-slate-100 shadow-soft rounded-xl animate-in fade-in zoom-in-95 duration-500">
                 <div className="mb-10 flex flex-col items-center gap-3">
                     <Link href="/">
                         <img src={logo} alt="Wisp Logo" className="w-12 h-12 object-contain hover:scale-110 transition-transform" />

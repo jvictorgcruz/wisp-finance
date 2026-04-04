@@ -3,6 +3,7 @@
 use App\Models\Ledger;
 use App\Models\User;
 use App\Models\Account;
+use App\Support\DefaultAccountDefinitions;
 
 test('it can create a ledger', function () {
     $ledger = Ledger::create([
@@ -28,5 +29,26 @@ test('ledger has many accounts', function () {
     $ledger = Ledger::factory()->create();
     Account::factory()->count(3)->create(['ledger_id' => $ledger->id]);
 
-    expect($ledger->accounts)->toHaveCount(3);
+    // Validate system accounts
+    expect($ledger->accounts()->where('is_system', true)->count())->toBe(DefaultAccountDefinitions::count());
+    
+    // Validate custom accounts
+    expect($ledger->accounts()->where('is_system', false)->count())->toBe(3);
+});
+
+test('it does not duplicate system accounts when synced multiple times', function () {
+    $ledger = Ledger::factory()->create();
+    $action = app(\App\Actions\Ledgers\CreateDefaultAccountsAction::class);
+    
+    $initialCount = DefaultAccountDefinitions::count();
+    
+    // Action should have been called by factory/observer already
+    expect($ledger->accounts()->where('is_system', true)->count())->toBe($initialCount);
+    
+    // Call again
+    $action->execute($ledger);
+    $action->execute($ledger);
+    
+    // Should still be the same count
+    expect($ledger->accounts()->where('is_system', true)->count())->toBe($initialCount);
 });

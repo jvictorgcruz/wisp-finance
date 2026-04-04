@@ -1,7 +1,27 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 import Home from './Home';
 import React from 'react';
+
+vi.mock('@inertiajs/react', () => ({
+    Head: ({ children }: any) => <>{children}</>,
+    Link: ({ children, href }: any) => <a href={href}>{children}</a>,
+    usePage: () => ({
+        url: '/en/home',
+        props: {
+            auth: { user: null },
+            locale: 'en',
+            locales: { en: 'English', pt: 'Português' },
+        }
+    })
+}));
+
+vi.mock('@/Hooks/useTranslation', () => ({
+    useTranslation: () => ({
+        t: (key: string) => key,
+        locale: 'en'
+    })
+}));
 
 describe('Home Page (Landing)', () => {
     it('should render the brand name Wisp', () => {

@@ -1,7 +1,33 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 import { useForm } from '@inertiajs/react';
 import Register from './Register';
+import React from 'react';
+
+vi.mock('@inertiajs/react', () => ({
+    Head: ({ children }: any) => <>{children}</>,
+    Link: ({ children, href }: any) => <a href={href}>{children}</a>,
+    usePage: () => ({
+        url: '/en/register',
+        props: {
+            auth: { user: null },
+            locale: 'en',
+            locales: { en: 'English', pt: 'Português' },
+        }
+    }),
+    useForm: vi.fn(),
+    router: {
+        visit: vi.fn(),
+        post: vi.fn(),
+    }
+}));
+
+vi.mock('@/Hooks/useTranslation', () => ({
+    useTranslation: () => ({
+        t: (key: string) => key,
+        locale: 'en'
+    })
+}));
 
 describe('Register Page', () => {
     const useFormMock = vi.mocked(useForm);
@@ -22,7 +48,7 @@ describe('Register Page', () => {
         expect(screen.getByLabelText('auth.email')).toBeInTheDocument();
         expect(screen.getByLabelText(/^auth.password$/i)).toBeInTheDocument();
         expect(screen.getByLabelText('auth.confirm_password')).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: 'auth.register_btn' })).toBeInTheDocument();
+        expect(screen.getByTestId('submit-button')).toBeInTheDocument();
     });
 
     it('should display validation errors when provided by backend', () => {
@@ -52,7 +78,7 @@ describe('Register Page', () => {
 
         render(<Register />);
         
-        const button = screen.getByRole('button');
+        const button = screen.getByTestId('submit-button');
         expect(button).toBeDisabled();
         expect(button.querySelector('.animate-spin')).toBeDefined();
     });
@@ -99,7 +125,7 @@ describe('Register Page', () => {
         expect(formData.password_confirmation).toBe('password123');
 
         // Simular envio
-        const form = screen.getByRole('button', { name: 'auth.register_btn' }).closest('form');
+        const form = screen.getByTestId('submit-button').closest('form');
         fireEvent.submit(form!);
 
         // Validação do Post

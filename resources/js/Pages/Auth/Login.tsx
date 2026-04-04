@@ -66,7 +66,7 @@ export default function Login() {
                             name="remember"
                             checked={data.remember}
                             onChange={(e) => setData('remember', e.target.checked)}
-                            className="w-4 h-4 rounded border-slate-300 text-brand focus:ring-brand"
+                            className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary"
                         />
                         <span className="text-sm text-slate-500 group-hover:text-slate-700 transition-colors">
                             {t('auth.remember_me')}
@@ -75,7 +75,7 @@ export default function Login() {
 
                     <Link
                         href="#"
-                        className="text-sm font-medium text-brand hover:text-brand/80 transition-colors"
+                        className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
                     >
                         {t('auth.forgot_password')}
                     </Link>
@@ -83,11 +83,12 @@ export default function Login() {
 
                 <button
                     type="submit"
+                    data-testid="submit-button"
                     disabled={processing}
                     className={`
-                        w-full h-11 bg-brand text-white rounded-lg font-semibold text-sm
+                        w-full h-11 bg-primary text-white rounded-lg font-semibold text-sm
                         flex items-center justify-center gap-2 transition-all
-                        hover:bg-brand/90 hover:shadow-lg hover:shadow-brand/20 active:scale-[0.98]
+                        hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20 active:scale-[0.98]
                         disabled:opacity-70 disabled:cursor-not-allowed
                     `}
                 >
@@ -105,7 +106,7 @@ export default function Login() {
                     {t('auth.dont_have_account')}{' '}
                     <Link
                         href={localeLink('/register')}
-                        className="font-semibold text-brand hover:text-brand/80 transition-colors underline underline-offset-4 decoration-brand/30"
+                        className="font-semibold text-primary hover:text-primary/80 transition-colors underline underline-offset-4 decoration-primary/30"
                     >
                         {t('auth.create_now')}
                     </Link>
