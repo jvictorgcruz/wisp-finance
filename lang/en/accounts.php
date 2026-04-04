@@ -24,4 +24,16 @@ return [
     'services' => 'Services',
     'other_expenses' => 'Other Expenses',
     'default_ledger_name' => ':name\'s Wallet',
+    'page' => [
+        'title' => 'Accounts & Categories',
+        'subtitle' => 'Manage your financial assets and liabilities history.',
+        'create_btn' => 'New Account',
+        'total_assets' => 'Total Assets',
+        'total_liabilities' => 'Total Liabilities',
+        'liabilities_desc' => 'Your total obligations and credit limits currently in use.',
+        'empty_title' => 'No accounts found',
+        'empty_desc' => 'Start by creating your first real account or use the system accounts generated in the setup.',
+        'tree_header_name' => 'Account Name',
+        'tree_header_balance' => 'Balance',
+    ],
 ];

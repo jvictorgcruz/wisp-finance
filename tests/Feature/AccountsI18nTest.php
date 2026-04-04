@@ -17,8 +17,8 @@ test('i18n is correctly applied to accounts page for authenticated users', funct
             ->where('locale', 'pt')
             ->where('translations.home.nav.accounts', 'Contas')
             // Estas chaves devem falhar se não existirem no lang/pt.json
-            ->has('translations.accounts_page.title')
-            ->has('translations.accounts_page.empty_title')
+            ->has('translations.accounts.page.title')
+            ->has('translations.accounts.page.empty_title')
         );
 
     // 3. Change language to English
@@ -37,7 +37,7 @@ test('i18n is correctly applied to accounts page for authenticated users', funct
             ->component('Accounts/Index')
             ->where('locale', 'en')
             ->where('translations.home.nav.accounts', 'Accounts')
-            ->where('translations.accounts_page.title', 'Accounts & Categories')
+            ->where('translations.accounts.page.title', 'Accounts & Categories')
         );
 });
 

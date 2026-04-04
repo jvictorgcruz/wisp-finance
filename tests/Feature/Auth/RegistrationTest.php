@@ -54,12 +54,12 @@ test('registration seeds default hierarchical accounts with translations', funct
         ->get();
 
     $topLevelNames = $topLevelAccounts->pluck('name');
-    expect($topLevelNames)->toContain(__('accounts.cash'));
-    expect($topLevelNames)->toContain(__('accounts.salary'));
-    expect($topLevelNames)->toContain(__('categories.housing'));
+    expect($topLevelNames)->toContain('accounts.cash');
+    expect($topLevelNames)->toContain('accounts.salary');
+    expect($topLevelNames)->toContain('categories.housing');
 
     // Check for nested accounts
-    $housingCategoryName = __('categories.housing');
+    $housingCategoryName = 'categories.housing';
     $housing = Account::withoutGlobalScopes()
         ->where('ledger_id', $ledger->id)
         ->where('name', $housingCategoryName)
@@ -70,8 +70,8 @@ test('registration seeds default hierarchical accounts with translations', funct
         ->get();
 
     $housingChildrenNames = $housingChildren->pluck('name');
-    expect($housingChildrenNames)->toContain(__('categories.rent'));
-    expect($housingChildrenNames)->toContain(__('categories.electricity'));
+    expect($housingChildrenNames)->toContain('categories.rent');
+    expect($housingChildrenNames)->toContain('categories.electricity');
 });
 
 test('registration is atomic and rolls back on failure', function () {

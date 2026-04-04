@@ -117,7 +117,7 @@ export default function Sidebar() {
                     {/* Floating Action Button Placeholder (Editorial-style) */}
                     <button className="w-full bg-primary text-surface-lowest py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-editorial">
                         <Plus className="w-4 h-4" />
-                        {t('accounts_page.create_btn')}
+                        {t('accounts.page.create_btn')}
                     </button>
 
                     <div className="p-4 rounded-2xl bg-surface-low border border-surface-low space-y-4">

@@ -24,4 +24,16 @@ return [
     'services' => 'Serviços',
     'other_expenses' => 'Outras Despesas',
     'default_ledger_name' => 'Carteira de :name',
+    'page' => [
+        'title' => 'Contas e Categorias',
+        'subtitle' => 'Gerencie seu histórico de ativos e passivos financeiros.',
+        'create_btn' => 'Nova Conta',
+        'total_assets' => 'Ativos Totais',
+        'total_liabilities' => 'Passivos Totais',
+        'liabilities_desc' => 'Suas obrigações totais e limites de crédito em uso.',
+        'empty_title' => 'Nenhuma conta encontrada',
+        'empty_desc' => 'Comece criando sua primeira conta real ou use as contas de sistema geradas no setup.',
+        'tree_header_name' => 'Nome da Conta',
+        'tree_header_balance' => 'Saldo',
+    ],
 ];

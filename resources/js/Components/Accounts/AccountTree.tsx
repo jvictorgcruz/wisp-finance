@@ -15,9 +15,9 @@ export default function AccountTree({ accounts }: AccountTreeProps) {
                     <span className="text-3xl">📭</span>
                 </div>
                 <div className="space-y-2">
-                    <h3 className="text-lg font-bold text-slate-900">{t('accounts_page.empty_title')}</h3>
+                    <h3 className="text-lg font-bold text-slate-900">{t('accounts.page.empty_title')}</h3>
                     <p className="text-sm text-slate-500 max-w-xs mx-auto">
-                        {t('accounts_page.empty_desc')}
+                        {t('accounts.page.empty_desc')}
                     </p>
                 </div>
             </div>
@@ -28,10 +28,10 @@ export default function AccountTree({ accounts }: AccountTreeProps) {
         <div className="mt-8 bg-white/50 backdrop-blur-sm rounded-4xl border border-slate-100 shadow-sm overflow-hidden">
             <div className="bg-white/80 p-4 border-b border-slate-100 flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                    {t('accounts_page.tree_header_name')}
+                    {t('accounts.page.tree_header_name')}
                 </span>
                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 pr-4">
-                    {t('accounts_page.tree_header_balance')}
+                    {t('accounts.page.tree_header_balance')}
                 </span>
             </div>
             <div className="divide-y divide-slate-100">

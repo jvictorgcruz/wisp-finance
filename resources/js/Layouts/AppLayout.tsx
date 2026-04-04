@@ -55,7 +55,7 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
                 {/* Footer Minimalista (Opcional) */}
                 <footer className="py-8 px-10 text-center opacity-40">
                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-editorial-wide">
-                        Wisp Finance &copy; {new Date().getFullYear()} — Precision Minimalism
+                        Wisp Finance &copy; {new Date().getFullYear()}
                     </p>
                 </footer>
             </main>
