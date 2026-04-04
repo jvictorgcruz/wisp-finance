@@ -62,4 +62,13 @@ class Account extends Model
     {
         return $this->hasMany(JournalEntry::class);
     }
+
+    /**
+     * Determine if this account can have direct journal entries.
+     * Rule: Root accounts (parents) cannot have direct transactions.
+     */
+    public function canHaveJournalEntries(): bool
+    {
+        return $this->parent_id !== null;
+    }
 }

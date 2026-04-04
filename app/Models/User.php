@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'locale',
+        'current_ledger_id',
     ];
 
     /**

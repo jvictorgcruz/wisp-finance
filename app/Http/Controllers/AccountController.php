@@ -15,13 +15,9 @@ class AccountController extends Controller
     /**
      * Display a listing of the accounts.
      */
-    public function index(): Response
+    public function index(\App\Actions\Accounts\GetAccountTreeAction $action): Response
     {
-        return Inertia::render('Accounts/Index', [
-            'accounts' => Account::with('children')
-                ->whereNull('parent_id')
-                ->get(),
-        ]);
+        return Inertia::render('Accounts/Index', $action->execute());
     }
 
     /**
