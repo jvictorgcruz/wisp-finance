@@ -166,3 +166,57 @@ test('it can delete a regular account', function () {
     $response->assertRedirect(route('accounts.index'));
     $this->assertSoftDeleted('accounts', ['id' => $account->id]);
 });
+
+test('it prevents creating a third level account', function () {
+    $this->withoutExceptionHandling();
+    $root = Account::create([
+        'name' => 'Root Asset',
+        'type' => AccountType::ASSET,
+        'status' => AccountStatus::ACTIVE,
+    ]);
+
+    $child = Account::create([
+        'name' => 'Child Asset',
+        'type' => AccountType::ASSET,
+        'status' => AccountStatus::ACTIVE,
+        'parent_id' => $root->id,
+    ]);
+
+    $response = $this->post(route('accounts.store'), [
+        'name' => 'Grandchild Asset',
+        'type' => 'asset',
+        'parent_id' => $child->id,
+    ]);
+
+    $response->assertSessionHasErrors(['parent_id']);
+})->throws(\Illuminate\Validation\ValidationException::class);
+
+test('it prevents a parent account from becoming a child', function () {
+    $parent = Account::create([
+        'name' => 'Parent Asset',
+        'type' => AccountType::ASSET,
+        'status' => AccountStatus::ACTIVE,
+    ]);
+
+    Account::create([
+        'name' => 'Child Asset',
+        'type' => AccountType::ASSET,
+        'status' => AccountStatus::ACTIVE,
+        'parent_id' => $parent->id,
+    ]);
+
+    $otherRoot = Account::create([
+        'name' => 'Other Root',
+        'type' => AccountType::ASSET,
+        'status' => AccountStatus::ACTIVE,
+    ]);
+
+    // Try to move $parent under $otherRoot (Rule 2)
+    $response = $this->put(route('accounts.update', $parent), [
+        'name' => 'Moved Parent',
+        'type' => 'asset',
+        'parent_id' => $otherRoot->id,
+    ]);
+
+    $response->assertSessionHasErrors(['parent_id']);
+});
