@@ -130,7 +130,7 @@ test('it cannot delete a system account', function () {
 
     $response = $this->delete(route('accounts.destroy', $account));
 
-    $response->assertSessionHasErrors(['id']);
+    $response->assertStatus(403);
     $this->assertDatabaseHas('accounts', ['id' => $account->id]);
 });
 
@@ -154,7 +154,7 @@ test('it cannot delete an account with children', function () {
     $this->assertDatabaseHas('accounts', ['id' => $parent->id]);
 });
 
-test('it can delete a regular account', function () {
+test('it soft deletes a regular account without history', function () {
     $account = Account::create([
         'name' => 'To Be Deleted',
         'type' => AccountType::ASSET,
@@ -164,7 +164,63 @@ test('it can delete a regular account', function () {
     $response = $this->delete(route('accounts.destroy', $account));
 
     $response->assertRedirect(route('accounts.index'));
+    
+    // Rule: Accounts WITHOUT history are soft deleted (deleted_at)
     $this->assertSoftDeleted('accounts', ['id' => $account->id]);
+});
+
+test('it inactivates an account with zero balance', function () {
+    $account = Account::create([
+        'name' => 'Account with Zero Balance',
+        'type' => AccountType::ASSET,
+        'status' => AccountStatus::ACTIVE,
+    ]);
+
+    // Create offsetting journal entries (balance = 0)
+    \App\Models\JournalEntry::create([
+        'ledger_id' => $this->ledger->id,
+        'account_id' => $account->id,
+        'type' => 'DEBIT',
+        'amount' => 1000,
+        'entry_date' => now(),
+    ]);
+    \App\Models\JournalEntry::create([
+        'ledger_id' => $this->ledger->id,
+        'account_id' => $account->id,
+        'type' => 'CREDIT',
+        'amount' => 1000,
+        'entry_date' => now(),
+    ]);
+
+    $response = $this->delete(route('accounts.destroy', $account));
+
+    $response->assertRedirect(route('accounts.index'));
+    
+    // Rule: Accounts WITH history and zero balance are INACTIVATED
+    expect($account->fresh()->status)->toBe(AccountStatus::INACTIVE);
+    $this->assertDatabaseHas('accounts', ['id' => $account->id, 'deleted_at' => null]);
+});
+
+test('it prevents inactivation of an account with a non-zero balance', function () {
+    $account = Account::create([
+        'name' => 'Account with Balance',
+        'type' => AccountType::ASSET,
+        'status' => AccountStatus::ACTIVE,
+    ]);
+
+    // Create a journal entry (balance != 0)
+    \App\Models\JournalEntry::create([
+        'ledger_id' => $this->ledger->id,
+        'account_id' => $account->id,
+        'type' => 'DEBIT',
+        'amount' => 5000,
+        'entry_date' => now(),
+    ]);
+
+    $response = $this->delete(route('accounts.destroy', $account));
+
+    $response->assertSessionHasErrors(['id']);
+    expect($account->fresh()->status)->toBe(AccountStatus::ACTIVE);
 });
 
 test('it prevents creating a third level account', function () {

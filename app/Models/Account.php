@@ -54,4 +54,12 @@ class Account extends Model
     {
         return $this->hasMany(Account::class, 'parent_id');
     }
+
+    /**
+     * Get the journal entries for this account.
+     */
+    public function journalEntries(): HasMany
+    {
+        return $this->hasMany(JournalEntry::class);
+    }
 }
