@@ -1,7 +1,7 @@
 import { PropsWithChildren } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import { ArrowLeft } from 'lucide-react';
-import logo from '@images/logo.png';
+import Logo from '@/Components/Common/Logo';
 import LanguageSelector from '@/Components/Navigation/LanguageSelector';
 import { useTranslation } from '@/Hooks/useTranslation';
 
@@ -36,7 +36,7 @@ export default function AuthLayout({ title, subtitle, children }: PropsWithChild
             <div className="w-full sm:max-w-md mt-20 sm:mt-6 px-8 py-10 bg-white border border-slate-100 shadow-soft rounded-xl animate-in fade-in zoom-in-95 duration-500">
                 <div className="mb-10 flex flex-col items-center gap-3">
                     <Link href="/">
-                        <img src={logo} alt="Wisp Logo" className="w-12 h-12 object-contain hover:scale-110 transition-transform" />
+                        <Logo showText={false} imageSize="w-12 h-12" />
                     </Link>
                     
                     <div className="text-center">

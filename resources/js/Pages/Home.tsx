@@ -3,7 +3,7 @@ import {
     ArrowRight, Maximize2, Zap,
     Target
 } from 'lucide-react';
-import logo from '@images/logo.png';
+import Logo from '@/Components/Common/Logo';
 import { useTranslation } from '@/Hooks/useTranslation';
 import LanguageSelector from '@/Components/Navigation/LanguageSelector';
 import { clsx, type ClassValue } from 'clsx';
@@ -36,10 +36,7 @@ export default function Home() {
 
             {/* Navigation Header */}
             <nav className="h-24 flex items-center justify-between px-8 lg:px-20 max-w-7xl mx-auto">
-                <div className="flex items-center gap-0.5 group cursor-pointer">
-                    <img src={logo} alt="Wisp Logo" className="w-9 h-9 object-contain group-hover:scale-110 transition-transform" />
-                    <span className="font-bold text-2xl tracking-tighter">Wisp</span>
-                </div>
+                <Logo />
 
                 <div className="flex items-center gap-6">
                     <LanguageSelector 
@@ -147,9 +144,8 @@ export default function Home() {
 
             {/* Footer */}
             <footer className="py-20 px-8 lg:px-20 text-center space-y-6">
-                <div className="flex items-center justify-center gap-0.5">
-                    <img src={logo} alt="Wisp Logo" className="w-6 h-6 " />
-                    <span className="font-bold text-lg tracking-tighter">Wisp</span>
+                <div className="flex justify-center">
+                    <Logo imageSize="w-6 h-6" textSize="text-lg" />
                 </div>
                 <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.3em]">
                     Wisp Finance &bull; {new Date().getFullYear()}

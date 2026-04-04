@@ -12,7 +12,7 @@ import {
     User,
     Plus
 } from 'lucide-react';
-import logo from '@images/logo.png';
+import Logo from '@/Components/Common/Logo';
 import { useTranslation } from '@/Hooks/useTranslation';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -75,13 +75,9 @@ export default function Sidebar() {
                 "fixed inset-y-0 left-0 z-40 w-64 bg-surface border-r border-surface-low flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 shadow-sm",
                 isOpen ? "translate-x-0" : "-translate-x-full"
             )}>
-                {/* Brand */}
                 <div className="h-20 flex items-center px-6">
-                    <Link href="/" className="flex items-center gap-2 group">
-                        <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center text-surface-lowest shadow-sm group-hover:scale-105 transition-transform">
-                            <Wallet className="w-5 h-5" />
-                        </div>
-                        <span className="font-black text-2xl tracking-editorial-tight text-primary">Wisp</span>
+                    <Link href="/" className="group">
+                        <Logo imageSize="w-8 h-8" />
                     </Link>
                 </div>
 
