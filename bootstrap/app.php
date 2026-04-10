@@ -14,6 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
         ]);
+        $middleware->alias([
+            'feature.disable_app' => \App\Http\Middleware\CheckAppDisabled::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

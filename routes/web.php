@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\App;
 use Inertia\Inertia;
 
-// Root fallback
 Route::get('/', function () {
     if (auth()->check()) {
         return redirect()->route('dashboard');
@@ -15,52 +14,45 @@ Route::get('/', function () {
     return redirect("/{$locale}/home");
 });
 
-// Explicit /home route goes to the locale hero page regardless of auth state
 Route::get('/home', function () {
     $locale = session('locale', request()->getPreferredLanguage(['en', 'pt']) ?: config('app.locale'));
     return redirect("/{$locale}/home");
 });
 
-// Authenticated dashboard redirect
-Route::get('/dashboard', function () {
-    return redirect()->route('accounts.index');
-})->middleware('auth')->name('dashboard');
-
-// Localized home page (accessible by both guests and authenticated users)
 Route::prefix('{locale}')->where(['locale' => 'en|pt'])->group(function () {
     Route::get('/home', fn() => Inertia::render('Home'))->name('home');
 });
 
-// Guest-only routes
-Route::middleware('guest')->group(function () {
-    
-    // Localized login/register views
-    Route::prefix('{locale}')->where(['locale' => 'en|pt'])->group(function () {
-        Route::get('register', [RegisteredUserController::class, 'create'])->name('register.locale');
-        Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login.locale');
+Route::middleware('feature.disable_app')->group(function () {
+
+    Route::middleware('guest')->group(function () {
+        Route::prefix('{locale}')->where(['locale' => 'en|pt'])->group(function () {
+            Route::get('register', [RegisteredUserController::class, 'create'])->name('register.locale');
+            Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login.locale');
+        });
+
+        Route::get('login', function () {
+            $locale = session('locale', config('app.locale'));
+            return redirect("/{$locale}/login");
+        })->name('login');
+
+        Route::get('register', function () {
+            $locale = session('locale', config('app.locale'));
+            return redirect("/{$locale}/register");
+        })->name('register');
+
+        Route::post('register', [RegisteredUserController::class, 'store']);
+        Route::post('login', [AuthenticatedSessionController::class, 'store']);
     });
 
-    // Fallback login/register
-    Route::get('login', function () {
-        $locale = session('locale', config('app.locale'));
-        return redirect("/{$locale}/login");
-    })->name('login');
+    Route::middleware('auth')->group(function () {
+        Route::get('dashboard', fn() => redirect()->route('accounts.index'))->name('dashboard');
 
-    Route::get('register', function () {
-        $locale = session('locale', config('app.locale'));
-        return redirect("/{$locale}/register");
-    })->name('register');
+        Route::resource('accounts', \App\Http\Controllers\AccountController::class)->only(['index', 'store', 'update', 'destroy']);
 
-    // Authentication actions
-    Route::post('register', [RegisteredUserController::class, 'store']);
-    Route::post('login', [AuthenticatedSessionController::class, 'store']);
-});
+        Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+        
+        Route::post('language/{locale}', [\App\Http\Controllers\LanguageController::class, 'update'])->name('language.update');
+    });
 
-// Authenticated routes
-Route::middleware('auth')->group(function () {
-    Route::resource('accounts', \App\Http\Controllers\AccountController::class)->only(['index', 'store', 'update', 'destroy']);
-
-    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-    
-    Route::post('language/{locale}', [\App\Http\Controllers\LanguageController::class, 'update'])->name('language.update');
 });
