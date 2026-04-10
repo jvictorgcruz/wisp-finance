@@ -29,4 +29,14 @@ class FeatureManager
         
         return app(FeatureDriverInterface::class)->allFlags($context);
     }
+
+    /**
+     * Get the expiration timestamp of the current cache for the given context.
+     */
+    public static function getExpiresAt(?FeatureContext $context = null): ?int
+    {
+        $context ??= FeatureContext::buildFromGlobalState();
+        
+        return app(FeatureDriverInterface::class)->getExpiresAt($context);
+    }
 }

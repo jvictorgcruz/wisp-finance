@@ -50,6 +50,9 @@ Route::middleware('feature.disable_app')->group(function () {
 
         Route::resource('accounts', \App\Http\Controllers\AccountController::class)->only(['index', 'store', 'update', 'destroy']);
 
+        Route::get('feature-flags', [\App\Http\Controllers\FeatureFlagController::class, 'index'])->name('feature-flags.index');
+        Route::post('feature-flags/clear-cache', [\App\Http\Controllers\FeatureFlagController::class, 'clearCache'])->name('feature-flags.clear-cache');
+
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
         
         Route::post('language/{locale}', [\App\Http\Controllers\LanguageController::class, 'update'])->name('language.update');

@@ -27,4 +27,9 @@ interface FeatureDriverInterface
      * @param array<string, bool> $flags
      */
     public function setFlags(array $flags): void;
+
+    /**
+     * Get the expiration timestamp of the current cache for the given context.
+     */
+    public function getExpiresAt(FeatureContext $context): ?int;
 }

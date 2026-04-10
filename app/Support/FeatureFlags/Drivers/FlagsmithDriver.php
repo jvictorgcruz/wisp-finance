@@ -14,8 +14,8 @@ class FlagsmithDriver implements FeatureDriverInterface
 {
     public function __construct(
         protected string $serverKey,
-        protected string $baseUrl = 'https://edge.api.flagsmith.com/api/v1/',
-        protected int $cacheTtlMinutes = 10
+        protected string $baseUrl,
+        protected int $cacheTtlMinutes,
     ) {
     }
 
@@ -30,7 +30,7 @@ class FlagsmithDriver implements FeatureDriverInterface
 
         $cache = Cache::supportsTags() ? Cache::tags(['feature_flags']) : Cache::store();
 
-        return $cache->remember($cacheKey, now()->addMinutes($this->cacheTtlMinutes), function () use ($context) {
+        return $cache->remember($cacheKey, now()->addMinutes($this->cacheTtlMinutes), function () use ($context, $cache, $cacheKey) {
             $traits = [];
 
             if ($context->ledgerId !== null) {
@@ -42,19 +42,27 @@ class FlagsmithDriver implements FeatureDriverInterface
 
             $identity = $context->userEmail ? $context->userEmail : 'anonymous';
 
-            $response = Http::withHeaders([
-                'X-Environment-Key' => $this->serverKey,
-            ])
-            ->timeout(3)
-            ->post(rtrim($this->baseUrl, '/') . '/identities/', [
-                'identifier' => $identity,
-                'traits'     => $traits,
-            ]);
+            try {
+                $response = Http::withHeaders([
+                    'X-Environment-Key' => $this->serverKey,
+                ])
+                ->timeout(3)
+                ->post(rtrim($this->baseUrl, '/') . '/identities/', [
+                    'identifier' => $identity,
+                    'traits'     => $traits,
+                ]);
 
-            if ($response->failed()) {
-                Log::error("Flagsmith request failed", ['response' => $response->body()]);
+                if ($response->failed()) {
+                    Log::error("Flagsmith request failed", ['response' => $response->body()]);
+                    return [];
+                }
+            } catch (\Exception $e) {
+                Log::error("Flagsmith request exception", ['message' => $e->getMessage()]);
                 return [];
             }
+
+            $expiresAt = now()->addMinutes($this->cacheTtlMinutes)->timestamp;
+            $cache->put($cacheKey . ':expires_at', $expiresAt, now()->addMinutes($this->cacheTtlMinutes));
 
             $flags = $response->json('flags') ?? [];
             $mappedFlags = [];
@@ -68,6 +76,14 @@ class FlagsmithDriver implements FeatureDriverInterface
 
             return $mappedFlags;
         });
+    }
+
+    public function getExpiresAt(FeatureContext $context): ?int
+    {
+        $cacheKey = 'flagsmith:' . $context->toCacheKey() . ':all:expires_at';
+        $cache = Cache::supportsTags() ? Cache::tags(['feature_flags']) : Cache::store();
+
+        return (int) $cache->get($cacheKey);
     }
 
     public function isAvailable(string $feature, FeatureContext $context): bool

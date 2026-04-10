@@ -31,4 +31,9 @@ class ArrayDriver implements FeatureDriverInterface
     {
         $this->flags = array_merge($this->flags, $flags);
     }
+
+    public function getExpiresAt(FeatureContext $context): ?int
+    {
+        return null;
+    }
 }
