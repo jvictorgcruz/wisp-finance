@@ -2,13 +2,14 @@
 
 use App\Models\User;
 use App\Models\Ledger;
+use App\Enums\UserRole;
 use App\Support\FeatureFlags\Contracts\FeatureDriverInterface;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach(function () {
     /** @var \Tests\TestCase $this */
-    $this->user = User::factory()->create();
+    $this->user = User::factory()->create(['role' => UserRole::ADMIN]);
     $this->ledger = Ledger::factory()->create();
     $this->user->ledgers()->attach($this->ledger->id, ['role' => 'owner']);
 

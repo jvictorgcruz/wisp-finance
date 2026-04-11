@@ -65,6 +65,8 @@ class HandleInertiaRequests extends Middleware
                 'user' => $user,
                 'ledgers' => $user ? $user->ledgers : [],
                 'current_ledger_id' => $currentLedgerId,
+                'is_admin' => $user?->isAdmin(),
+                'is_super_admin' => $user?->isSuperAdmin(),
             ],
             'locale' => $locale,
             'translations' => collect(glob(base_path("lang/{$locale}/*.php")))->mapWithKeys(function ($path) {
