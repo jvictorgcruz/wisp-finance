@@ -6,9 +6,10 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Support\FeatureFlags\FeatureManager;
+use App\Support\Settings\SettingManager;
 use Inertia\Inertia;
 
-class CheckAppDisabled
+class CheckMaintenanceMode
 {
     /**
      * Handle an incoming request.
@@ -17,7 +18,10 @@ class CheckAppDisabled
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!FeatureManager::isAvailable('enable_app')) {
+        $isMaintenanceActive = SettingManager::isActive('maintenance_mode');
+        $hasBypass = FeatureManager::isAvailable('bypass_maintenance');
+
+        if ($isMaintenanceActive && !$hasBypass) {
             return Inertia::render('Maintenance')->toResponse($request)->setStatusCode(503);
         }
 

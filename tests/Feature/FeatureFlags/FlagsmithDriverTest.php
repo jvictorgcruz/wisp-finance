@@ -43,7 +43,7 @@ it('fetches and caches flags from flagsmith api safely', function () {
 
 it('gracefully handles missing server key', function () {
     $context = new FeatureContext();
-    $driver = new FlagsmithDriver('');
+    $driver = new FlagsmithDriver('', '', 10);
     
     expect($driver->allFlags($context))->toBeEmpty();
 });

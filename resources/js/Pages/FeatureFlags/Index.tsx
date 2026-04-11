@@ -54,16 +54,16 @@ export default function FeatureFlags({ flags, filters, expires_at, errors }: Pro
 
     const handleFilter = (e: React.FormEvent) => {
         e.preventDefault();
-        router.get('/feature-flags', filterData, { preserveState: true });
+        router.get('/admin/feature-flags', filterData, { preserveState: true });
     };
 
     const handleClearFilter = () => {
         setFilterData({ ledger_id: '', user_email: '' });
-        router.get('/feature-flags');
+        router.get('/admin/feature-flags');
     };
 
     const handleClearCache = () => {
-        post('/feature-flags/clear-cache');
+        post('/admin/feature-flags/clear-cache');
     };
 
     const flagEntries = Object.entries(flags);

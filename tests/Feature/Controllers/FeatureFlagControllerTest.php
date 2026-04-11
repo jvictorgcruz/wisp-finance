@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach(function () {
+    /** @var \Tests\TestCase $this */
     $this->user = User::factory()->create();
     $this->ledger = Ledger::factory()->create();
     $this->user->ledgers()->attach($this->ledger->id, ['role' => 'owner']);
@@ -20,7 +21,7 @@ beforeEach(function () {
 });
 
 test('feature flags index is protected', function () {
-    $this->get(route('feature-flags.index'))
+    $this->get(route('admin.feature-flags.index'))
         ->assertRedirect(route('login'));
 });
 
@@ -28,7 +29,7 @@ test('feature flags index renders correctly', function () {
     $this->driver->shouldReceive('getExpiresAt')->once()->andReturn(null);
 
     $this->actingAs($this->user)
-        ->get(route('feature-flags.index'))
+        ->get(route('admin.feature-flags.index'))
         ->assertStatus(200)
         ->assertInertia(fn (Assert $page) => $page
             ->component('FeatureFlags/Index')
@@ -48,12 +49,12 @@ test('feature flags can be filtered by valid context', function () {
             $context->ledgerId === $anotherLedger->id && 
             $context->userEmail === 'other@example.com'
         ))
-        ->andReturn(['flag' => true]);
+        ->andReturns(['flag' => true]);
 
     $this->driver->shouldReceive('getExpiresAt')->once()->andReturn(null);
 
     $this->actingAs($this->user)
-        ->get(route('feature-flags.index', [
+        ->get(route('admin.feature-flags.index', [
             'ledger_id' => $anotherLedger->id,
             'user_email' => 'other@example.com'
         ]))
@@ -66,7 +67,7 @@ test('feature flags can be filtered by valid context', function () {
 
 test('filtering by invalid context returns validation errors', function () {
     $this->actingAs($this->user)
-        ->get(route('feature-flags.index', [
+        ->get(route('admin.feature-flags.index', [
             'ledger_id' => 99999,
             'user_email' => 'not-exists@example.com'
         ]))
@@ -78,10 +79,10 @@ test('clear cache flushes the correct tag', function () {
     Cache::shouldReceive('tags')
         ->once()
         ->with(['feature_flags'])
-        ->andReturn(Mockery::mock(['flush' => true]));
+        ->andReturns(Mockery::mock(['flush' => true]));
 
     $this->actingAs($this->user)
-        ->post(route('feature-flags.clear-cache'))
+        ->post(route('admin.feature-flags.clear-cache'))
         ->assertRedirect()
         ->assertSessionHas('success');
 });
