@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\UserRole;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,6 +25,7 @@ class User extends Authenticatable
         'password',
         'locale',
         'current_ledger_id',
+        'role',
     ];
 
     /**
@@ -46,6 +48,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => UserRole::class,
         ];
     }
 
@@ -65,5 +68,21 @@ class User extends Authenticatable
     public function currentLedger(): ?Ledger
     {
         return $this->ledgers()->first();
+    }
+
+    /**
+     * Determine if the user has an admin role (Admin or Super Admin).
+     */
+    public function isAdmin(): bool
+    {
+        return in_array($this->role, [UserRole::ADMIN, UserRole::SUPER_ADMIN]);
+    }
+
+    /**
+     * Determine if the user is a super admin.
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === UserRole::SUPER_ADMIN;
     }
 }

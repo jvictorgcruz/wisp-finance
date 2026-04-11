@@ -9,6 +9,8 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 abstract class TestCase extends BaseTestCase
 {
     public ?User $user = null;
+    public ?User $admin = null;
+    public ?User $superAdmin = null;
     public ?Ledger $ledger = null;
     public $driver;
 }

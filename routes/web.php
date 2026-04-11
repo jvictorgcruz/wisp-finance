@@ -59,10 +59,15 @@ Route::middleware('check_maintenance')->group(function () {
 
 });
 
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('feature-flags', [\App\Http\Controllers\FeatureFlagController::class, 'index'])->name('feature-flags.index');
     Route::post('feature-flags/clear-cache', [\App\Http\Controllers\FeatureFlagController::class, 'clearCache'])->name('feature-flags.clear-cache');
     
     Route::get('settings', [\App\Http\Controllers\Admin\SystemSettingController::class, 'index'])->name('settings.index');
     Route::put('settings', [\App\Http\Controllers\Admin\SystemSettingController::class, 'update'])->name('settings.update');
+
+    Route::middleware('super_admin')->group(function () {
+        Route::get('users', [\App\Http\Controllers\Admin\UserRoleController::class, 'index'])->name('users.index');
+        Route::patch('users/{user}/role', [\App\Http\Controllers\Admin\UserRoleController::class, 'update'])->name('users.update-role');
+    });
 });

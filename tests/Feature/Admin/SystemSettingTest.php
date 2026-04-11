@@ -4,6 +4,7 @@ namespace Tests\Feature\Admin;
 
 use App\Models\SystemSetting;
 use App\Models\User;
+use App\Enums\UserRole;
 use App\Support\Settings\SettingManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -37,7 +38,7 @@ class SystemSettingTest extends TestCase
 
     public function test_admin_can_view_all_settings()
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => UserRole::ADMIN]);
 
         $response = $this->actingAs($user)->get(route('admin.settings.index'));
 
@@ -54,7 +55,7 @@ class SystemSettingTest extends TestCase
 
     public function test_admin_can_update_a_specific_setting()
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => UserRole::ADMIN]);
 
         $response = $this->actingAs($user)->put(route('admin.settings.update'), [
             'key' => 'maintenance_mode',
@@ -76,7 +77,7 @@ class SystemSettingTest extends TestCase
 
     public function test_updating_one_setting_does_not_affect_others()
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => UserRole::ADMIN]);
 
         $this->actingAs($user)->put(route('admin.settings.update'), [
             'key' => 'maintenance_mode',
@@ -93,7 +94,7 @@ class SystemSettingTest extends TestCase
 
     public function test_cannot_update_non_existent_setting()
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => UserRole::ADMIN]);
 
         $response = $this->actingAs($user)->put(route('admin.settings.update'), [
             'key' => 'invalid_key',
