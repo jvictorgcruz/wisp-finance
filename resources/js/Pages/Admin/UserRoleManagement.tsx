@@ -131,10 +131,10 @@ export default function UserRoleManagement({ users, availableRoles }: UserRoleMa
                                                             ? 'bg-[#4B3BC9] text-white shadow-lg shadow-[#4B3BC9]/20 cursor-default'
                                                             : user.role === 'super_admin'
                                                             ? 'bg-slate-50 text-slate-300 cursor-not-allowed border border-slate-100'
-                                                            : 'bg-slate-50 text-slate-400 hover:bg-slate-900 hover:text-white border border-slate-100'
+                                                            : 'bg-slate-50 text-slate-400 hover:bg-primary hover:text-white border border-slate-100'
                                                         }`}
                                                     >
-                                                        {user.role === role.value ? <Check className="w-4 h-4" /> : getRoleIcon(role.value)}
+                                                        {getRoleIcon(role.value)}
                                                         
                                                         {/* Tooltip */}
                                                         <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 transition-opacity whitespace-nowrap pointer-events-none font-bold uppercase tracking-widest leading-none">

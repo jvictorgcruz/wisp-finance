@@ -17,12 +17,12 @@ class ListUsersWithRolesAction
     {
         return [
             'users' => User::select('id', 'name', 'email', 'role')->get(),
-            'availableRoles' => collect(UserRole::cases())
+            'availableRoles' => array_values(collect(UserRole::cases())
                 ->filter(fn($role) => $role !== UserRole::SUPER_ADMIN)
                 ->map(fn($role) => [
                     'name' => $role->name,
                     'value' => $role->value,
-                ])->toArray(),
+                ])->toArray()),
         ];
     }
 }

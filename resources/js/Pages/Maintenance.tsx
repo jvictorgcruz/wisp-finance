@@ -1,14 +1,23 @@
 import { Head, Link } from '@inertiajs/react';
-import { Settings, Headset, Share2 } from 'lucide-react';
+import { Settings, ArrowLeft } from 'lucide-react';
 import { useTranslation } from '@/Hooks/useTranslation';
-import Logo from '@/Components/Common/Logo';
 
 export default function Maintenance() {
     const { t } = useTranslation();
 
     return (
-        <div className="bg-slate-50 text-slate-900 min-h-screen flex flex-col items-center justify-center p-6 md:p-12 font-sans selection:bg-primary/20">
+        <div className="bg-slate-50 text-slate-900 min-h-screen flex flex-col items-center justify-center p-6 md:p-12 font-sans selection:bg-primary/20 relative">
             <Head title={t('maintenance.title')} />
+            
+            <div className="absolute top-8 md:top-12 left-8 right-8 flex justify-start items-center z-10 max-w-7xl mx-auto w-full px-4 lg:px-12">
+                <Link 
+                    href="/" 
+                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-editorial-wide text-slate-400 hover:text-primary transition-colors group"
+                >
+                    <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
+                    {t('auth.back_to_home') || 'Back to Home'}
+                </Link>
+            </div>
             
             <main className="max-w-2xl w-full flex flex-col items-center text-center space-y-12">
 

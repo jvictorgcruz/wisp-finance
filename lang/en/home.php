@@ -14,6 +14,10 @@ return [
         'transactions' => 'Transactions',
         'cards' => 'Cards',
         'logout' => 'Logout',
+        'administration' => 'Administration',
+        'admin_settings' => 'System Parameters',
+        'admin_users' => 'User Roles',
+        'admin_feature_flags' => 'Feature Flags',
     ],
     'sidebar' => [
         'current_ledger' => 'Current Ledger',

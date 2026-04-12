@@ -17,7 +17,6 @@ class UpdateUserRoleAction
      */
     public function execute(User $user, string $role): User
     {
-        // Super Admin roles can only be changed via database/tinker
         if ($user->role === UserRole::SUPER_ADMIN || $role === UserRole::SUPER_ADMIN->value) {
             abort(403, "It's not possible to change the role of a Super Admin.");
         }

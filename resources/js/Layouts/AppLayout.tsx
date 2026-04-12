@@ -34,7 +34,7 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
                     </div>
 
                     {/* Actions Area */}
-                    <div className="flex items-center gap-2">
+                    {/* <div className="flex items-center gap-2">
                         <button className="p-2 text-slate-400 hover:text-primary hover:bg-surface rounded-full transition-all relative">
                             <Bell className="w-5 h-5" />
                             <span className="absolute top-2 right-2 w-2 h-2 bg-expense rounded-full border-2 border-surface-lowest"></span>
@@ -42,7 +42,7 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
                         <button className="p-2 text-slate-400 hover:text-primary hover:bg-surface rounded-full transition-all">
                             <HelpCircle className="w-5 h-5" />
                         </button>
-                    </div>
+                    </div> */}
                 </header>
 
                 {/* Page Content Container */}

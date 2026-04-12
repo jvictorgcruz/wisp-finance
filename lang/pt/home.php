@@ -14,6 +14,10 @@ return [
         'transactions' => 'Transações',
         'cards' => 'Cartões',
         'logout' => 'Sair da conta',
+        'administration' => 'Administração',
+        'admin_settings' => 'Parâmetros do Sistema',
+        'admin_users' => 'Grupos de Permissão',
+        'admin_feature_flags' => 'Feature Flags',
     ],
     'sidebar' => [
         'current_ledger' => 'Carteira Atual',

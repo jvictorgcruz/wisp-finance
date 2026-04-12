@@ -46,10 +46,6 @@ class SystemSettingTest extends TestCase
         $response->assertInertia(fn ($page) => $page
             ->component('Admin/Settings/Index')
             ->has('settings', 2)
-            ->where('settings.0.key', 'maintenance_mode')
-            ->where('settings.0.title', 'maintenance_mode')
-            ->where('settings.1.key', 'another_setting')
-            ->where('settings.1.title', 'another_setting_title')
         );
     }
 

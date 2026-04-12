@@ -10,7 +10,10 @@ import {
     Menu,
     X,
     User,
-    Plus
+    Plus,
+    Shield,
+    Settings,
+    Users
 } from 'lucide-react';
 import Logo from '@/Components/Common/Logo';
 import { useTranslation } from '@/Hooks/useTranslation';
@@ -60,6 +63,17 @@ export default function Sidebar() {
         { name: t('home.nav.cards'), href: '/cards', icon: CreditCard },
     ];
 
+    const adminLinks = [
+        { name: t('home.nav.admin_settings'), href: '/admin/settings', icon: Settings },
+        { name: t('home.nav.admin_feature_flags'), href: '/admin/feature-flags', icon: Shield },
+    ];
+
+    const superAdminLinks = [
+        { name: t('home.nav.admin_users'), href: '/admin/users', icon: Users },
+    ];
+
+    const hasAdminAccess = auth.is_admin || auth.is_super_admin;
+
     return (
         <>
             {/* Mobile Toggle */}
@@ -96,16 +110,47 @@ export default function Sidebar() {
                 </div>)}
 
                 {/* Navigation */}
-                <nav className="flex-1 px-4 space-y-1 overflow-y-auto mt-2">
-                    {navLinks.map((link) => (
-                        <NavLink 
-                            key={link.name} 
-                            {...link}
-                            active={url === `/${link.href}` || url.startsWith(link.href)}
-                        >
-                            {link.name}
-                        </NavLink>
-                    ))}
+                <nav className="flex-1 flex flex-col justify-between px-4 space-y-1 overflow-y-auto mt-2">
+                    <div>
+                        {navLinks.map((link) => (
+                            <NavLink 
+                                key={link.name} 
+                                {...link}
+                                active={url === link.href || url.startsWith(link.href)}
+                            >
+                                {link.name}
+                            </NavLink>
+                        ))}
+                    </div>
+
+                    {hasAdminAccess && (
+                        <div className="">
+                            <h3 className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-editorial-wide mb-2">
+                                {t('home.nav.administration')}
+                            </h3>
+                            <div className="space-y-1">
+                                {auth.is_admin && adminLinks.map((link) => (
+                                    <NavLink 
+                                        key={link.name}
+                                        {...link}
+                                        active={url.startsWith(link.href)}
+                                    >
+                                        {link.name}
+                                    </NavLink>
+                                ))}
+                                
+                                {auth.is_super_admin && superAdminLinks.map((link) => (
+                                    <NavLink 
+                                        key={link.name}
+                                        {...link}
+                                        active={url.startsWith(link.href)}
+                                    >
+                                        {link.name}
+                                    </NavLink>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </nav>
 
                 {/* Footer User Profile & Language Switcher */}

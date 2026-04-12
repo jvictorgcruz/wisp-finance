@@ -3,22 +3,25 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Actions\Admin\ListSystemSettingsAction;
+use App\Actions\Admin\UpdateSystemSettingAction;
 use App\Models\SystemSetting;
 use App\Support\Settings\SettingManager;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class SystemSettingController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request, ListSystemSettingsAction $action): Response
     {
         return Inertia::render('Admin/Settings/Index', [
-            'settings' => SystemSetting::all(),
+            'settings' => $action->execute(),
         ]);
     }
 
-    public function update(Request $request)
+    public function update(Request $request, UpdateSystemSettingAction $action)
     {
         $validated = $request->validate([
             'key' => 'required|string|exists:system_settings,key',
@@ -26,13 +29,11 @@ class SystemSettingController extends Controller
             'value' => 'nullable|string',
         ]);
 
-        SystemSetting::where('key', $validated['key'])->update([
+        $action->execute($validated['key'], [
             'is_active' => $validated['is_active'],
             'value' => $validated['value'],
         ]);
 
-        SettingManager::clearCache($validated['key']);
-
-        return redirect()->back();
+        return redirect()->back()->with('success', __('settings.success'));
     }
 }
