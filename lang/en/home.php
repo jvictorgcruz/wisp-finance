@@ -22,6 +22,12 @@ return [
     'sidebar' => [
         'current_ledger' => 'Current Ledger',
         'loading' => 'Loading...',
+        'user_profile' => 'User Profile',
+        'roles' => [
+            'super_admin' => 'Super Admin',
+            'admin' => 'Administrator',
+            'member' => 'Member',
+        ],
     ],
     'search_placeholder' => 'Search...',
     'features_title' => 'Everything in one place',

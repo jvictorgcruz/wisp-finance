@@ -1,9 +1,10 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { usePage } from '@inertiajs/react';
-import { Listbox, Transition, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
-import { Globe, Check, ChevronDown } from 'lucide-react';
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
+import { Globe, Check } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import DropdownSelector from '@/Components/Common/DropdownSelector';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -12,9 +13,12 @@ function cn(...inputs: ClassValue[]) {
 interface Props {
     className?: string;
     onChange?: (locale: string) => void;
+    variant?: 'full' | 'minimal';
+    align?: 'left' | 'right';
+    placement?: 'bottom' | 'top';
 }
 
-export default function LanguageSelector({ className, onChange }: Props) {
+export default function LanguageSelector({ className, onChange, variant = 'full', align = 'right', placement = 'bottom' }: Props) {
     const { props } = usePage<any>();
     const { locale, locales } = props as { locale: string, locales: Record<string, string> };
 
@@ -27,60 +31,58 @@ export default function LanguageSelector({ className, onChange }: Props) {
     };
 
     return (
-        <div className={cn("relative", className)}>
-            <Listbox value={locale} onChange={onChange}>
-                <div className="relative">
-                    <ListboxButton className="relative w-full cursor-pointer rounded-xl bg-surface-lowest border border-surface-low py-2.5 pl-10 pr-10 text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/5 focus:border-primary/20 sm:text-[10px] font-bold uppercase tracking-editorial-wide text-primary transition-all group">
-                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <Globe className="w-3.5 h-3.5 text-slate-400 group-hover:text-primary transition-colors" aria-hidden="true" />
-                        </span>
-                        <span className="block truncate">
-                            {getFlag(locale)} {locales[locale]}
-                        </span>
-                        <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                            <ChevronDown className="w-3 h-3 text-slate-400 group-hover:text-primary transition-transform duration-200" aria-hidden="true" />
-                        </span>
-                    </ListboxButton>
+        <Listbox value={locale} onChange={onChange} as={DropdownSelector} className={className}>
+            <DropdownSelector.Trigger 
+                as={ListboxButton} 
+                showChevron
+                className={cn(
+                    "pl-10 text-[10px] font-bold uppercase tracking-editorial-wide text-primary",
+                    variant === 'full' ? "w-full" : "pr-4"
+                )}
+            >
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <Globe className="w-3.5 h-3.5 text-slate-400 group-hover:text-primary transition-colors" aria-hidden="true" />
+                </span>
+                <span className="flex items-center gap-1">
+                    {getFlag(locale)} <p className="text-[10px]">{variant === 'full' ? locales[locale] : locale.toUpperCase()}</p>
+                </span>
+            </DropdownSelector.Trigger>
 
-                    <Transition
-                        as={Fragment}
-                        enter="transition ease-out duration-100"
-                        enterFrom="opacity-0 translate-y-1"
-                        enterTo="opacity-100 translate-y-0"
-                        leave="transition ease-in duration-75"
-                        leaveFrom="opacity-100 translate-y-0"
-                        leaveTo="opacity-0 translate-y-1"
+            <DropdownSelector.Panel 
+                as={ListboxOptions} 
+                align={align}
+                placement={placement}
+                className={cn(
+                    "max-h-60 overflow-auto py-1 text-[10px] font-bold uppercase tracking-editorial-wide",
+                    variant === 'full' ? "w-full" : "w-48"
+                )}
+            >
+                {Object.entries(locales).map(([code, name]) => (
+                    <ListboxOption
+                        key={code}
+                        className={({ active }) =>
+                            cn(
+                                "relative cursor-pointer select-none py-2.5 pl-10 pr-4 transition-colors",
+                                active ? "bg-primary/5 text-primary" : "text-slate-600"
+                            )
+                        }
+                        value={code}
                     >
-                        <ListboxOptions className="absolute z-50 mt-2 max-h-60 w-full overflow-auto rounded-xl bg-surface-lowest py-1 text-[10px] font-bold uppercase tracking-editorial-wide shadow-editorial border border-surface-low focus:outline-none ring-1 ring-black/5">
-                            {Object.entries(locales).map(([code, name]) => (
-                                <ListboxOption
-                                    key={code}
-                                    className={({ active }) =>
-                                        cn(
-                                            "relative cursor-pointer select-none py-2.5 pl-10 pr-4 transition-colors",
-                                            active ? "bg-primary/5 text-primary" : "text-slate-600"
-                                        )
-                                    }
-                                    value={code}
-                                >
-                                    {({ selected }) => (
-                                        <>
-                                            <span className={cn("block truncate", selected ? "font-black" : "font-bold")}>
-                                                {getFlag(code)} {name}
-                                            </span>
-                                            {selected ? (
-                                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-primary">
-                                                    <Check className="h-3 w-3" aria-hidden="true" />
-                                                </span>
-                                            ) : null}
-                                        </>
-                                    )}
-                                </ListboxOption>
-                            ))}
-                        </ListboxOptions>
-                    </Transition>
-                </div>
-            </Listbox>
-        </div>
+                        {({ selected }) => (
+                            <>
+                                <span className={cn("block truncate", selected ? "font-black" : "font-bold")}>
+                                    {getFlag(code)} {name}
+                                </span>
+                                {selected ? (
+                                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-primary">
+                                        <Check className="h-3 w-3" aria-hidden="true" />
+                                    </span>
+                                ) : null}
+                            </>
+                        )}
+                    </ListboxOption>
+                ))}
+            </DropdownSelector.Panel>
+        </Listbox>
     );
 }

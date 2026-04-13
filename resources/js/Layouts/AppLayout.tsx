@@ -1,8 +1,13 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
-import Sidebar from '@/Components/Navigation/Sidebar';
-import { Search, Bell, HelpCircle } from 'lucide-react';
+import { Search, LogOut } from 'lucide-react';
 import { useTranslation } from '@/Hooks/useTranslation';
+import CreateActionBtn from '@/Components/Navigation/CreateActionBtn';
+import LanguageSelector from '@/Components/Navigation/LanguageSelector';
+import UserMenu from '@/Components/Navigation/UserMenu';
+import { Link, router } from '@inertiajs/react';
+
+import Sidebar from '@/Components/Navigation/Sidebar';
 
 interface AppLayoutProps {
     title?: string;
@@ -34,15 +39,14 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
                     </div>
 
                     {/* Actions Area */}
-                    {/* <div className="flex items-center gap-2">
-                        <button className="p-2 text-slate-400 hover:text-primary hover:bg-surface rounded-full transition-all relative">
-                            <Bell className="w-5 h-5" />
-                            <span className="absolute top-2 right-2 w-2 h-2 bg-expense rounded-full border-2 border-surface-lowest"></span>
-                        </button>
-                        <button className="p-2 text-slate-400 hover:text-primary hover:bg-surface rounded-full transition-all">
-                            <HelpCircle className="w-5 h-5" />
-                        </button>
-                    </div> */}
+                    <div className="hidden lg:flex items-center gap-4">
+                        <LanguageSelector 
+                            variant="minimal" 
+                            onChange={(next) => router.post(`/language/${next}`)} 
+                        />
+
+                        <UserMenu />
+                    </div>
                 </header>
 
                 {/* Page Content Container */}

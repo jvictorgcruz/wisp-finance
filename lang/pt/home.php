@@ -22,6 +22,12 @@ return [
     'sidebar' => [
         'current_ledger' => 'Carteira Atual',
         'loading' => 'Carregando...',
+        'user_profile' => 'Perfil do Usuário',
+        'roles' => [
+            'super_admin' => 'Super Admin',
+            'admin' => 'Administrador',
+            'member' => 'Membro',
+        ],
     ],
     'search_placeholder' => 'Pesquisar...',
     'features_title' => 'Tudo em um só lugar',
