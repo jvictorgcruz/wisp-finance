@@ -5,18 +5,18 @@ import {
     Wallet,
     ArrowLeftRight,
     CreditCard,
-    ChevronDown,
-    LogOut,
-    Menu,
-    X,
-    User,
-    Plus
+    ChevronDown, Menu,
+    X, Shield,
+    Settings,
+    Users
 } from 'lucide-react';
 import Logo from '@/Components/Common/Logo';
 import { useTranslation } from '@/Hooks/useTranslation';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import LanguageSelector from './LanguageSelector';
+import CreateActionBtn from './CreateActionBtn';
+import UserMenu from './UserMenu';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -60,6 +60,17 @@ export default function Sidebar() {
         { name: t('home.nav.cards'), href: '/cards', icon: CreditCard },
     ];
 
+    const adminLinks = [
+        { name: t('home.nav.admin_settings'), href: '/admin/settings', icon: Settings },
+        { name: t('home.nav.admin_feature_flags'), href: '/admin/feature-flags', icon: Shield },
+    ];
+
+    const superAdminLinks = [
+        { name: t('home.nav.admin_users'), href: '/admin/users', icon: Users },
+    ];
+
+    const hasAdminAccess = auth.is_admin || auth.is_super_admin;
+
     return (
         <>
             {/* Mobile Toggle */}
@@ -97,50 +108,68 @@ export default function Sidebar() {
 
                 {/* Navigation */}
                 <nav className="flex-1 px-4 space-y-1 overflow-y-auto mt-2">
-                    {navLinks.map((link) => (
-                        <NavLink 
-                            key={link.name} 
-                            {...link}
-                            active={url === `/${link.href}` || url.startsWith(link.href)}
-                        >
-                            {link.name}
-                        </NavLink>
-                    ))}
+                    <div>
+                        {navLinks.map((link) => (
+                            <NavLink 
+                                key={link.name} 
+                                {...link}
+                                active={url === link.href || url.startsWith(link.href)}
+                            >
+                                {link.name}
+                            </NavLink>
+                        ))}
+                    </div>
                 </nav>
 
-                {/* Footer User Profile & Language Switcher */}
+                {/* CTA Button - Always visible on sidebar as requested */}
                 <div className="p-4 mt-auto space-y-4">
-                    {/* Floating Action Button Placeholder (Editorial-style) */}
-                    <button className="w-full bg-primary text-surface-lowest py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-editorial">
-                        <Plus className="w-4 h-4" />
-                        {t('accounts.page.create_btn')}
-                    </button>
+                    <CreateActionBtn className="w-full" />
+                </div>
 
-                    <div className="p-4 rounded-2xl bg-surface-low border border-surface-low space-y-4">
+                <nav className="px-4 space-y-1 overflow-y-auto mt-2">
+                    {hasAdminAccess && (
+                    <div>
+                        <h3 className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-editorial-wide mb-2">
+                            {t('home.nav.administration')}
+                        </h3>
+                        <div className="space-y-1">
+                            {auth.is_admin && adminLinks.map((link) => (
+                                <NavLink 
+                                    key={link.name}
+                                    {...link}
+                                    active={url.startsWith(link.href)}
+                                >
+                                    {link.name}
+                                </NavLink>
+                            ))}
+                            
+                            {auth.is_super_admin && superAdminLinks.map((link) => (
+                                <NavLink 
+                                    key={link.name}
+                                    {...link}
+                                    active={url.startsWith(link.href)}
+                                >
+                                    {link.name}
+                                </NavLink>
+                            ))}
+                        </div>
+                    </div>
+                    )}
+                </nav>
+                <div className="p-4 mt-auto space-y-4">
+                    {/* Mobile-only Footer (Language & User Menu) */}
+                    <div className="lg:hidden p-4 rounded-2xl bg-surface-low border border-surface-low space-y-4">
                         {/* Language Selector */}
-                        <LanguageSelector onChange={(next) => router.post(`/language/${next}`)} />
+                        <LanguageSelector
+                            placement='top'
+                            onChange={(next) => router.post(`/language/${next}`)} 
+                        />
 
                         <div className="h-px bg-surface-highest/50" />
 
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-surface-lowest rounded-xl flex items-center justify-center border border-surface-low shadow-sm overflow-hidden">
-                                <User className="w-5 h-5 text-primary" />
-                            </div>
-                            <div className="flex flex-col min-w-0">
-                                <span className="text-sm font-bold text-primary truncate leading-tight">{auth.user?.name}</span>
-                                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-editorial-wide">Member</span>
-                            </div>
+                        <div className="flex items-center justify-between">
+                            <UserMenu showLabels={true} placement="top" align="left" />
                         </div>
-
-                        <Link 
-                            href="/logout" 
-                            method="post" 
-                            as="button" 
-                            className="w-full flex items-center gap-2 py-1 px-2 text-xs font-bold text-slate-400 hover:text-expense transition-colors group uppercase tracking-editorial-wide"
-                        >
-                            <LogOut className="w-3 h-3 group-hover:-translate-x-1 transition-transform" />
-                            <span>{t('home.nav.logout')}</span>
-                        </Link>
                     </div>
                 </div>
             </aside>

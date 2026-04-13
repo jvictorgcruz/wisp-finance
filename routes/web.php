@@ -24,8 +24,20 @@ Route::prefix('{locale}')->where(['locale' => 'en|pt'])->group(function () {
 });
 
 Route::middleware('guest')->group(function () {
+    Route::middleware('check_maintenance')->group(function () {
+        Route::prefix('{locale}')->where(['locale' => 'en|pt'])->group(function () {
+            Route::get('register', [RegisteredUserController::class, 'create'])->name('register.locale');
+        });
+
+        Route::get('register', function () {
+            $locale = session('locale', config('app.locale'));
+            return redirect("/{$locale}/register");
+        })->name('register');
+
+        Route::post('register', [RegisteredUserController::class, 'store']);
+    });
+
     Route::prefix('{locale}')->where(['locale' => 'en|pt'])->group(function () {
-        Route::get('register', [RegisteredUserController::class, 'create'])->name('register.locale');
         Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login.locale');
     });
 
@@ -34,12 +46,6 @@ Route::middleware('guest')->group(function () {
         return redirect("/{$locale}/login");
     })->name('login');
 
-    Route::get('register', function () {
-        $locale = session('locale', config('app.locale'));
-        return redirect("/{$locale}/register");
-    })->name('register');
-
-    Route::post('register', [RegisteredUserController::class, 'store']);
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 });
 
