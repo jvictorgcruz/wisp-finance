@@ -88,7 +88,7 @@ export default function Sidebar() {
             )}>
                 <div className="h-20 flex items-center px-6">
                     <Link href="/" className="group">
-                        <Logo imageSize="w-8 h-8" />
+                        <Logo imageSize={6} />
                     </Link>
                 </div>
 
