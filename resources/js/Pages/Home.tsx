@@ -145,7 +145,7 @@ export default function Home() {
             {/* Footer */}
             <footer className="py-20 px-8 lg:px-20 text-center space-y-6">
                 <div className="flex justify-center">
-                    <Logo imageSize="w-6 h-6" textSize="text-lg" />
+                    <Logo imageSize={5} textSize="text-lg" />
                 </div>
                 <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.3em]">
                     Wisp Finance &bull; {new Date().getFullYear()}
