@@ -36,13 +36,15 @@ describe('AppLayout Component', () => {
         expect(screen.getByTestId('child')).toBeDefined();
     });
 
-    it('should display the authenticated user name in the sidebar', () => {
+    it('should display the authenticated user name in the layout', () => {
         render(
             <AppLayout title="Dashboard">
                 <div>Content</div>
             </AppLayout>
         );
 
-        expect(screen.getByText('João Silva')).toBeDefined();
+        const userNames = screen.getAllByText('João Silva');
+        expect(userNames.length).toBeGreaterThan(0);
+        expect(userNames[0]).toBeInTheDocument();
     });
 });

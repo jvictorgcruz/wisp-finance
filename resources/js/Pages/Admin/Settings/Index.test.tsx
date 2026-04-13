@@ -57,7 +57,7 @@ describe('Settings Index Page', () => {
     });
 
     it('renders the page title and settings list', () => {
-        render(<Index settings={settings} />);
+        render(<Index settings={settings} filters={{}} />);
 
         expect(screen.getByText('settings.title')).toBeInTheDocument();
         expect(screen.getByText('settings.maintenance_mode')).toBeInTheDocument();
@@ -66,12 +66,12 @@ describe('Settings Index Page', () => {
     });
 
     it('shows empty state when no settings are provided', () => {
-        render(<Index settings={[]} />);
-        expect(screen.getByText('No settings found')).toBeInTheDocument();
+        render(<Index settings={[]} filters={{}} />);
+        expect(screen.getByText('settings.no_settings_found')).toBeInTheDocument();
     });
 
     it('opens configuration modal when clicking configure button', () => {
-        render(<Index settings={settings} />);
+        render(<Index settings={settings} filters={{}}/>);
 
         const configureButtons = screen.getAllByText('settings.configure');
         fireEvent.click(configureButtons[0]);
@@ -82,7 +82,7 @@ describe('Settings Index Page', () => {
     });
 
     it('calls router.put with correct data when saving changes', () => {
-        render(<Index settings={settings} />);
+        render(<Index settings={settings} filters={{}}/>);
 
         const configureButtons = screen.getAllByText('settings.configure');
         fireEvent.click(configureButtons[0]);
@@ -105,7 +105,7 @@ describe('Settings Index Page', () => {
     });
 
     it('can toggle the status switch in the modal', () => {
-        render(<Index settings={settings} />);
+        render(<Index settings={settings} filters={{}}/>);
 
         const configureButtons = screen.getAllByText('settings.configure');
         fireEvent.click(configureButtons[0]);
@@ -132,7 +132,7 @@ describe('Settings Index Page', () => {
     });
 
     it('closes the modal when clicking cancel', () => {
-        render(<Index settings={settings} />);
+        render(<Index settings={settings} filters={{}}/>);
 
         const configureButtons = screen.getAllByText('settings.configure');
         fireEvent.click(configureButtons[0]);

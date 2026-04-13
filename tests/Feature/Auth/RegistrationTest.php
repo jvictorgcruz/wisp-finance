@@ -78,6 +78,26 @@ test('registration is atomic and rolls back on failure', function () {
     // We expect 0 users before
     expect(User::count())->toBe(0);
 
-    // We can't easily force a DB failure within the transaction without mocking or causing a constraint violation.
-    // Let's assume the transaction works if previous tests pass.
+    // Use Eloquent events to force a failure during Ledger creation
+    Ledger::creating(function () {
+        throw new \RuntimeException('Simulated failure during ledger creation');
+    });
+
+    try {
+        $this->post('/register', [
+            'name' => 'Failed User',
+            'email' => 'failed@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ]);
+    } catch (\RuntimeException $e) {
+        expect($e->getMessage())->toBe('Simulated failure during ledger creation');
+    }
+
+    // Verify rollback: User should not exist because Ledger creation failed inside the transaction
+    expect(User::where('email', 'failed@example.com')->exists())->toBeFalse();
+    expect(User::count())->toBe(0);
+    
+    // Clear the event listener for other tests if needed
+    Ledger::flushEventListeners();
 });

@@ -1,6 +1,5 @@
 import React from 'react';
 import { usePage } from '@inertiajs/react';
-import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
 import { Globe, Check } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -31,9 +30,8 @@ export default function LanguageSelector({ className, onChange, variant = 'full'
     };
 
     return (
-        <Listbox value={locale} onChange={onChange} as={DropdownSelector} className={className}>
+        <DropdownSelector value={locale} onChange={onChange} className={className}>
             <DropdownSelector.Trigger 
-                as={ListboxButton} 
                 showChevron
                 className={cn(
                     "pl-10 text-[10px] font-bold uppercase tracking-editorial-wide text-primary",
@@ -49,7 +47,6 @@ export default function LanguageSelector({ className, onChange, variant = 'full'
             </DropdownSelector.Trigger>
 
             <DropdownSelector.Panel 
-                as={ListboxOptions} 
                 align={align}
                 placement={placement}
                 className={cn(
@@ -58,9 +55,9 @@ export default function LanguageSelector({ className, onChange, variant = 'full'
                 )}
             >
                 {Object.entries(locales).map(([code, name]) => (
-                    <ListboxOption
+                    <DropdownSelector.Option
                         key={code}
-                        className={({ active }) =>
+                        className={({ active }: { active: boolean }) =>
                             cn(
                                 "relative cursor-pointer select-none py-2.5 pl-10 pr-4 transition-colors",
                                 active ? "bg-primary/5 text-primary" : "text-slate-600"
@@ -68,8 +65,8 @@ export default function LanguageSelector({ className, onChange, variant = 'full'
                         }
                         value={code}
                     >
-                        {({ selected }) => (
-                            <>
+                        {({ selected }: { selected: boolean }) => (
+                            <div className="flex items-center">
                                 <span className={cn("block truncate", selected ? "font-black" : "font-bold")}>
                                     {getFlag(code)} {name}
                                 </span>
@@ -78,11 +75,11 @@ export default function LanguageSelector({ className, onChange, variant = 'full'
                                         <Check className="h-3 w-3" aria-hidden="true" />
                                     </span>
                                 ) : null}
-                            </>
+                            </div>
                         )}
-                    </ListboxOption>
+                    </DropdownSelector.Option>
                 ))}
             </DropdownSelector.Panel>
-        </Listbox>
+        </DropdownSelector>
     );
 }
