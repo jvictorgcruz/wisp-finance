@@ -10,7 +10,6 @@ bootstrap/cache/packages.php
 bootstrap/cache/routes-v7.php
 bootstrap/cache/services.php
 /build/
-composer.lock
 .DS_Store
 .env
 .env.backup
@@ -24,7 +23,6 @@ Homestead.yaml
 /node_modules
 node_modules/
 /.nova
-package-lock.json
 .phpactor.json
 .php-cs-fixer.cache
 .phpunit.cache/
