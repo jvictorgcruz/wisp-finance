@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, usePage } from '@inertiajs/react';
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { User, LogOut } from 'lucide-react';
 import { useTranslation } from '@/Hooks/useTranslation';
 import { clsx, type ClassValue } from 'clsx';
@@ -29,8 +28,8 @@ export default function UserMenu({ showLabels = false, placement = 'bottom', ali
     };
 
     return (
-        <Menu as={DropdownSelector} className='w-full'>
-            <DropdownSelector.Trigger as={MenuButton} className='w-full'>
+        <DropdownSelector className='w-full'>
+            <DropdownSelector.Trigger className='w-full'>
                 <div className="w-9 h-9 rounded-lg flex items-center justify-center overflow-hidden group-hover:border-primary/20 transition-colors">
                     <User className="w-5 h-5 text-primary" />
                 </div>
@@ -47,7 +46,7 @@ export default function UserMenu({ showLabels = false, placement = 'bottom', ali
                 </div>
             </DropdownSelector.Trigger>
 
-            <DropdownSelector.Panel as={MenuItems} placement={placement} align={align} className="w-56">
+            <DropdownSelector.Panel placement={placement} align={align} className="w-56">
                 <div className="px-4 py-3 bg-surface-lowest/50">
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-editorial-wide mb-0.5">
                         {t('home.sidebar.user_profile')}
@@ -61,7 +60,7 @@ export default function UserMenu({ showLabels = false, placement = 'bottom', ali
                 </div>
 
                 <div className="py-1">
-                    <MenuItem>
+                    <DropdownSelector.Item>
                         {({ active }) => (
                             <Link
                                 href="/logout"
@@ -76,9 +75,9 @@ export default function UserMenu({ showLabels = false, placement = 'bottom', ali
                                 {t('home.nav.logout')}
                             </Link>
                         )}
-                    </MenuItem>
+                    </DropdownSelector.Item>
                 </div>
             </DropdownSelector.Panel>
-        </Menu>
+        </DropdownSelector>
     );
 }
