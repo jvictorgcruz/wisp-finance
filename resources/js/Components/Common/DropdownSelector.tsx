@@ -1,12 +1,26 @@
-import React, { ElementType, Fragment } from 'react';
+import React, { ElementType, Fragment, createContext, useContext } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from '@headlessui/react';
+import { 
+    Listbox, 
+    ListboxButton, 
+    ListboxOption, 
+    ListboxOptions, 
+    Menu, 
+    MenuButton, 
+    MenuItem, 
+    MenuItems, 
+    Transition 
+} from '@headlessui/react';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
+
+type DropdownMode = 'listbox' | 'menu';
+
+const DropdownContext = createContext<{ mode: DropdownMode }>({ mode: 'menu' });
 
 interface DropdownSelectorProps {
     children: React.ReactNode;
@@ -41,34 +55,52 @@ interface OptionProps {
     [key: string]: any;
 }
 
+interface ItemProps {
+    as?: ElementType;
+    children: React.ReactNode | ((props: { active: boolean; disabled: boolean }) => React.ReactElement);
+    className?: string | ((props: { active: boolean; disabled: boolean }) => string);
+    [key: string]: any;
+}
+
 export default function DropdownSelector({ children, className, value, onChange, as: Component = 'div' }: DropdownSelectorProps) {
-    if (value !== undefined) {
-        return (
-            <Listbox value={value} onChange={onChange}>
-                <div className={cn("relative", className)}>
-                    {children}
-                </div>
-            </Listbox>
-        );
-    }
+    const isListbox = value !== undefined;
+    const mode: DropdownMode = isListbox ? 'listbox' : 'menu';
+
+    const content = (
+        <div className={cn("relative", className)}>
+            {children}
+        </div>
+    );
 
     return (
-        <Component className={cn("relative", className)}>
-            {children}
-        </Component>
+        <DropdownContext.Provider value={{ mode }}>
+            {isListbox ? (
+                <Listbox value={value} onChange={onChange}>
+                    {content}
+                </Listbox>
+            ) : (
+                <Menu as={Component} className={cn("relative", className)}>
+                    {children}
+                </Menu>
+            )}
+        </DropdownContext.Provider>
     );
 }
 
 DropdownSelector.Trigger = function Trigger({
-    as: Component = ListboxButton,
+    as: Component,
     children,
     className,
     showChevron = true,
     chevronClassName,
     ...props
 }: TriggerProps) {
+    const { mode } = useContext(DropdownContext);
+    const DefaultComponent = mode === 'listbox' ? ListboxButton : MenuButton;
+    const ResolvedComponent = Component || DefaultComponent;
+
     return (
-        <Component
+        <ResolvedComponent
             className={cn(
                 "flex items-center justify-between gap-3 p-1.5 rounded-xl transition-all group border border-transparent hover:border-surface-low hover:bg-surface-low shadow-sm hover:shadow-md h-10 focus:outline-none focus:ring-2 focus:ring-primary/5 focus:border-primary/20",
                 className
@@ -86,18 +118,22 @@ DropdownSelector.Trigger = function Trigger({
                     )} 
                 />
             )}
-        </Component>
+        </ResolvedComponent>
     );
 };
 
 DropdownSelector.Panel = function Panel({
-    as: Component = ListboxOptions,
+    as: Component,
     children,
     className,
     placement = 'bottom',
     align = 'right',
     ...props
 }: PanelProps) {
+    const { mode } = useContext(DropdownContext);
+    const DefaultComponent = mode === 'listbox' ? ListboxOptions : MenuItems;
+    const ResolvedComponent = Component || DefaultComponent;
+
     const alignmentClasses = align === 'right' ? "right-0" : "left-0";
     
     const placementClasses = placement === 'bottom'
@@ -114,7 +150,7 @@ DropdownSelector.Panel = function Panel({
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
         >
-            <Component
+            <ResolvedComponent
                 className={cn(
                     "absolute z-50 overflow-hidden divide-y divide-surface-low rounded-xl bg-surface-lowest shadow-editorial border border-surface-low focus:outline-none",
                     alignmentClasses,
@@ -124,7 +160,7 @@ DropdownSelector.Panel = function Panel({
                 {...props}
             >
                 {children}
-            </Component>
+            </ResolvedComponent>
         </Transition>
     );
 };
@@ -146,3 +182,19 @@ DropdownSelector.Option = function Option({
     );
 };
 
+DropdownSelector.Item = function Item({
+    as: Component = Fragment,
+    children,
+    className,
+    ...props
+}: ItemProps) {
+    return (
+        <MenuItem as={Component} {...props}>
+            {(state) => (
+                <div className={typeof className === 'function' ? className(state) : className}>
+                    {typeof children === 'function' ? children(state) : children}
+                </div>
+            )}
+        </MenuItem>
+    );
+};
