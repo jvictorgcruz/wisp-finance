@@ -25,10 +25,7 @@ const FeatureCard = ({ icon: Icon, title, description }: { icon: any, title: str
 
 export default function Home() {
     const { auth } = usePage<any>().props;
-    const { t, locale } = useTranslation();
-
-    // Helper for guest links with locale prefix
-    const localeLink = (path: string) => `/${locale}${path}`;
+    const { t, route } = useTranslation();
 
     return (
         <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-primary/20">
@@ -53,13 +50,13 @@ export default function Home() {
                     ) : (
                         <>
                             <Link 
-                                href={localeLink('/login')} 
+                                href={route('/login')} 
                                 className="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors"
                             >
                                 {t('home.nav.login')}
                             </Link>
                             <Link 
-                                href={localeLink('/register')} 
+                                href={route('/register')} 
                                 className="bg-primary text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-primary/90 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/20"
                             >
                                 {t('home.nav.register')}
@@ -84,7 +81,7 @@ export default function Home() {
 
                         <div className="flex flex-col sm:flex-row gap-4 pt-4 animate-in fade-in slide-in-from-bottom-12 duration-1500 delay-300">
                             <Link 
-                                href={localeLink('/register')} 
+                                href={route('/register')} 
                                 className="h-16 px-10 bg-slate-900 text-white rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-slate-800 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-slate-200 group"
                             >
                                 {t('home.cta')}

@@ -6,7 +6,7 @@ import { Mail, Lock, LogIn } from 'lucide-react';
 import { useTranslation } from '@/Hooks/useTranslation';
 
 export default function Login() {
-    const { t, locale } = useTranslation();
+    const { t, route } = useTranslation();
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
@@ -15,15 +15,10 @@ export default function Login() {
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/login', {
+        post(route('/login'), {
             onFinish: () => reset('password'),
         });
     };
-
-    /**
-     * Helper for guest links with locale prefix
-     */
-    const localeLink = (path: string) => `/${locale}${path}`;
 
     return (
         <AuthLayout 
@@ -49,7 +44,7 @@ export default function Login() {
                     id="password"
                     type="password"
                     name="password"
-                    label={t('auth.password')}
+                    label={t('auth.password_label')}
                     value={data.password}
                     autoComplete="current-password"
                     onChange={(val) => setData('password', val)}
@@ -74,7 +69,7 @@ export default function Login() {
                     </label>
 
                     <Link
-                        href="#"
+                        href={route('/forgot-password')}
                         className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
                     >
                         {t('auth.forgot_password')}
@@ -105,7 +100,7 @@ export default function Login() {
                 <p className="text-center text-sm text-slate-500">
                     {t('auth.dont_have_account')}{' '}
                     <Link
-                        href={localeLink('/register')}
+                        href={route('/register')}
                         className="font-semibold text-primary hover:text-primary/80 transition-colors underline underline-offset-4 decoration-primary/30"
                     >
                         {t('auth.create_now')}

@@ -46,7 +46,7 @@ describe('Register Page', () => {
         
         expect(screen.getByLabelText('auth.full_name')).toBeInTheDocument();
         expect(screen.getByLabelText('auth.email')).toBeInTheDocument();
-        expect(screen.getByLabelText(/^auth.password$/i)).toBeInTheDocument();
+        expect(screen.getByLabelText(/^auth.password_label$/i)).toBeInTheDocument();
         expect(screen.getByLabelText('auth.confirm_password')).toBeInTheDocument();
         expect(screen.getByTestId('submit-button')).toBeInTheDocument();
     });

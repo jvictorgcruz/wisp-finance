@@ -27,18 +27,22 @@ Route::middleware('guest')->group(function () {
     Route::middleware('check_maintenance')->group(function () {
         Route::prefix('{locale}')->where(['locale' => 'en|pt'])->group(function () {
             Route::get('register', [RegisteredUserController::class, 'create'])->name('register.locale');
+            Route::post('register', [RegisteredUserController::class, 'store'])->name('register.store.locale');
         });
 
         Route::get('register', function () {
             $locale = session('locale', config('app.locale'));
             return redirect("/{$locale}/register");
         })->name('register');
-
-        Route::post('register', [RegisteredUserController::class, 'store']);
     });
 
     Route::prefix('{locale}')->where(['locale' => 'en|pt'])->group(function () {
         Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login.locale');
+        Route::post('login', [AuthenticatedSessionController::class, 'store'])->name('login.store.locale');
+        Route::get('forgot-password', [\App\Http\Controllers\Auth\PasswordResetLinkController::class, 'create'])->name('password.request.locale');
+        Route::post('forgot-password', [\App\Http\Controllers\Auth\PasswordResetLinkController::class, 'store'])->name('password.email.locale');
+        Route::get('reset-password/{token}', [\App\Http\Controllers\Auth\NewPasswordController::class, 'create'])->name('password.reset.locale');
+        Route::post('reset-password', [\App\Http\Controllers\Auth\NewPasswordController::class, 'store'])->name('password.store.locale');
     });
 
     Route::get('login', function () {
@@ -46,7 +50,19 @@ Route::middleware('guest')->group(function () {
         return redirect("/{$locale}/login");
     })->name('login');
 
-    Route::post('login', [AuthenticatedSessionController::class, 'store']);
+    Route::get('forgot-password', function () {
+        $locale = session('locale', config('app.locale'));
+        return redirect("/{$locale}/forgot-password");
+    })->name('password.request');
+
+    Route::get('reset-password/{token}', function ($token) {
+        $locale = session('locale', config('app.locale'));
+        return redirect()->route('password.reset.locale', [
+            'locale' => $locale,
+            'token' => $token,
+            ...request()->query()
+        ]);
+    })->name('password.reset');
 });
 
 Route::middleware('check_maintenance')->group(function () {

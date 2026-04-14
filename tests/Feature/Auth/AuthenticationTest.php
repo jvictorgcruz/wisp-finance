@@ -14,9 +14,9 @@ test('login screen can be rendered', function () {
 test('users can authenticate using the login screen', function () {
     $user = User::factory()->create();
 
-    $response = $this->post('/login', [
+    $response = $this->post('/en/login', [
         'email' => $user->email,
-        'password' => 'password',
+        'password' => 'Password123',
     ]);
 
     $this->assertAuthenticated();
@@ -26,7 +26,7 @@ test('users can authenticate using the login screen', function () {
 test('users can not authenticate with invalid password', function () {
     $user = User::factory()->create();
 
-    $this->post('/login', [
+    $this->post('/en/login', [
         'email' => $user->email,
         'password' => 'wrong-password',
     ]);
@@ -45,11 +45,11 @@ test('users can logout', function () {
 
 test('authenticated session sets current_ledger_id', function () {
     // We register first to ensure a ledger is created
-    $this->post('/register', [
+    $this->post('/en/register', [
         'name' => 'John Doe',
         'email' => 'john@example.com',
-        'password' => 'password',
-        'password_confirmation' => 'password',
+        'password' => 'Password123',
+        'password_confirmation' => 'Password123',
     ]);
 
     $user = User::where('email', 'john@example.com')->first();
@@ -58,9 +58,9 @@ test('authenticated session sets current_ledger_id', function () {
     $this->post('/logout');
 
     // Now login
-    $this->post('/login', [
+    $this->post('/en/login', [
         'email' => 'john@example.com',
-        'password' => 'password',
+        'password' => 'Password123',
     ]);
 
     expect(session('current_ledger_id'))->toBe($ledger->id);
