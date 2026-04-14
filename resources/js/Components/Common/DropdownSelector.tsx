@@ -2,7 +2,7 @@ import React, { ElementType, Fragment } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { Transition } from '@headlessui/react';
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from '@headlessui/react';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -11,6 +11,9 @@ function cn(...inputs: ClassValue[]) {
 interface DropdownSelectorProps {
     children: React.ReactNode;
     className?: string;
+    value?: any;
+    onChange?: (value: any) => void;
+    as?: ElementType;
 }
 
 interface TriggerProps {
@@ -31,16 +34,33 @@ interface PanelProps {
     [key: string]: any;
 }
 
-export default function DropdownSelector({ children, className }: DropdownSelectorProps) {
+interface OptionProps {
+    value: any;
+    children: React.ReactNode | ((props: { selected: boolean; active: boolean; disabled: boolean }) => React.ReactElement);
+    className?: string | ((props: { selected: boolean; active: boolean; disabled: boolean }) => string);
+    [key: string]: any;
+}
+
+export default function DropdownSelector({ children, className, value, onChange, as: Component = 'div' }: DropdownSelectorProps) {
+    if (value !== undefined) {
+        return (
+            <Listbox value={value} onChange={onChange}>
+                <div className={cn("relative", className)}>
+                    {children}
+                </div>
+            </Listbox>
+        );
+    }
+
     return (
-        <div className={cn("relative", className)}>
+        <Component className={cn("relative", className)}>
             {children}
-        </div>
+        </Component>
     );
 }
 
 DropdownSelector.Trigger = function Trigger({
-    as: Component = 'button',
+    as: Component = ListboxButton,
     children,
     className,
     showChevron = true,
@@ -71,7 +91,7 @@ DropdownSelector.Trigger = function Trigger({
 };
 
 DropdownSelector.Panel = function Panel({
-    as: Component = 'div',
+    as: Component = ListboxOptions,
     children,
     className,
     placement = 'bottom',
@@ -108,3 +128,21 @@ DropdownSelector.Panel = function Panel({
         </Transition>
     );
 };
+
+DropdownSelector.Option = function Option({
+    value,
+    children,
+    className,
+    ...props
+}: OptionProps) {
+    return (
+        <ListboxOption
+            value={value}
+            className={className}
+            {...props}
+        >
+            {children}
+        </ListboxOption>
+    );
+};
+

@@ -25,15 +25,9 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request, RegisterUserAction $registerUserAction): RedirectResponse
+    public function store(\App\Http\Requests\RegisterUserRequest $request, RegisterUserAction $registerUserAction): RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:\App\Models\User',
-            'password' => 'required|confirmed|min:8',
-        ]);
-
-        $user = $registerUserAction->execute($request->only('name', 'email', 'password'));
+        $user = $registerUserAction->execute($request->validated());
 
         Auth::login($user);
 
