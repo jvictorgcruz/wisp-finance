@@ -4,7 +4,7 @@ return [
     'login' => 'Login',
     'register' => 'Register',
     'email' => 'Email Address',
-    'password' => 'Password',
+    'password_label' => 'Password',
     'remember_me' => 'Remember me',
     'forgot_password' => 'Forgot your password?',
     'name' => 'Name',
@@ -20,4 +20,19 @@ return [
     'register_btn' => 'Sign up',
     'login_now' => 'Login now',
     'back_to_home' => 'Back to Home',
+    'forgot_password_title' => 'Recover password',
+    'forgot_password_subtitle' => 'No problem. Just let us know your email address and we will email you a password reset link.',
+    'forgot_password_head' => 'Forgot Password',
+    'send_reset_link' => 'Email Password Reset Link',
+    'back_to_login' => 'Back to login',
+    'reset_password_title' => 'Reset password',
+    'reset_password_subtitle' => 'Almost there! Choose a new secure password for your account.',
+    'reset_password_head' => 'Reset Password',
+    'new_password' => 'New Password',
+    'reset_password_button' => 'Reset Password',
+
+    // Standard Laravel Auth Keys
+    'failed' => 'These credentials do not match our records.',
+    'password' => 'The provided password is incorrect.',
+    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
 ];

@@ -1,66 +1,52 @@
-import React from 'react';
-import { useForm, Link } from '@inertiajs/react';
+import React, { useEffect } from 'react';
+import { useForm, Head } from '@inertiajs/react';
 import AuthLayout from '@/Components/Auth/AuthLayout';
 import TextField from '@/Components/Common/TextField';
-import { User, Mail, Lock, UserPlus } from 'lucide-react';
+import { Mail, Lock, CheckCircle } from 'lucide-react';
 import { useTranslation } from '@/Hooks/useTranslation';
 
-export default function Register() {
+interface Props {
+    token: string;
+    email: string;
+}
+
+export default function ResetPassword({ token, email }: Props) {
     const { t, route } = useTranslation();
     const { data, setData, post, processing, errors, reset } = useForm({
-        name: '',
-        email: '',
+        token: token,
+        email: email,
         password: '',
         password_confirmation: '',
     });
 
+    useEffect(() => {
+        return () => {
+            reset('password', 'password_confirmation');
+        };
+    }, []);
+
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('/register'), {
-            onFinish: () => reset('password', 'password_confirmation'),
-        });
+        post(route('/reset-password'));
     };
 
     return (
         <AuthLayout 
-            title={t('auth.start_now')} 
-            subtitle={t('auth.register_subtitle')}
+            title={t('auth.reset_password_title')} 
+            subtitle={t('auth.reset_password_subtitle')}
         >
-            <form onSubmit={submit} className="space-y-6">
-                <TextField
-                    id="name"
-                    name="name"
-                    label={t('auth.full_name')}
-                    value={data.name}
-                    autoComplete="name"
-                    onChange={(val) => setData('name', val)}
-                    error={errors.name}
-                    icon={<User className="w-4 h-4" />}
-                    placeholder="John Doe"
-                    required
-                />
+            <Head title={t('auth.reset_password_head')} />
 
-                <TextField
-                    id="email"
-                    type="email"
-                    name="email"
-                    label={t('auth.email')}
-                    value={data.email}
-                    autoComplete="username"
-                    onChange={(val) => setData('email', val)}
-                    error={errors.email}
-                    icon={<Mail className="w-4 h-4" />}
-                    placeholder="your@email.com"
-                    required
-                />
+            <form onSubmit={submit} className="space-y-6">
 
                 <TextField
                     id="password"
                     type="password"
                     name="password"
-                    label={t('auth.password_label')}
+                    label={t('auth.new_password')}
                     value={data.password}
                     autoComplete="new-password"
+                    autoFocus
                     onChange={(val) => setData('password', val)}
                     error={errors.password}
                     icon={<Lock className="w-4 h-4" />}
@@ -84,7 +70,6 @@ export default function Register() {
 
                 <button
                     type="submit"
-                    data-testid="submit-button"
                     disabled={processing}
                     className={`
                         w-full h-11 bg-primary text-white rounded-lg font-semibold text-sm
@@ -97,21 +82,11 @@ export default function Register() {
                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     ) : (
                         <>
-                            <UserPlus className="w-4 h-4" />
-                            {t('auth.register_btn')}
+                            <CheckCircle className="w-4 h-4" />
+                            {t('auth.reset_password_button')}
                         </>
                     )}
                 </button>
-
-                <p className="text-center text-sm text-slate-500">
-                    {t('auth.already_registered')}{' '}
-                    <Link
-                        href={route('/login')}
-                        className="font-semibold text-primary hover:text-primary/80 transition-colors underline underline-offset-4 decoration-primary/30"
-                    >
-                        {t('auth.login_now')}
-                    </Link>
-                </p>
             </form>
         </AuthLayout>
     );

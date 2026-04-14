@@ -24,11 +24,9 @@ class UserRoleController extends Controller
     /**
      * Update the specified user's role.
      */
-    public function update(Request $request, User $user, UpdateUserRoleAction $updateUserRoleAction)
+    public function update(\App\Http\Requests\Admin\UpdateUserRoleRequest $request, User $user, UpdateUserRoleAction $updateUserRoleAction)
     {
-        $validated = $request->validate([
-            'role' => ['required', Rule::enum(UserRole::class)],
-        ]);
+        $validated = $request->validated();
 
         $updateUserRoleAction->execute($user, $validated['role']);
 

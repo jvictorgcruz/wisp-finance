@@ -1,4 +1,3 @@
-import logoImg from '@images/logo.png';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -22,7 +21,7 @@ export default function Logo({
     return (
         <div className={cn("flex items-center gap-2 group cursor-pointer", className)}>
             <img 
-                src={logoImg} 
+                src="/logo.png" 
                 alt="Wisp Logo" 
                 className={cn("object-contain group-hover:scale-110 transition-transform", `w-${imageSize} h-${imageSize}`)} 
             />

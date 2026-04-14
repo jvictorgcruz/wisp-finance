@@ -46,7 +46,7 @@ describe('Login Page', () => {
         
         // We use translation keys as placeholders or labels now
         expect(screen.getByLabelText(/auth.email/i)).toBeInTheDocument();
-        expect(screen.getByLabelText(/auth.password/i)).toBeInTheDocument();
+        expect(screen.getByLabelText(/auth.password_label/i)).toBeInTheDocument();
         expect(screen.getByTestId('submit-button')).toBeInTheDocument();
     });
 

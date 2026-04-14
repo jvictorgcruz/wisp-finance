@@ -2,19 +2,16 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-use Illuminate\Validation\Rules;
-
-class RegisterUserRequest extends FormRequest
+class FeatureFlagIndexRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->check() && auth()->user()->isAdmin();
     }
 
     /**
@@ -25,9 +22,8 @@ class RegisterUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:\App\Models\User',
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'ledger_id' => 'nullable|integer|exists:ledgers,id',
+            'user_email' => 'nullable|email|exists:users,email',
         ];
     }
 }

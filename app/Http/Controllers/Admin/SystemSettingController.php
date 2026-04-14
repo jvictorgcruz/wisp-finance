@@ -21,13 +21,9 @@ class SystemSettingController extends Controller
         ]);
     }
 
-    public function update(Request $request, UpdateSystemSettingAction $action)
+    public function update(\App\Http\Requests\Admin\UpdateSystemSettingRequest $request, UpdateSystemSettingAction $action)
     {
-        $validated = $request->validate([
-            'key' => 'required|string|exists:system_settings,key',
-            'is_active' => 'required|boolean',
-            'value' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         $action->execute($validated['key'], [
             'is_active' => $validated['is_active'],

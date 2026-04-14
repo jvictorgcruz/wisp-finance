@@ -29,7 +29,7 @@ it('blocks registration when maintenance mode is active', function () {
     $response = $this->get('/register');
     $response->assertStatus(503);
 
-    $response = $this->post('/register', []);
+    $response = $this->post('/en/register', []);
     $response->assertStatus(503);
 });
 

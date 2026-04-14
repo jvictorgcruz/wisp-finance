@@ -28,7 +28,9 @@ export default function TextField({
             
             <div className="relative group">
                 {icon && (
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">
+                    <div className={`absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors
+                        ${props.readOnly || props.disabled ? 'text-slate-400!' : ''}
+                    `}>
                         {icon}
                     </div>
                 )}
@@ -43,6 +45,7 @@ export default function TextField({
                         focus:border-primary focus:ring-4 focus:ring-primary/5
                         ${icon ? 'pl-10' : ''}
                         ${error ? 'border-danger focus:border-danger focus:ring-danger/5' : ''}
+                        ${props.readOnly || props.disabled ? 'bg-slate-100! text-slate-400 cursor-not-allowed border-slate-100' : ''}
                     `}
                 />
             </div>

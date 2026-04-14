@@ -8,11 +8,11 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 test('new users can register', function () {
-    $response = $this->post('/register', [
+    $response = $this->post('/en/register', [
         'name' => 'Test User',
         'email' => 'test@example.com',
-        'password' => 'password',
-        'password_confirmation' => 'password',
+        'password' => 'Password123',
+        'password_confirmation' => 'Password123',
     ]);
 
     $response->assertRedirect('/');
@@ -20,11 +20,11 @@ test('new users can register', function () {
 });
 
 test('registration creates a ledger with localized name', function () {
-    $this->post('/register', [
+    $this->post('/en/register', [
         'name' => 'John Doe',
         'email' => 'john@example.com',
-        'password' => 'password',
-        'password_confirmation' => 'password',
+        'password' => 'Password123',
+        'password_confirmation' => 'Password123',
     ]);
 
     $user = User::where('email', 'john@example.com')->first();
@@ -37,11 +37,11 @@ test('registration creates a ledger with localized name', function () {
 });
 
 test('registration seeds default hierarchical accounts with translations', function () {
-    $this->post('/register', [
+    $this->post('/en/register', [
         'name' => 'Alice',
         'email' => 'alice@example.com',
-        'password' => 'password',
-        'password_confirmation' => 'password',
+        'password' => 'Password123',
+        'password_confirmation' => 'Password123',
     ]);
 
     $user = User::where('email', 'alice@example.com')->first();
@@ -84,11 +84,11 @@ test('registration is atomic and rolls back on failure', function () {
     });
 
     try {
-        $this->post('/register', [
+        $this->post('/en/register', [
             'name' => 'Failed User',
             'email' => 'failed@example.com',
-            'password' => 'password',
-            'password_confirmation' => 'password',
+            'password' => 'Password123',
+            'password_confirmation' => 'Password123',
         ]);
     } catch (\RuntimeException $e) {
         expect($e->getMessage())->toBe('Simulated failure during ledger creation');

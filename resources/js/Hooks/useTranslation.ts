@@ -33,5 +33,10 @@ export function useTranslation() {
         return translation;
     };
 
-    return { t, locale, locales: props.locales || {} };
+    /**
+     * Helper to generate localized URLs.
+     */
+    const route = (path: string) => `/${locale}${path.startsWith('/') ? '' : '/'}${path}`;
+
+    return { t, route, locale, locales: props.locales || {} };
 }
