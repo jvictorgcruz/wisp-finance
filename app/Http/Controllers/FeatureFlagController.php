@@ -9,12 +9,9 @@ use Inertia\Inertia;
 
 class FeatureFlagController extends Controller
 {
-    public function index(Request $request)
+    public function index(\App\Http\Requests\FeatureFlagIndexRequest $request)
     {
-        $validated = $request->validate([
-            'ledger_id' => 'nullable|integer|exists:ledgers,id',
-            'user_email' => 'nullable|email|exists:users,email',
-        ]);
+        $validated = $request->validated();
 
         $context = \App\Support\FeatureFlags\DTO\FeatureContext::buildFromGlobalState();
 
