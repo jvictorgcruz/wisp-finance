@@ -26,7 +26,7 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
             {/* Main Content Area */}
             <main className="flex-1 lg:ml-64 flex flex-col min-h-screen">
                 {/* Top Header / Breadcrumb Bar (Editorial Style) */}
-                <header className="h-16 flex items-center justify-between px-8 bg-surface-lowest/80 backdrop-blur-md border-b border-surface-low sticky top-0 z-10 shadow-editorial">
+                <header className="h-16 flex items-center justify-between px-8 bg-surface-lowest backdrop-blur-md border-b border-surface-low sticky top-0 z-10 shadow-editorial">
                     <div className="flex items-center gap-4 flex-1">
                         <div className="relative w-full max-w-md group">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 group-focus-within:text-primary transition-colors" />
@@ -40,7 +40,7 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
 
                     {/* Actions Area */}
                     <div className="hidden lg:flex items-center gap-4">
-                        <LanguageSelector 
+                        <LanguageSelector
                             variant="minimal" 
                             onChange={(next) => router.post(`/language/${next}`)} 
                         />

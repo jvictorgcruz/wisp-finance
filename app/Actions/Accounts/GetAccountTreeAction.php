@@ -24,16 +24,22 @@ class GetAccountTreeAction
             ->whereIn('type', [AccountType::ASSET, AccountType::LIABILITY])
             ->orderBy('type', 'ASC')
             ->get()
-            ->map(function ($account) {
+            ->map(function (Account $account) {
+                $parentKey = str_replace(['accounts.', 'categories.'], '', $account->name);
+
                 // Map children with their balances and runtime translation
-                $mappedChildren = $account->children->map(function ($child) {
+                $mappedChildren = $account->children->map(function (Account $child) use ($parentKey) {
                     return [
                         'id' => $child->id,
-                        'name' => $child->is_system ? __($child->name) : $child->name,
+                        'name' => $child->name,
                         'type' => $child->type,
                         'status' => $child->status,
+                        'parent_id' => $child->parent_id,
+                        'is_system' => $child->is_system,
                         'ui_metadata' => $child->ui_metadata,
                         'balance' => $this->balanceAction->execute($child),
+                        'has_history' => $child->journalEntries()->exists(),
+                        'parent_Key' => $parentKey,
                     ];
                 });
 
@@ -42,11 +48,15 @@ class GetAccountTreeAction
 
                 return [
                     'id' => $account->id,
-                    'name' => $account->is_system ? __($account->name) : $account->name,
+                    'name' => $account->name,
                     'type' => $account->type,
                     'status' => $account->status,
+                    'parent_id' => $account->parent_id,
+                    'is_system' => $account->is_system,
                     'ui_metadata' => $account->ui_metadata,
                     'balance' => $aggregatedBalance,
+                    'has_history' => $account->journalEntries()->exists(),
+                    'parent_Key' => $parentKey,
                     'children' => $mappedChildren,
                 ];
             });
@@ -57,6 +67,9 @@ class GetAccountTreeAction
                 'assets' => $accounts->where('type', AccountType::ASSET)->sum('balance'),
                 'liabilities' => $accounts->where('type', AccountType::LIABILITY)->sum('balance'),
             ],
+            'root_categories' => \App\Support\DefaultAccountDefinitions::getUiRootCategories(),
+            'available_colors' => \App\Support\DefaultAccountDefinitions::getAvailableColors(),
+            'available_icons' => \App\Support\DefaultAccountDefinitions::getAvailableIcons(),
         ];
     }
 }

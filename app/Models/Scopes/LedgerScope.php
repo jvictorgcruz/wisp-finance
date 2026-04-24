@@ -14,28 +14,10 @@ class LedgerScope implements Scope
      */
     public function apply(Builder $builder, Model $model): void
     {
-        $ledgerId = $this->getLedgerId();
+        $ledgerId = \App\Support\LedgerContext::currentId();
 
         if ($ledgerId) {
             $builder->where($model->getTable() . '.ledger_id', $ledgerId);
         }
-    }
-
-    /**
-     * Resolve the current ledger ID.
-     */
-    protected function getLedgerId(): ?int
-    {
-        // Prioritize session if available
-        if (request()->hasSession() && session()->has('current_ledger_id')) {
-            return (int) session('current_ledger_id');
-        }
-
-        // Fallback to authenticated user's first ledger
-        if (Auth::check()) {
-            return Auth::user()->currentLedger()?->id;
-        }
-
-        return null;
     }
 }

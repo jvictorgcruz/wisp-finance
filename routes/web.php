@@ -72,8 +72,6 @@ Route::middleware('check_maintenance')->group(function () {
 
         Route::resource('accounts', \App\Http\Controllers\AccountController::class)->only(['index', 'store', 'update', 'destroy']);
 
-
-
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
         
         Route::post('language/{locale}', [\App\Http\Controllers\LanguageController::class, 'update'])->name('language.update');

@@ -35,16 +35,14 @@ class AccountBalanceSeeder extends Seeder
         }
 
         DB::transaction(function () use ($ledger, $openingBalanceRoot, $bankRoot) {
-            // 3. Create Child Asset Accounts (User-specific accounts)
-            $checkingAccount = Account::firstOrCreate([
-                'ledger_id' => $ledger->id,
-                'parent_id' => $bankRoot->id,
-                'name' => 'Main Checking Account',
-                'type' => AccountType::ASSET,
-                'is_system' => false,
-            ], [
-                'status' => AccountStatus::ACTIVE,
-            ]);
+            $checkingAccount = Account::where('ledger_id', $ledger->id)
+                ->where('parent_id', $bankRoot->id)
+                ->where('name', __('accounts.checking_account'))
+                ->first();
+
+            if (!$checkingAccount) {
+                return;
+            }
 
             // 4. Create Journal Entries (Balanced: Equity Root Credit <-> Asset Child Debit)
             

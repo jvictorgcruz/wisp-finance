@@ -15,6 +15,12 @@ class AccountRequest extends FormRequest
      */
     public function authorize(): bool
     {
+        // Root accounts (system categories) cannot be edited
+        if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
+            $account = $this->route('account');
+            return $account && $account->parent_id !== null;
+        }
+
         return true;
     }
 
@@ -25,7 +31,7 @@ class AccountRequest extends FormRequest
      */
     public function rules(): array
     {
-        $ledgerId = session('current_ledger_id');
+        $ledgerId = \App\Support\LedgerContext::currentId();
 
         return [
             'name' => ['required', 'string', 'min:2', 'max:255'],
@@ -34,6 +40,19 @@ class AccountRequest extends FormRequest
                 'nullable',
                 Rule::exists('accounts', 'id')->where(fn ($query) => $query->where('ledger_id', $ledgerId)),
                 fn ($attribute, $value, $fail) => $this->validateHierarchy($value, $fail),
+            ],
+            'ui_metadata' => ['required', 'array'],
+            'ui_metadata.icon' => [
+                'required_unless:type,asset,liability', 
+                'nullable', 
+                'string',
+                Rule::in(\App\Support\DefaultAccountDefinitions::getAvailableIcons())
+            ],
+            'ui_metadata.color' => [
+                'required', 
+                'string', 
+                'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/',
+                Rule::in(\App\Support\DefaultAccountDefinitions::getAvailableColors())
             ],
         ];
     }

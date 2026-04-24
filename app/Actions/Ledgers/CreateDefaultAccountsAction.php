@@ -27,12 +27,14 @@ class CreateDefaultAccountsAction
      */
     protected function createAccountRecursive(Ledger $ledger, array $definition, ?int $parentId = null): void
     {
+        $name = $parentId !== null ? __($definition['name']) : $definition['name'];
+
         $lookupData = [
             'ledger_id' => $ledger->id,
-            'name' => $definition['name'],
+            'name' => $name,
             'parent_id' => $parentId,
             'type' => $definition['type'],
-            'is_system' => true,
+            'is_system' => $parentId === null,
         ];
 
         $extraData = [

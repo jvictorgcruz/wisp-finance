@@ -1,12 +1,20 @@
 <?php
+/*
+|--------------------------------------------------------------------------
+| Tipos de Conta e Rótulos
+|--------------------------------------------------------------------------
+| Usados para categorização de contas financeiras.
+*/
 
 return [
     'opening_balance' => 'Saldo Inicial',
     'cash' => 'Dinheiro',
     'bank' => 'Banco',
     'credit_card' => 'Cartão de Crédito',
-    'loans' => 'Empréstimos',
+    'debts' => 'Dívidas',
     'investments' => 'Investimentos',
+    'checking_account' => 'Conta Corrente',
+    'wallet' => 'Carteira',
     'savings' => 'Poupança',
     'fixed_income' => 'Renda Fixa',
     'variable_income' => 'Renda Variável',
@@ -23,6 +31,20 @@ return [
     'personal' => 'Pessoal',
     'services' => 'Serviços',
     'other_expenses' => 'Outras Despesas',
+    'type' => [
+        'asset' => 'Ativo',
+        'liability' => 'Passivo',
+        'revenue' => 'Receita',
+        'expense' => 'Despesa',
+        'equity' => 'Patrimônio Líquido',
+    ],
+    'cards' => [
+        'cash' => 'Dinheiro',
+        'bank' => 'Banco',
+        'investments' => 'Investimentos',
+        'credit_card' => 'Cartão de Crédito',
+        'debts' => 'Dívidas',
+    ],
     'default_ledger_name' => 'Carteira de :name',
     'page' => [
         'title' => 'Contas',
@@ -32,8 +54,45 @@ return [
         'total_liabilities' => 'Passivos Totais',
         'liabilities_desc' => 'Suas obrigações totais e limites de crédito em uso.',
         'empty_title' => 'Nenhuma conta encontrada',
-        'empty_desc' => 'Comece criando sua primeira conta real ou use as contas de sistema geradas no setup.',
-        'tree_header_name' => 'Nome da Conta',
+        'empty_desc' => 'Comece criando sua primeira conta para gerenciar suas finanças.',
+        'tree_header_name' => 'Conta / Categoria',
         'tree_header_balance' => 'Saldo',
+        'children_count' => 'contas',
+        'children_count_singular' => 'conta',
+        'total_balance' => 'Saldo total',
+    ],
+    'modal' => [
+        'title_create' => 'Criar Conta',
+        'title_edit' => 'Editar Conta',
+        'title_subaccount' => 'Adicionar Subconta em :parent',
+        'name_label' => 'Nome da Conta',
+        'name_placeholder' => 'ex: Banco Principal, Poupança, Cartão de Crédito',
+        'name_placeholders' => [
+            'bank' => 'Ex: Nubank, Banco do Brasil, Itaú',
+            'cash' => 'Ex: Dinheiro em Espécie, Cofre',
+            'credit_card' => 'Ex: Meu Cartão Visa, Mastercard Nubank',
+            'investments' => 'Ex: XP Investimentos, Corretora, Ações',
+            'debts' => 'Ex: Empréstimo, Crediário',
+        ],
+        'preview_name_placeholder' => 'Nome da Conta',
+        'type_label' => 'Tipo de Conta',
+        'icon_label' => 'Ícone',
+        'color_label' => 'Cor do Design',
+        'submit_create' => 'Criar Conta',
+        'submit_edit' => 'Salvar Alterações',
+        'cancel' => 'Cancelar',
+    ],
+    'actions' => [
+        'edit' => 'Editar',
+        'delete' => 'Excluir',
+        'inactivate' => 'Inativar',
+    ],
+    'messages' => [
+        'confirm_delete' => 'Tem certeza que deseja excluir esta conta? Esta ação é permanente.',
+        'confirm_inactivate' => 'Esta conta possui histórico e será inativada ao invés de excluída. Deseja continuar?',
+        'inactivate_success' => 'Conta inativada com sucesso.',
+        'delete_success' => 'Conta excluída com sucesso.',
+        'inactivate_tooltip' => 'Contas com transações não podem ser excluídas, somente inativadas.',
+        'cannot_inactivate' => 'Não é possível inativar conta com saldo maior que 0',
     ],
 ];

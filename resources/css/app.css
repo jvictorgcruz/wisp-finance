@@ -13,6 +13,17 @@
 
     /* Brand Editorial */
     --color-primary: #24389c;
+    --color-primary-50: #eef1ff;
+    --color-primary-100: #e0e6fe;
+    --color-primary-200: #c6d0fd;
+    --color-primary-300: #9eb3fa;
+    --color-primary-400: #708df4;
+    --color-primary-500: #4966ec;
+    --color-primary-600: #3549df;
+    --color-primary-700: #2b38cb;
+    --color-primary-800: #24389c;
+    --color-primary-900: #2932a4;
+    --color-primary-950: #1b1e60;
     --color-income: #006d37;
     --color-expense: #8b0203;
     --color-warning: #f59e0b;
