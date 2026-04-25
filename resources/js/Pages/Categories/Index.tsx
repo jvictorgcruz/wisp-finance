@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { useTranslation } from '@/Hooks/useTranslation';
 import { Plus } from 'lucide-react';
 import CategoryTree from '@/Components/Categories/CategoryTree';
 import { Category } from '@/Components/Categories/CategoryRow';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import CategoryModal from '@/Components/Categories/CategoryModal';
+import { useEffect } from 'react';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -20,9 +22,57 @@ interface CategoryIndexProps {
 
 export default function Index({ category_tree, available_icons, available_colors }: CategoryIndexProps) {
     const { t } = useTranslation();
+    const { props } = usePage();
     const [activeTab, setActiveTab] = useState<'expense' | 'revenue'>('expense');
+    
+    // Modal State
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
+    const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+    const [selectedParent, setSelectedParent] = useState<Category | null>(null);
+
+    // Auto-open Add Sub after creation
+    useEffect(() => {
+        const flash = props.flash as any;
+        if (flash?.new_category_id) {
+            const newCat = category_tree.find(c => c.id === flash.new_category_id);
+            if (newCat) {
+                handleAddSub(newCat);
+            }
+        }
+    }, [props.flash, category_tree]);
 
     const filteredTree = category_tree.filter(cat => cat.type === activeTab);
+
+    const handleCreate = () => {
+        setSelectedCategory(null);
+        setSelectedParent(null);
+        setModalMode('create');
+        setModalOpen(true);
+    };
+
+    const handleEdit = (category: Category) => {
+        setSelectedCategory(category);
+        setSelectedParent(null);
+        setModalMode('edit');
+        setModalOpen(true);
+    };
+
+    const handleAddSub = (category: Category) => {
+        setSelectedCategory(null);
+        setSelectedParent(category);
+        setModalMode('create');
+        setModalOpen(true);
+    };
+
+    const handleDelete = (category: Category) => {
+        if (!confirm(t('categories.actions.confirm_delete'))) return;
+        
+        // @ts-ignore
+        import('@inertiajs/react').then(({ router }) => {
+            router.delete(`/categories/${category.id}`);
+        });
+    };
 
     return (
         <AppLayout title={t('categories.page.title')}>
@@ -38,7 +88,7 @@ export default function Index({ category_tree, available_icons, available_colors
                     </p>
                 </div>
                 <button 
-                    onClick={() => console.log('Open Create Modal')} // Handled in Task 034
+                    onClick={handleCreate}
                     className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 cursor-pointer w-fit"
                 >
                     <Plus className="w-4 h-4" />
@@ -77,11 +127,23 @@ export default function Index({ category_tree, available_icons, available_colors
                 <div className="max-w-4xl">
                     <CategoryTree 
                         categories={filteredTree}
-                        onEdit={(cat) => console.log('Edit', cat)}
-                        onDelete={(cat) => console.log('Delete', cat)}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                        onAddSub={handleAddSub}
                     />
                 </div>
             </div>
+
+            <CategoryModal
+                show={modalOpen}
+                onClose={() => setModalOpen(false)}
+                mode={modalMode}
+                category={selectedCategory}
+                parentCategory={selectedParent}
+                availableColors={available_colors}
+                availableIcons={available_icons}
+                initialType={activeTab}
+            />
         </AppLayout>
     );
 }

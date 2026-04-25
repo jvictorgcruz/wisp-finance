@@ -34,9 +34,12 @@ class CategoryController extends Controller
         $data = $request->validated();
         $data['ledger_id'] = LedgerContext::currentId();
 
-        $action->execute($data);
+        $category = $action->execute($data);
 
-        return redirect()->back()->with('success', __('Category created successfully.'));
+        return redirect()->back()->with([
+            'success' => __('Category created successfully.'),
+            'new_category_id' => $category->id,
+        ]);
     }
 
     /**

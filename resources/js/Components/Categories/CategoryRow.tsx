@@ -1,5 +1,5 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Transition } from '@headlessui/react';
-import { ChevronRight, Edit2, MoreVertical, Trash2 } from 'lucide-react';
+import { ChevronRight, Edit2, MoreVertical, Trash2, PlusCircle } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import LucideIcon from '@/Components/Common/LucideIcon';
@@ -28,6 +28,7 @@ interface CategoryRowProps {
     isChild?: boolean;
     onEdit?: (category: Category) => void;
     onDelete?: (category: Category) => void;
+    onAddSub?: (category: Category) => void;
 }
 
 const getTypeIcon = (type: string) => {
@@ -42,7 +43,8 @@ export default function CategoryRow({
     category, 
     isChild = false,
     onEdit,
-    onDelete
+    onDelete,
+    onAddSub
 }: CategoryRowProps) {
     const { t } = useTranslation();
     const hasChildren = category.children && category.children.length > 0;
@@ -113,7 +115,20 @@ export default function CategoryRow({
                             >
                                 <MoreVertical className="w-4 h-4 text-slate-400 group-hover:text-slate-900 transition-colors" />
                             </DropdownSelector.Trigger>
-                            <DropdownSelector.Panel align="right" placement='top' className="w-48 p-1">
+                            <DropdownSelector.Panel align="right" placement='top' className="w-56 p-1">
+                                {isRoot && (
+                                    <DropdownSelector.Item 
+                                        onClick={(e: any) => {
+                                            e.stopPropagation();
+                                            onAddSub?.(category);
+                                        }}
+                                        className="flex items-center gap-2 p-2 text-xs font-bold text-slate-600 hover:bg-primary/5 hover:text-primary rounded-lg cursor-pointer transition-colors"
+                                    >
+                                        <PlusCircle className="w-3.5 h-3.5" />
+                                        {t('categories.actions.add_subcategory')}
+                                    </DropdownSelector.Item>
+                                )}
+
                                 <DropdownSelector.Item 
                                     onClick={(e: any) => {
                                         e.stopPropagation();
@@ -178,6 +193,7 @@ export default function CategoryRow({
                                     isChild 
                                     onEdit={onEdit}
                                     onDelete={onDelete}
+                                    onAddSub={onAddSub}
                                 />
                             ))}
                         </DisclosurePanel>

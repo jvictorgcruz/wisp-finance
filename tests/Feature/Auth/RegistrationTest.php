@@ -55,11 +55,11 @@ test('registration seeds default hierarchical accounts with translations', funct
 
     $topLevelNames = $topLevelAccounts->pluck('name');
     expect($topLevelNames)->toContain('accounts.cash');
-    expect($topLevelNames)->toContain('accounts.salary');
-    expect($topLevelNames)->toContain('categories.housing');
+    expect($topLevelNames)->toContain(__('accounts.salary'));
+    expect($topLevelNames)->toContain(__('categories.housing'));
 
     // Check for nested accounts
-    $housingCategoryName = 'categories.housing';
+    $housingCategoryName = __('categories.housing');
     $housing = Account::withoutGlobalScopes()
         ->where('ledger_id', $ledger->id)
         ->where('name', $housingCategoryName)

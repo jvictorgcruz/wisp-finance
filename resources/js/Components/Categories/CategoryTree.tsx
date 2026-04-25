@@ -7,9 +7,10 @@ interface CategoryTreeProps {
     categories: Category[];
     onEdit?: (category: Category) => void;
     onDelete?: (category: Category) => void;
+    onAddSub?: (category: Category) => void;
 }
 
-export default function CategoryTree({ categories, onEdit, onDelete }: CategoryTreeProps) {
+export default function CategoryTree({ categories, onEdit, onDelete, onAddSub }: CategoryTreeProps) {
     const { t } = useTranslation();
 
     if (categories.length === 0) {
@@ -35,6 +36,7 @@ export default function CategoryTree({ categories, onEdit, onDelete }: CategoryT
                         category={category} 
                         onEdit={onEdit}
                         onDelete={onDelete}
+                        onAddSub={onAddSub}
                     />
                 ))}
             </div>

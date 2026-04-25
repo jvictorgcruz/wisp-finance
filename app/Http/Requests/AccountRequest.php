@@ -45,7 +45,18 @@ class AccountRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'min:2', 'max:255'],
-            'type' => ['required', new Enum(AccountType::class)],
+            'type' => [
+                'required', 
+                new Enum(AccountType::class),
+                function ($attribute, $value, $fail) {
+                    if (($this->isMethod('PUT') || $this->isMethod('PATCH')) && $this->route('account') || $this->route('category')) {
+                        $account = $this->route('account') ?: $this->route('category');
+                        if ($account && $account->type->value !== $value) {
+                            $fail(__('The account type cannot be changed after creation.'));
+                        }
+                    }
+                }
+            ],
             'parent_id' => [
                 'required_if:type,asset,liability',
                 'nullable',
@@ -54,9 +65,9 @@ class AccountRequest extends FormRequest
             ],
             'ui_metadata' => ['required', 'array'],
             'ui_metadata.icon' => [
-                'required_unless:type,asset,liability', 
                 'nullable', 
                 'string',
+                Rule::requiredIf(fn() => $this->input('parent_id') === null && !in_array($this->type, [AccountType::ASSET, AccountType::LIABILITY])),
                 Rule::in(\App\Support\DefaultAccountDefinitions::getAvailableIcons())
             ],
             'ui_metadata.color' => [
@@ -95,7 +106,10 @@ class AccountRequest extends FormRequest
 
         // Rule 2: Structural Lock (Parents cannot become children)
         if ($this->isMethod('PUT') && $this->isAccountAParent()) {
-            $fail(__('This account has children and cannot be moved under another parent.'));
+            $account = $this->route('account') ?: $this->route('category');
+            if ($account->parent_id != $parentId) {
+                $fail(__('This account has children and cannot be moved under another parent.'));
+            }
         }
     }
 
