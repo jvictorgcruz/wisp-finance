@@ -4,19 +4,18 @@ import { toast, Toaster } from 'sonner';
 
 export default function FlashNotifications() {
     const { props } = usePage();
-    const flash = props.flash as { success?: string; error?: string; warning?: string };
+    const { flash } = props as any || {};
 
     useEffect(() => {
+        if (!flash) return;
+
         if (flash.success) {
-            console.log(flash.success);
             toast.success(flash.success);
         }
         if (flash.error) {
-            console.error(flash.error);
             toast.error(flash.error);
         }
         if (flash.warning) {
-            console.warn(flash.warning);
             toast.warning(flash.warning);
         }
     }, [flash]);

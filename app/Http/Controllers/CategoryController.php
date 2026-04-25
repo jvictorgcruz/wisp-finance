@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Accounts\UpsertAccountAction;
+use App\Actions\Categories\DeleteCategoryAction;
 use App\Actions\Categories\GetCategoryTreeAction;
 use App\Http\Requests\AccountRequest;
 use App\Models\Account;
@@ -59,18 +60,13 @@ class CategoryController extends Controller
      * Remove the specified category from storage.
      * Note: Full deletion logic with reassignment will be implemented in Task 035.
      */
-    public function destroy(Account $category): RedirectResponse
+    public function destroy(Account $category, DeleteCategoryAction $action): RedirectResponse
     {
-        if ($category->children()->exists()) {
-            return redirect()->back()->with('error', __('Cannot delete category with subcategories.'));
+        try {
+            $action->execute($category);
+            return redirect()->back()->with('success', __('Category updated successfully.'));
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
         }
-
-        if ($category->is_system) {
-            return redirect()->back()->with('error', __('Cannot delete system categories.'));
-        }
-
-        $category->delete();
-
-        return redirect()->back()->with('success', __('Category deleted successfully.'));
     }
 }

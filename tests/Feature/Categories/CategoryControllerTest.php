@@ -95,13 +95,13 @@ test('it can update a category', function () {
     ]);
 });
 
-test('it cannot delete a category with children', function () {
+test('it deletes a category tree recursively if no history exists', function () {
     $parent = Account::factory()->create([
         'ledger_id' => $this->ledger->id,
         'type' => AccountType::EXPENSE,
     ]);
     
-    Account::factory()->create([
+    $child = Account::factory()->create([
         'ledger_id' => $this->ledger->id,
         'parent_id' => $parent->id,
         'type' => AccountType::EXPENSE,
@@ -110,8 +110,9 @@ test('it cannot delete a category with children', function () {
     $response = $this->delete(route('categories.destroy', $parent));
     
     $response->assertRedirect();
-    $response->assertSessionHas('error');
-    $this->assertDatabaseHas('accounts', ['id' => $parent->id]);
+    $response->assertSessionHas('success');
+    $this->assertSoftDeleted('accounts', ['id' => $parent->id]);
+    $this->assertSoftDeleted('accounts', ['id' => $child->id]);
 });
 
 test('it cannot delete a system category', function () {
