@@ -1,6 +1,20 @@
 <?php
 
 return [
+    'salary' => 'Salário',
+    'base_salary' => 'Salário Base',
+    'overtime' => 'Horas Extras',
+    'thirteenth_salary' => 'Décimo Terceiro',
+    'vacation' => 'Férias',
+    'food_voucher' => 'Vale Alimentação/Refeição',
+    'investments' => 'Rendimentos de Investimento',
+    'dividends' => 'Dividendos',
+    'jcp_interest' => 'Juros JCP',
+    'fii_earnings' => 'Rendimentos FII',
+    'freelance' => 'Vendas/Freelance',
+    'personal' => 'Pessoal',
+    'services' => 'Serviços',
+    'other_expenses' => 'Outras Despesas',
     'food' => 'Alimentação',
     'transport' => 'Transporte',
     'housing' => 'Moradia',
@@ -57,5 +71,17 @@ return [
         'title' => 'Gestão de Categorias',
         'description' => 'Organize seu plano de categorias para receitas e despesas. Categorias ajudam a classificar seus lançamentos de forma clara.',
         'coming_soon' => 'O gerenciador completo de categorias está chegando. Em breve você poderá criar, editar e organizar sua árvore de categorias aqui.',
+        'create_btn' => 'Nova Categoria',
+        'income_tab' => 'Receitas',
+        'expense_tab' => 'Despesas',
+        'empty_title' => 'Nenhuma categoria encontrada',
+        'empty_desc' => 'Comece criando uma categoria principal ou subcategoria para organizar suas finanças.',
+        'children_count' => 'subcategorias',
+        'children_count_singular' => 'subcategoria',
+        'total_balance' => 'Saldo Total',
+    ],
+    'actions' => [
+        'edit' => 'Editar',
+        'delete' => 'Excluir',
     ],
 ];

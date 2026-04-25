@@ -27,7 +27,10 @@ class CreateDefaultAccountsAction
      */
     protected function createAccountRecursive(Ledger $ledger, array $definition, ?int $parentId = null): void
     {
-        $name = $parentId !== null ? __($definition['name']) : $definition['name'];
+        $isCategory = in_array($definition['type'], [AccountType::REVENUE, AccountType::EXPENSE]);
+        $isSubaccount = $parentId !== null;
+
+        $name = ($isCategory || $isSubaccount) ? __($definition['name']) : $definition['name'];
 
         $lookupData = [
             'ledger_id' => $ledger->id,

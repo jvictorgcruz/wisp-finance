@@ -102,7 +102,9 @@ export default function AccountRow({
                 
                 <div className="flex flex-col">
                     <h5 className={cn("font-bold text-slate-900", isRoot ? "text-sm text-slate-700" : "text-xs")}>
-                        {(account.name.startsWith('accounts.') || account.name.startsWith('categories.')) ? t(account.name) : account.name}
+                        {(!account.parent_id && (account.type === 'asset' || account.type === 'liability' || account.type === 'equity')) 
+                            ? t(account.name) 
+                            : account.name}
                     </h5>
                     {(account.children?.length ?? 0) > 0 && (
                         <span className="text-[10px] uppercase tracking-widest font-black text-slate-400">

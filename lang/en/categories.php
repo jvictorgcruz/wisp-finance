@@ -1,6 +1,20 @@
 <?php
 
 return [
+    'salary' => 'Salary',
+    'base_salary' => 'Base Salary',
+    'overtime' => 'Overtime',
+    'thirteenth_salary' => '13th Salary',
+    'vacation' => 'Vacation',
+    'food_voucher' => 'Food Voucher',
+    'investments' => 'Investment Returns',
+    'dividends' => 'Dividends',
+    'jcp_interest' => 'JCP Interest',
+    'fii_earnings' => 'FII Earnings',
+    'freelance' => 'Freelance',
+    'personal' => 'Personal',
+    'services' => 'Services',
+    'other_expenses' => 'Other Expenses',
     'food' => 'Food',
     'transport' => 'Transport',
     'housing' => 'Housing',
@@ -57,5 +71,17 @@ return [
         'title' => 'Category Management',
         'description' => 'Organize your category plan for revenue and expenses. Categories help classify your entries clearly.',
         'coming_soon' => 'The complete category manager is coming soon. You will soon be able to create, edit, and organize your category tree here.',
+        'create_btn' => 'New Category',
+        'income_tab' => 'Revenues',
+        'expense_tab' => 'Expenses',
+        'empty_title' => 'No categories found',
+        'empty_desc' => 'Start by creating a main category or subcategory to organize your finances.',
+        'children_count' => 'subcategories',
+        'children_count_singular' => 'subcategory',
+        'total_balance' => 'Total Balance',
+    ],
+    'actions' => [
+        'edit' => 'Edit',
+        'delete' => 'Delete',
     ],
 ];

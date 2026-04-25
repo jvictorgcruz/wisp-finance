@@ -56,30 +56,30 @@ class DefaultAccountDefinitions
             ],
 
             [
-                'name' => 'accounts.salary',
+                'name' => 'categories.salary',
                 'type' => AccountType::REVENUE,
                 'metadata' => ['icon' => 'Coins', 'color' => '#f59e0b'],
                 'children' => [
-                    ['name' => 'accounts.base_salary', 'type' => AccountType::REVENUE, 'metadata' => ['icon' => 'Banknote', 'color' => '#f59e0b']],
-                    ['name' => 'accounts.overtime', 'type' => AccountType::REVENUE, 'metadata' => ['icon' => 'Activity', 'color' => '#f59e0b']],
-                    ['name' => 'accounts.thirteenth_salary', 'type' => AccountType::REVENUE, 'metadata' => ['icon' => 'Sparkles', 'color' => '#f59e0b']],
-                    ['name' => 'accounts.vacation', 'type' => AccountType::REVENUE, 'metadata' => ['icon' => 'Plane', 'color' => '#f59e0b']],
-                    ['name' => 'accounts.food_voucher', 'type' => AccountType::REVENUE, 'metadata' => ['icon' => 'ShoppingCart', 'color' => '#f59e0b']],
+                    ['name' => 'categories.base_salary', 'type' => AccountType::REVENUE, 'metadata' => ['icon' => 'Banknote', 'color' => '#f59e0b']],
+                    ['name' => 'categories.overtime', 'type' => AccountType::REVENUE, 'metadata' => ['icon' => 'Activity', 'color' => '#f59e0b']],
+                    ['name' => 'categories.thirteenth_salary', 'type' => AccountType::REVENUE, 'metadata' => ['icon' => 'Sparkles', 'color' => '#f59e0b']],
+                    ['name' => 'categories.vacation', 'type' => AccountType::REVENUE, 'metadata' => ['icon' => 'Plane', 'color' => '#f59e0b']],
+                    ['name' => 'categories.food_voucher', 'type' => AccountType::REVENUE, 'metadata' => ['icon' => 'ShoppingCart', 'color' => '#f59e0b']],
                 ]
             ],
 
             [
-                'name' => 'accounts.investments', 
+                'name' => 'categories.investments', 
                 'type' => AccountType::REVENUE,
                 'metadata' => ['icon' => 'Gem', 'color' => '#8b5cf6'],
                 'children' => [
-                    ['name' => 'accounts.dividends', 'type' => AccountType::REVENUE, 'metadata' => ['icon' => 'LineChart', 'color' => '#8b5cf6']],
-                    ['name' => 'accounts.jcp_interest', 'type' => AccountType::REVENUE, 'metadata' => ['icon' => 'CircleDollarSign', 'color' => '#8b5cf6']],
-                    ['name' => 'accounts.fii_earnings', 'type' => AccountType::REVENUE, 'metadata' => ['icon' => 'Building2', 'color' => '#8b5cf6']],
+                    ['name' => 'categories.dividends', 'type' => AccountType::REVENUE, 'metadata' => ['icon' => 'LineChart', 'color' => '#8b5cf6']],
+                    ['name' => 'categories.jcp_interest', 'type' => AccountType::REVENUE, 'metadata' => ['icon' => 'CircleDollarSign', 'color' => '#8b5cf6']],
+                    ['name' => 'categories.fii_earnings', 'type' => AccountType::REVENUE, 'metadata' => ['icon' => 'Building2', 'color' => '#8b5cf6']],
                 ]
             ],
 
-            ['name' => 'accounts.freelance', 'type' => AccountType::REVENUE, 'metadata' => ['icon' => 'Tag', 'color' => '#10b981']],
+            ['name' => 'categories.freelance', 'type' => AccountType::REVENUE, 'metadata' => ['icon' => 'Tag', 'color' => '#10b981']],
 
             [
                 'name' => 'categories.housing',
@@ -143,7 +143,7 @@ class DefaultAccountDefinitions
             [
                 'name' => 'categories.entertainment',
                 'type' => AccountType::EXPENSE,
-                'metadata' => ['icon' => 'MasksTheater', 'color' => '#ec4899'],
+                'metadata' => ['icon' => 'Music', 'color' => '#ec4899'],
                 'children' => [
                     ['name' => 'categories.shows', 'type' => AccountType::EXPENSE, 'metadata' => ['icon' => 'Music', 'color' => '#ec4899']],
                     ['name' => 'categories.events', 'type' => AccountType::EXPENSE, 'metadata' => ['icon' => 'Tag', 'color' => '#ec4899']],
@@ -153,7 +153,7 @@ class DefaultAccountDefinitions
             ],
 
              [
-                'name' => 'accounts.personal',
+                'name' => 'categories.personal',
                 'type' => AccountType::EXPENSE,
                 'metadata' => ['icon' => 'Gem', 'color' => '#8b5cf6'],
                 'children' => [
@@ -176,7 +176,7 @@ class DefaultAccountDefinitions
             ],
 
              [
-                'name' => 'accounts.services',
+                'name' => 'categories.services',
                 'type' => AccountType::EXPENSE,
                 'metadata' => ['icon' => 'Gavel', 'color' => '#64748b'],
                 'children' => [
@@ -187,7 +187,7 @@ class DefaultAccountDefinitions
             ],
 
             [
-                'name' => 'accounts.other_expenses',
+                'name' => 'categories.other_expenses',
                 'type' => AccountType::EXPENSE,
                 'metadata' => ['icon' => 'Package', 'color' => '#94a3b8'],
                 'children' => [

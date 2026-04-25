@@ -26,7 +26,7 @@ test('it can access the categories index page', function () {
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
         ->component('Categories/Index')
-        ->has('categories')
+        ->has('category_tree')
         ->has('available_icons')
         ->has('available_colors')
     );
@@ -43,7 +43,7 @@ test('index only returns revenue and expense categories', function () {
 
     $response = $this->get(route('categories.index'));
     
-    $categories = $response->viewData('page')['props']['categories'];
+    $categories = $response->viewData('page')['props']['category_tree'];
     
     foreach ($categories as $category) {
         expect(in_array($category['type'], [AccountType::REVENUE->value, AccountType::EXPENSE->value]))->toBeTrue();

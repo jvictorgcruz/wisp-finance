@@ -20,7 +20,7 @@ class CategoryController extends Controller
     public function index(GetCategoryTreeAction $action): Response
     {
         return Inertia::render('Categories/Index', [
-            'categories' => $action->execute(),
+            'category_tree' => $action->execute(),
             'available_icons' => DefaultAccountDefinitions::getAvailableIcons(),
             'available_colors' => DefaultAccountDefinitions::getAvailableColors(),
         ]);
