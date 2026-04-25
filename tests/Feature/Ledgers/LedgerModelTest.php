@@ -4,6 +4,9 @@ use App\Models\Ledger;
 use App\Models\User;
 use App\Models\Account;
 use App\Support\DefaultAccountDefinitions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(RefreshDatabase::class);
 
 test('it can create a ledger', function () {
     $ledger = Ledger::create([

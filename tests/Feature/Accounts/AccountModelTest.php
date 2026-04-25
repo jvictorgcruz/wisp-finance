@@ -4,6 +4,9 @@ use App\Models\Account;
 use App\Models\Ledger;
 use App\Enums\AccountType;
 use App\Enums\AccountStatus;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(RefreshDatabase::class);
 
 test('it can create an account with enums', function () {
     $ledger = Ledger::factory()->create();

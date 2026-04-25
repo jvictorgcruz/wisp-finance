@@ -2,6 +2,9 @@
 
 use App\Models\User;
 use App\Enums\UserRole;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(RefreshDatabase::class);
 
 
 beforeEach(function () {
