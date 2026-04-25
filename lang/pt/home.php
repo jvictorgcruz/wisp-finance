@@ -11,6 +11,7 @@ return [
         'go_to_app' => 'Ir para o App',
         'dashboard' => 'Dashboard',
         'accounts' => 'Contas',
+        'categories' => 'Categorias',
         'transactions' => 'Transações',
         'cards' => 'Cartões',
         'logout' => 'Sair da conta',

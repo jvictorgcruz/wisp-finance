@@ -8,7 +8,8 @@ import {
     ChevronDown, Menu,
     X, Shield,
     Settings,
-    Users
+    Users,
+    Tags
 } from 'lucide-react';
 import Logo from '@/Components/Common/Logo';
 import { useTranslation } from '@/Hooks/useTranslation';
@@ -55,9 +56,10 @@ export default function Sidebar() {
 
     const navLinks = [
         { name: t('home.nav.dashboard'), href: '/dashboard', icon: LayoutDashboard },
-        { name: t('home.nav.accounts'), href: '/accounts', icon: Wallet },
         { name: t('home.nav.transactions'), href: '/transactions', icon: ArrowLeftRight },
+        { name: t('home.nav.accounts'), href: '/accounts', icon: Wallet },
         { name: t('home.nav.cards'), href: '/cards', icon: CreditCard },
+        { name: t('home.nav.categories'), href: '/categories', icon: Tags },
     ];
 
     const adminLinks = [

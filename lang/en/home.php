@@ -11,6 +11,7 @@ return [
         'go_to_app' => 'Go to App',
         'dashboard' => 'Dashboard',
         'accounts' => 'Accounts',
+        'categories' => 'Categories',
         'transactions' => 'Transactions',
         'cards' => 'Cards',
         'logout' => 'Logout',
