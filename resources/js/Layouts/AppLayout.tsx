@@ -6,6 +6,7 @@ import CreateActionBtn from '@/Components/Navigation/CreateActionBtn';
 import LanguageSelector from '@/Components/Navigation/LanguageSelector';
 import UserMenu from '@/Components/Navigation/UserMenu';
 import { Link, router } from '@inertiajs/react';
+import FlashNotifications from '@/Components/Common/FlashNotifications';
 
 import Sidebar from '@/Components/Navigation/Sidebar';
 
@@ -19,6 +20,7 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
     return (
         <div className="min-h-screen bg-surface flex">
             <Head title={title} />
+            <FlashNotifications />
             
             {/* Navigation */}
             <Sidebar />
