@@ -53,4 +53,9 @@ return [
     'subscriptions' => 'Subscriptions',
     'emergencies' => 'Emergencies',
     'gifts' => 'Gifts',
+    'page' => [
+        'title' => 'Category Management',
+        'description' => 'Organize your category plan for revenue and expenses. Categories help classify your entries clearly.',
+        'coming_soon' => 'The complete category manager is coming soon. You will soon be able to create, edit, and organize your category tree here.',
+    ],
 ];

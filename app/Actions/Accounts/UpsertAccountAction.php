@@ -12,9 +12,10 @@ class UpsertAccountAction
      *
      * @param array{
      *     name: string,
-     *     type: \App\Enums\AccountType,
+     *     type: \App\Enums\AccountType|string,
      *     parent_id?: int|null,
-     *     ledger_id: int
+     *     ledger_id: int,
+     *     ui_metadata: array
      * } $data
      */
     public function execute(array $data, ?Account $account = null): Account

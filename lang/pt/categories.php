@@ -53,4 +53,9 @@ return [
     'subscriptions' => 'Assinaturas',
     'emergencies' => 'Imprevistos',
     'gifts' => 'Presentes',
+    'page' => [
+        'title' => 'Gestão de Categorias',
+        'description' => 'Organize seu plano de categorias para receitas e despesas. Categorias ajudam a classificar seus lançamentos de forma clara.',
+        'coming_soon' => 'O gerenciador completo de categorias está chegando. Em breve você poderá criar, editar e organizar sua árvore de categorias aqui.',
+    ],
 ];

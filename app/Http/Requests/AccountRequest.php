@@ -16,7 +16,7 @@ class AccountRequest extends FormRequest
     public function authorize(): bool
     {
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-            $account = $this->route('account');
+            $account = $this->route('account') ?: $this->route('category');
 
             if (!$account) {
                 return false;
@@ -104,7 +104,7 @@ class AccountRequest extends FormRequest
      */
     private function isAccountAParent(): bool
     {
-        $account = $this->route('account');
+        $account = $this->route('account') ?: $this->route('category');
 
         return $account instanceof Account && $account->children()->exists();
     }
