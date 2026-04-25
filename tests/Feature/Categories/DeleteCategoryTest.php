@@ -1,15 +1,13 @@
 <?php
 
-namespace Tests\Feature\Categories;
-
 use App\Actions\Categories\DeleteCategoryAction;
 use App\Enums\AccountStatus;
 use App\Enums\AccountType;
 use App\Models\Account;
-use App\Models\JournalEntry;
 use App\Models\Ledger;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 uses(RefreshDatabase::class);
@@ -18,16 +16,16 @@ beforeEach(function () {
     /** @var \Tests\TestCase $this */
     $this->user = User::factory()->create();
     $this->ledger = Ledger::factory()->create();
-    $this->user->ledgers()->attach($this->ledger);
-    $this->actingAs($this->user);
+    $this->ledger->users()->attach($this->user, ['role' => 'owner']);
 
+    Auth::login($this->user);
     session(['current_ledger_id' => $this->ledger->id]);
 });
 
 test('it soft deletes a category without history', function () {
-    $category = Account::factory()->create([
-        'ledger_id' => $this->ledger->id,
+    $category = Account::create([
         'type' => AccountType::EXPENSE,
+        'name' => 'Food',
         'is_system' => false,
     ]);
 
@@ -38,49 +36,50 @@ test('it soft deletes a category without history', function () {
 });
 
 test('it inactivates a category with history instead of deleting', function () {
-    $category = Account::factory()->create([
-        'ledger_id' => $this->ledger->id,
+    $category = Account::create([
         'type' => AccountType::EXPENSE,
+        'name' => 'Housing',
         'is_system' => false,
     ]);
 
-    // Create a subaccount and entry to represent history
-    $sub = Account::factory()->create([
-        'ledger_id' => $this->ledger->id,
-        'parent_id' => $category->id,
+    $sub = Account::create([
         'type' => AccountType::EXPENSE,
+        'name' => 'Rent',
+        'parent_id' => $category->id,
     ]);
 
-    JournalEntry::factory()->create([
+    // Simulate history by creating a direct journal entry on the subcategory
+    \App\Models\JournalEntry::create([
         'ledger_id' => $this->ledger->id,
         'account_id' => $sub->id,
-        'amount' => 1000,
+        'type' => 'DEBIT',
+        'amount' => 150000,
+        'entry_date' => now(),
     ]);
 
     $action = new DeleteCategoryAction();
     $action->execute($category);
 
-    // Parent should be inactive
+    // Parent should be inactivated, not deleted
     expect($category->fresh()->status)->toBe(AccountStatus::INACTIVE);
-    // Child should also be inactive
+    // Child should also be inactivated
     expect($sub->fresh()->status)->toBe(AccountStatus::INACTIVE);
-    
-    // None should be deleted
+    // Neither should be soft deleted
     $this->assertDatabaseHas('accounts', ['id' => $category->id, 'deleted_at' => null]);
     $this->assertDatabaseHas('accounts', ['id' => $sub->id, 'deleted_at' => null]);
 });
 
-test('it recursive deletes a whole tree without history', function () {
-    $parent = Account::factory()->create([
-        'ledger_id' => $this->ledger->id,
+test('it recursively deletes a whole tree without history', function () {
+    $parent = Account::create([
         'type' => AccountType::EXPENSE,
+        'name' => 'Transport',
         'is_system' => false,
     ]);
 
-    $child = Account::factory()->create([
-        'ledger_id' => $this->ledger->id,
-        'parent_id' => $parent->id,
+    $child = Account::create([
         'type' => AccountType::EXPENSE,
+        'name' => 'Bus',
+        'parent_id' => $parent->id,
     ]);
 
     $action = new DeleteCategoryAction();
@@ -90,15 +89,15 @@ test('it recursive deletes a whole tree without history', function () {
     $this->assertSoftDeleted('accounts', ['id' => $child->id]);
 });
 
-test('it prevents deletion of system categories', function () {
-    $category = Account::factory()->create([
-        'ledger_id' => $this->ledger->id,
+test('it throws a validation exception when deleting a system category', function () {
+    $category = Account::create([
         'type' => AccountType::EXPENSE,
+        'name' => 'System Category',
         'is_system' => true,
     ]);
 
     $action = new DeleteCategoryAction();
-    
-    expect(fn() => $action->execute($category))
+
+    expect(fn () => $action->execute($category))
         ->toThrow(ValidationException::class);
 });
