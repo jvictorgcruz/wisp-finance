@@ -13,17 +13,43 @@ afterEach(() => {
 });
 
 // Mock Global do Inertia
-vi.mock('@inertiajs/react', () => ({
-  useForm: vi.fn(),
-  usePage: () => ({
-    props: {
-      auth: { user: null },
-      locale: 'en',
-      translations: {},
-    },
-  }),
-  Link: ({ children, href }: { children: React.ReactNode; href: string }) => (
-    <a href={href}>{children}</a>
-  ),
-  Head: ({ title }: { title: string }) => <title>{title}</title>,
-}));
+vi.mock('@inertiajs/react', () => {
+  return {
+    useForm: vi.fn((initialValues) => ({
+      data: initialValues || {},
+      setData: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn(),
+      processing: false,
+      errors: {},
+      reset: vi.fn(),
+      clearErrors: vi.fn(),
+    })),
+    usePage: vi.fn(() => ({
+      url: '/',
+      props: {
+        auth: { 
+            user: null,
+            ledgers: [],
+            current_ledger_id: null
+        },
+        locale: 'en',
+        locales: { en: 'English', pt: 'Português' },
+        translations: {},
+      },
+    })),
+    Link: ({ children, href }: { children: React.ReactNode; href: string }) => (
+      <a href={href}>{children}</a>
+    ),
+    Head: ({ children }: any) => <>{children}</>,
+    router: {
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn(),
+      get: vi.fn(),
+      patch: vi.fn(),
+      visit: vi.fn(),
+    }
+  };
+});

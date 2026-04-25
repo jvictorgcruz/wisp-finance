@@ -15,10 +15,20 @@ class AccountRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Root accounts (system categories) cannot be edited
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
             $account = $this->route('account');
-            return $account && $account->parent_id !== null;
+
+            if (!$account) {
+                return false;
+            }
+            
+            $isChildAccount = $account->parent_id !== null;
+            if ($isChildAccount) {
+                return true;
+            }
+
+            $isCategoryAccount = in_array($account->type->value, [AccountType::REVENUE->value, AccountType::EXPENSE->value]);
+            return $isCategoryAccount;
         }
 
         return true;
@@ -37,6 +47,7 @@ class AccountRequest extends FormRequest
             'name' => ['required', 'string', 'min:2', 'max:255'],
             'type' => ['required', new Enum(AccountType::class)],
             'parent_id' => [
+                'required_if:type,asset,liability',
                 'nullable',
                 Rule::exists('accounts', 'id')->where(fn ($query) => $query->where('ledger_id', $ledgerId)),
                 fn ($attribute, $value, $fail) => $this->validateHierarchy($value, $fail),

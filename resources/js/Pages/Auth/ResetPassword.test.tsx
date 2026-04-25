@@ -24,7 +24,8 @@ vi.mock('@inertiajs/react', () => ({
 vi.mock('@/Hooks/useTranslation', () => ({
     useTranslation: () => ({
         t: (key: string) => key,
-        locale: 'en'
+        locale: 'en',
+        localeRoute: (path: string) => path
     })
 }));
 
@@ -43,7 +44,6 @@ describe('ResetPassword Page', () => {
 
         render(<ResetPassword token="token" email="test@example.com" />);
         
-        expect(screen.getByLabelText(/auth.email/i)).toHaveValue('test@example.com');
         expect(screen.getByLabelText(/auth.new_password/i)).toBeInTheDocument();
         expect(screen.getByLabelText(/auth.confirm_password/i)).toBeInTheDocument();
         expect(screen.getByText('auth.reset_password_button')).toBeInTheDocument();

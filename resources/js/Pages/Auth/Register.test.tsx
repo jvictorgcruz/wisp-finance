@@ -25,7 +25,8 @@ vi.mock('@inertiajs/react', () => ({
 vi.mock('@/Hooks/useTranslation', () => ({
     useTranslation: () => ({
         t: (key: string) => key,
-        locale: 'en'
+        locale: 'en',
+        localeRoute: (path: string) => path
     })
 }));
 

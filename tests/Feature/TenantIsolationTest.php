@@ -40,17 +40,19 @@ test('users can only see accounts from their own ledger', function () {
     // Act as User A
     Auth::login($userA);
     $accountsA = Account::all();
-    expect($accountsA->where('is_system', true))->toHaveCount(DefaultAccountDefinitions::count());
-    expect($accountsA->where('is_system', false))->toHaveCount(1);
-    expect($accountsA->where('is_system', false)->first()->name)->toBe('Account A');
+    expect($accountsA->where('is_system', true))->toHaveCount(DefaultAccountDefinitions::countRoots());
+    
+    $expectedNonSystem = 1 + DefaultAccountDefinitions::countChildren();
+    expect($accountsA->where('is_system', false))->toHaveCount($expectedNonSystem);
+    expect($accountsA->where('is_system', false)->where('name', 'Account A'))->toHaveCount(1);
     Auth::logout();
 
     // Act as User B
     Auth::login($userB);
     $accountsB = Account::all();
-    expect($accountsB->where('is_system', true))->toHaveCount(DefaultAccountDefinitions::count());
-    expect($accountsB->where('is_system', false))->toHaveCount(1);
-    expect($accountsB->where('is_system', false)->first()->name)->toBe('Account B');
+    expect($accountsB->where('is_system', true))->toHaveCount(DefaultAccountDefinitions::countRoots());
+    expect($accountsB->where('is_system', false))->toHaveCount($expectedNonSystem);
+    expect($accountsB->where('is_system', false)->where('name', 'Account B'))->toHaveCount(1);
 });
 
 test('it automatically injects ledger_id when creating models', function () {

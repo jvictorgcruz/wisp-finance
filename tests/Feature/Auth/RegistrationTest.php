@@ -70,8 +70,8 @@ test('registration seeds default hierarchical accounts with translations', funct
         ->get();
 
     $housingChildrenNames = $housingChildren->pluck('name');
-    expect($housingChildrenNames)->toContain('categories.rent');
-    expect($housingChildrenNames)->toContain('categories.electricity');
+    expect($housingChildrenNames)->toContain(__('categories.rent'));
+    expect($housingChildrenNames)->toContain(__('categories.electricity'));
 });
 
 test('registration is atomic and rolls back on failure', function () {

@@ -208,6 +208,22 @@ class DefaultAccountDefinitions
     }
 
     /**
+     * Count only the root accounts.
+     */
+    public static function countRoots(): int
+    {
+        return count(static::get());
+    }
+
+    /**
+     * Count only the children accounts.
+     */
+    public static function countChildren(): int
+    {
+        return static::count() - static::countRoots();
+    }
+
+    /**
      * Get the root categories for UI selection cards.
      * Derived dynamically from the master definitions to include all root Assets and Liabilities.
      */
