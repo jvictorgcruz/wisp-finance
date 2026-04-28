@@ -31,16 +31,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        // Set current state in session
-        if ($user->locale) {
-            session(['locale' => $user->locale]);
-        }
-
-        $ledger = $user->currentLedger();
-        if ($ledger) {
-            session(['current_ledger_id' => $ledger->id]);
-        }
-
         // Redirect to home/root as fallback since we don't have dashboard yet
         return redirect()->intended('/');
     }
