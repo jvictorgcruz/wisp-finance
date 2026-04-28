@@ -55,6 +55,43 @@ test('users can only see accounts from their own ledger', function () {
     expect($accountsB->where('is_system', false)->where('name', 'Account B'))->toHaveCount(1);
 });
 
+test('users can only see categories from their own ledger', function () {
+    $userA = User::factory()->create();
+    $ledgerA = Ledger::factory()->create();
+    $ledgerA->users()->attach($userA, ['role' => 'owner']);
+    
+    $userB = User::factory()->create();
+    $ledgerB = Ledger::factory()->create();
+    $ledgerB->users()->attach($userB, ['role' => 'owner']);
+
+    // Category A for Ledger A
+    Account::withoutGlobalScopes()->create([
+        'ledger_id' => $ledgerA->id,
+        'name' => 'Category A',
+        'type' => AccountType::EXPENSE,
+        'status' => AccountStatus::ACTIVE,
+    ]);
+
+    // Category B for Ledger B
+    Account::withoutGlobalScopes()->create([
+        'ledger_id' => $ledgerB->id,
+        'name' => 'Category B',
+        'type' => AccountType::EXPENSE,
+        'status' => AccountStatus::ACTIVE,
+    ]);
+
+    Auth::login($userA);
+    $categoriesA = Account::whereIn('type', [AccountType::REVENUE, AccountType::EXPENSE])->get();
+    expect($categoriesA->pluck('name'))->toContain('Category A');
+    expect($categoriesA->pluck('name'))->not->toContain('Category B');
+    Auth::logout();
+
+    Auth::login($userB);
+    $categoriesB = Account::whereIn('type', [AccountType::REVENUE, AccountType::EXPENSE])->get();
+    expect($categoriesB->pluck('name'))->toContain('Category B');
+    expect($categoriesB->pluck('name'))->not->toContain('Category A');
+});
+
 test('it automatically injects ledger_id when creating models', function () {
     $user = User::factory()->create();
     $ledger = Ledger::factory()->create();
@@ -69,4 +106,20 @@ test('it automatically injects ledger_id when creating models', function () {
     ]);
 
     expect($account->ledger_id)->toBe($ledger->id);
+});
+
+test('it automatically injects ledger_id when creating categories', function () {
+    $user = User::factory()->create();
+    $ledger = Ledger::factory()->create();
+    $ledger->users()->attach($user, ['role' => 'owner']);
+
+    Auth::login($user);
+
+    $category = Account::create([
+        'name' => 'New Injected Category',
+        'type' => AccountType::EXPENSE,
+        'status' => AccountStatus::ACTIVE,
+    ]);
+
+    expect($category->ledger_id)->toBe($ledger->id);
 });
