@@ -5,6 +5,7 @@ use App\Enums\AccountType;
 use App\Models\Account;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 uses(RefreshDatabase::class);
 
@@ -22,6 +23,7 @@ function calculateNestedBalance(Account $account, GetAccountBalanceAction $actio
 }
 
 test('seeder generates valid financial data', function () {
+    /** @var TestCase $this */
     if (app()->environment('production')) {
         $this->markTestSkipped('Seeder integrity tests should only run in development.');
     }
@@ -54,13 +56,13 @@ test('seeder generates valid financial data', function () {
         ->where('type', AccountType::ASSET)
         ->whereNull('parent_id')
         ->get()
-        ->sum(fn ($a) => calculateNestedBalance($a, $balanceAction));
+        ->sum(fn (Account $a) => calculateNestedBalance($a, $balanceAction));
 
     $totalEquity = Account::where('ledger_id', $ledger->id)
         ->where('type', AccountType::EQUITY)
         ->whereNull('parent_id')
         ->get()
-        ->sum(fn ($a) => calculateNestedBalance($a, $balanceAction));
+        ->sum(fn (Account $a) => calculateNestedBalance($a, $balanceAction));
 
     // Seeder total should perfectly match R$ 10.000,00 (1.000.000 cents)
     expect($totalAssets)->toBe(1000000);

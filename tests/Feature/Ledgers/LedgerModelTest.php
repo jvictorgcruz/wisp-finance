@@ -5,6 +5,7 @@ use App\Models\User;
 use App\Models\Account;
 use App\Support\DefaultAccountDefinitions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 uses(RefreshDatabase::class);
 

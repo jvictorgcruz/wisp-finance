@@ -58,7 +58,8 @@ test('registration seeds default hierarchical accounts with translations', funct
     // System accounts (ASSET/LIABILITY/EQUITY) persist raw translation keys by design.
     // This is intentional: the hybrid localization strategy stores keys so names
     // update automatically when the user changes language (resolved at runtime on frontend).
-    expect($topLevelNames)->toContain('accounts.cash');
+    $cashTranslationKey = 'accounts.cash';
+    expect($topLevelNames)->toContain($cashTranslationKey);
 
     // Category accounts (REVENUE/EXPENSE) persist translated strings at creation time
     // using the user's locale at the moment of registration (en in this test).
