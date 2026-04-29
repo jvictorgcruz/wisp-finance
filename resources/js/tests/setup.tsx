@@ -53,3 +53,10 @@ vi.mock('@inertiajs/react', () => {
     }
   };
 });
+
+// Mock ResizeObserver para evitar erros no Headless UI
+global.ResizeObserver = class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
