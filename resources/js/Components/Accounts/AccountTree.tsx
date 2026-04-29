@@ -30,7 +30,7 @@ export default function AccountTree({ accounts, rootCategories, onEdit, onDelete
     }
 
     return (
-        <div className="mt-8 bg-white/50 backdrop-blur-sm rounded-4xl border border-slate-100 shadow-sm overflow-hidden">
+        <div className="bg-white/50 backdrop-blur-sm rounded-4xl border border-slate-100 shadow-sm overflow-hidden">
             <div className="divide-y divide-slate-100">
                 {filteredAccounts.map(account => (
                     <AccountRow 

@@ -236,7 +236,7 @@ class DefaultAccountDefinitions
                 'name' => $item['name'],
                 'type' => strtolower($item['type']->value),
                 'icon' => $item['metadata']['icon'] ?? 'Package',
-                'disabled' => $item['name'] === 'accounts.credit_card'
+                'disabled' => false
             ])
             ->values()
             ->toArray();

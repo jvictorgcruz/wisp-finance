@@ -1,8 +1,9 @@
 import AppLayout from '@/Layouts/AppLayout';
-import { Plus, TrendingUp, TrendingDown } from 'lucide-react';
+import { Plus, TrendingUp, TrendingDown, Info } from 'lucide-react';
 import { useTranslation } from '@/Hooks/useTranslation';
 import AccountTree from '@/Components/Accounts/AccountTree';
 import AccountModal, { Account } from '@/Components/Accounts/AccountModal';
+import LucideIcon from '@/Components/Common/LucideIcon';
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
 import Modal from '@/Components/Common/Modal';
@@ -63,6 +64,7 @@ export default function Accounts({ accounts, totals, root_categories, available_
         });
     };
 
+
     return (
         <AppLayout title={t('accounts.page.title')}>
             <div className="flex items-center justify-between">
@@ -84,7 +86,8 @@ export default function Accounts({ accounts, totals, root_categories, available_
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8">
-                <div className="md:col-span-2">
+                <div className="md:col-span-2 space-y-8">
+
                     <AccountTree 
                         accounts={accounts} 
                         rootCategories={root_categories}
@@ -93,26 +96,46 @@ export default function Accounts({ accounts, totals, root_categories, available_
                     />
                 </div>
 
-                <div className="space-y-6 pt-2">
+                <div className="space-y-6">
                     {/* Summary Cards */}
-                    <div className="bg-slate-900 text-white rounded-4xl p-8 shadow-xl shadow-slate-200 overflow-hidden relative group">
-                        <div className="absolute -right-4 -top-4 w-32 h-32 bg-white/5 rounded-full blur-2xl group-hover:bg-white/10 transition-all"></div>
-                        <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">{t('accounts.page.total_assets')}</h4>
-                        <div className="text-3xl font-black tracking-tight flex items-center gap-2">
-                            {formatCurrency(totals.assets)}
-                            <TrendingUp className="w-5 h-5 text-emerald-400" />
+                    <div className="bg-slate-900 text-white rounded-4xl p-8 shadow-xl shadow-slate-200 relative group">
+                        <div className="absolute inset-0 overflow-hidden rounded-4xl pointer-events-none">
+                            <div className="absolute -right-4 -top-4 w-32 h-32 bg-white/5 rounded-full blur-2xl group-hover:bg-white/10 transition-all"></div>
+                        </div>
+                        
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-2 mb-2">
+                                <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{t('accounts.page.total_assets')}</h4>
+                                <div className="relative group/tooltip">
+                                    <Info className="w-3.5 h-3.5 text-slate-500 hover:text-white transition-colors" />
+                                    <div className="absolute bottom-full left-0 mb-2 w-48 p-3 bg-white text-slate-900 text-[10px] font-bold leading-relaxed rounded-2xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all shadow-xl z-10 pointer-events-none border border-slate-100">
+                                        <div className="absolute -bottom-1 left-1.5 w-2 h-2 bg-white rotate-45 border-r border-b border-slate-100"></div>
+                                        {t('accounts.page.assets_desc')}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="text-3xl font-black tracking-tight flex items-center gap-2">
+                                {formatCurrency(totals.assets)}
+                                <TrendingUp className="w-5 h-5 text-emerald-400" />
+                            </div>
                         </div>
                     </div>
 
                     <div className="bg-white border border-slate-100 rounded-4xl p-8 shadow-sm group">
-                        <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">{t('accounts.page.total_liabilities')}</h4>
-                        <div className="text-3xl font-black tracking-tight text-slate-900 flex items-center gap-2">
+                        <div className="flex items-center gap-2 mb-2">
+                            <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{t('accounts.page.total_liabilities')}</h4>
+                            <div className="relative group/tooltip">
+                                <Info className="w-3.5 h-3.5 text-slate-300 hover:text-primary transition-colors" />
+                                <div className="absolute bottom-full left-0 mb-2 w-48 p-3 bg-slate-900 text-white text-[10px] font-bold leading-relaxed rounded-2xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all shadow-xl shadow-slate-900/20 z-10 pointer-events-none">
+                                    <div className="absolute -bottom-1 left-1.5 w-2 h-2 bg-slate-900 rotate-45"></div>
+                                    {t('accounts.page.liabilities_desc')}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-2 text-3xl font-black tracking-tight text-slate-900">
                             {formatCurrency(totals.liabilities)}
                             <TrendingDown className="w-5 h-5 text-rose-500" />
                         </div>
-                        <p className="mt-4 text-xs text-slate-400 font-medium leading-relaxed">
-                            {t('accounts.page.liabilities_desc')}
-                        </p>
                     </div>
                 </div>
             </div>

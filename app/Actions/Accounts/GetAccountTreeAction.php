@@ -19,7 +19,7 @@ class GetAccountTreeAction
      */
     public function execute(): array
     {
-        $accounts = Account::with('children')
+        $accounts = Account::with(['children', 'creditCardDetail'])
             ->whereNull('parent_id')
             ->whereIn('type', [AccountType::ASSET, AccountType::LIABILITY])
             ->orderBy('type', 'ASC')
@@ -40,6 +40,12 @@ class GetAccountTreeAction
                         'balance' => $this->balanceAction->execute($child),
                         'has_history' => $child->journalEntries()->exists(),
                         'parent_Key' => $parentKey,
+                        'is_credit_card' => $child->is_credit_card,
+                        'credit_card_details' => $child->creditCardDetail ? [
+                            'limit' => $child->creditCardDetail->limit,
+                            'closing_day' => $child->creditCardDetail->closing_day,
+                            'due_day' => $child->creditCardDetail->due_day,
+                        ] : null,
                     ];
                 });
 
@@ -57,6 +63,12 @@ class GetAccountTreeAction
                     'balance' => $aggregatedBalance,
                     'has_history' => $account->journalEntries()->exists(),
                     'parent_Key' => $parentKey,
+                    'is_credit_card' => $account->is_credit_card,
+                    'credit_card_details' => $account->creditCardDetail ? [
+                        'limit' => $account->creditCardDetail->limit,
+                        'closing_day' => $account->creditCardDetail->closing_day,
+                        'due_day' => $account->creditCardDetail->due_day,
+                    ] : null,
                     'children' => $mappedChildren,
                 ];
             });

@@ -39,7 +39,7 @@ export default function AccountModal({
     availableIcons = []
 }: AccountModalProps) {
     const { t } = useTranslation();
-    const { data, setData, post, put, processing, errors, reset, clearErrors } = useForm({
+    const { data, setData, post, put, transform, processing, errors, reset, clearErrors } = useForm({
         name: '',
         type: 'asset',
         parent_Key: 'bank', 
@@ -47,6 +47,12 @@ export default function AccountModal({
         ui_metadata: {
             icon: '', // Removed for accounts
             color: '#3b82f6',
+        },
+        is_credit_card: false,
+        credit_card_details: {
+            limit: 0,
+            closing_day: 10,
+            due_day: 17
         }
     });
 
@@ -61,6 +67,12 @@ export default function AccountModal({
                     ui_metadata: {
                         icon: account.ui_metadata?.icon || '', 
                         color: account.ui_metadata?.color || '#3b82f6',
+                    },
+                    is_credit_card: account.is_credit_card || false,
+                    credit_card_details: account.credit_card_details || {
+                        limit: 0,
+                        closing_day: 10,
+                        due_day: 17
                     }
                 });
             } else if (mode === 'subaccount' && parentAccount) {
@@ -72,6 +84,12 @@ export default function AccountModal({
                     ui_metadata: {
                         icon: '',
                         color: parentAccount.ui_metadata?.color || '#3b82f6',
+                    },
+                    is_credit_card: false,
+                    credit_card_details: {
+                        limit: 0,
+                        closing_day: 10,
+                        due_day: 17
                     }
                 });
             } else {
@@ -86,6 +104,12 @@ export default function AccountModal({
                     ui_metadata: {
                         icon: '',
                         color: '#3b82f6',
+                    },
+                    is_credit_card: false,
+                    credit_card_details: {
+                        limit: 0,
+                        closing_day: 10,
+                        due_day: 17
                     }
                 });
             }
@@ -114,6 +138,11 @@ export default function AccountModal({
             return;
         }
 
+        transform((data) => ({
+            ...data,
+            is_credit_card: data.parent_Key === 'credit_card'
+        }));
+
         if (mode === 'edit' && account) {
             put(`/accounts/${account.id}`, {
                 onSuccess: () => {
@@ -129,6 +158,21 @@ export default function AccountModal({
                 },
             });
         }
+    };
+
+    const formatLimit = (val: number) => {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+        }).format(val / 100);
+    };
+
+    const handleLimitChange = (val: string) => {
+        const numericValue = parseInt(val.replace(/\D/g, '')) || 0;
+        setData(d => ({
+            ...d,
+            credit_card_details: { ...d.credit_card_details, limit: numericValue }
+        }));
     };
 
     const initials = data.name ? data.name.substring(0, 3).toUpperCase() : '';
@@ -303,6 +347,48 @@ export default function AccountModal({
                             </DropdownSelector>
                         </div>
                     </div>
+
+                    {/* Credit Card Details */}
+                    {data.parent_Key === 'credit_card' && (
+                        <div className="space-y-6 animate-in fade-in slide-in-from-top-2 duration-300">
+                            <TextField
+                                id="limit"
+                                label={t('accounts.modal.limit_label')}
+                                value={formatLimit(data.credit_card_details.limit)}
+                                onChange={handleLimitChange}
+                                placeholder={t('accounts.modal.limit_placeholder')}
+                                error={errors['credit_card_details.limit' as keyof typeof errors]}
+                            />
+                            <div className="grid grid-cols-2 gap-6">
+                                <TextField
+                                    id="closing_day"
+                                    type="number"
+                                    min="1"
+                                    max="31"
+                                    label={t('accounts.modal.closing_day_label')}
+                                    value={data.credit_card_details.closing_day.toString()}
+                                    onChange={(val) => setData(d => ({
+                                        ...d,
+                                        credit_card_details: { ...d.credit_card_details, closing_day: parseInt(val) || 0 }
+                                    }))}
+                                    error={errors['credit_card_details.closing_day' as keyof typeof errors]}
+                                />
+                                <TextField
+                                    id="due_day"
+                                    type="number"
+                                    min="1"
+                                    max="31"
+                                    label={t('accounts.modal.due_day_label')}
+                                    value={data.credit_card_details.due_day.toString()}
+                                    onChange={(val) => setData(d => ({
+                                        ...d,
+                                        credit_card_details: { ...d.credit_card_details, due_day: parseInt(val) || 0 }
+                                    }))}
+                                    error={errors['credit_card_details.due_day' as keyof typeof errors]}
+                                />
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex items-center justify-end gap-3 pt-6 border-t border-slate-50">

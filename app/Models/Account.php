@@ -23,6 +23,7 @@ class Account extends Model
         'type',
         'status',
         'is_system',
+        'is_credit_card',
         'ui_metadata',
     ];
 
@@ -37,6 +38,7 @@ class Account extends Model
             'type' => AccountType::class,
             'status' => AccountStatus::class,
             'is_system' => 'boolean',
+            'is_credit_card' => 'boolean',
             'ui_metadata' => 'array',
         ];
     }

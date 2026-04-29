@@ -24,6 +24,12 @@ export interface Account {
         icon?: string;
         color?: string;
     };
+    is_credit_card?: boolean;
+    credit_card_details?: {
+        limit: number;
+        closing_day: number;
+        due_day: number;
+    } | null;
     children?: Account[];
 }
 
@@ -101,11 +107,13 @@ export default function AccountRow({
                 </div>
                 
                 <div className="flex flex-col">
-                    <h5 className={cn("font-bold text-slate-900", isRoot ? "text-sm text-slate-700" : "text-xs")}>
-                        {(!account.parent_id && (account.type === 'asset' || account.type === 'liability' || account.type === 'equity')) 
-                            ? t(account.name) 
-                            : account.name}
-                    </h5>
+                    <div className="flex items-center gap-2">
+                        <h5 className={cn("font-bold text-slate-900", isRoot ? "text-sm text-slate-700" : "text-xs")}>
+                            {(!account.parent_id && (account.type === 'asset' || account.type === 'liability' || account.type === 'equity')) 
+                                ? t(account.name) 
+                                : account.name}
+                        </h5>
+                    </div>
                     {(account.children?.length ?? 0) > 0 && (
                         <span className="text-[10px] uppercase tracking-widest font-black text-slate-400">
                             {`${account.children?.length ?? 0} ${account.children?.length === 1 ? t('accounts.page.children_count_singular') : t('accounts.page.children_count')}`}

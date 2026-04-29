@@ -52,6 +52,7 @@ return [
         'create_btn' => 'New Account',
         'total_assets' => 'Total Assets',
         'total_liabilities' => 'Total Liabilities',
+        'assets_desc' => 'The sum of all your assets, investments, and available balances.',
         'liabilities_desc' => 'Your total obligations and credit limits currently in use.',
         'empty_title' => 'No accounts found',
         'empty_desc' => 'Start by creating your first real account or use the system accounts generated in the setup.',
@@ -60,6 +61,7 @@ return [
         'children_count' => 'accounts',
         'children_count_singular' => 'account',
         'total_balance' => 'Total balance',
+        'credit_cards_section' => 'My Cards',
     ],
     'modal' => [
         'title_create' => 'Create Account',
@@ -81,6 +83,11 @@ return [
         'submit_create' => 'Create Account',
         'submit_edit' => 'Save Changes',
         'cancel' => 'Cancel',
+        'is_credit_card_label' => 'Is this a Credit Card account?',
+        'due_day_label' => 'Due day',
+        'closing_day_label' => 'Closing day',
+        'limit_label' => 'Credit Limit',
+        'limit_placeholder' => '$ 0.00',
     ],
     'actions' => [
         'edit' => 'Edit',

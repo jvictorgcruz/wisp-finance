@@ -52,6 +52,7 @@ return [
         'create_btn' => 'Nova Conta',
         'total_assets' => 'Ativos Totais',
         'total_liabilities' => 'Passivos Totais',
+        'assets_desc' => 'A soma de todos os seus bens, investimentos e saldos disponíveis.',
         'liabilities_desc' => 'Suas obrigações totais e limites de crédito em uso.',
         'empty_title' => 'Nenhuma conta encontrada',
         'empty_desc' => 'Comece criando sua primeira conta para gerenciar suas finanças.',
@@ -60,6 +61,7 @@ return [
         'children_count' => 'contas',
         'children_count_singular' => 'conta',
         'total_balance' => 'Saldo total',
+        'credit_cards_section' => 'Meus Cartões',
     ],
     'modal' => [
         'title_create' => 'Criar Conta',
@@ -81,6 +83,11 @@ return [
         'submit_create' => 'Criar Conta',
         'submit_edit' => 'Salvar Alterações',
         'cancel' => 'Cancelar',
+        'is_credit_card_label' => 'Esta é uma conta de Cartão de Crédito?',
+        'due_day_label' => 'Vencimento da fatura',
+        'closing_day_label' => 'Fechamento da fatura',
+        'limit_label' => 'Limite de Crédito',
+        'limit_placeholder' => 'R$ 0,00',
     ],
     'actions' => [
         'edit' => 'Editar',
