@@ -13,12 +13,9 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     /** @var \Tests\TestCase $this */
-    $this->user = User::factory()->create();
-    $this->ledger = Ledger::factory()->create();
-    $this->ledger->users()->attach($this->user, ['role' => 'owner']);
-    
-    Auth::login($this->user);
-    session(['current_ledger_id' => $this->ledger->id]);
+    $authenticated = createAuthenticatedLedger();
+    $this->user = $authenticated['user'];
+    $this->ledger = $authenticated['ledger'];
 });
 
 test('it can list accounts', function () {

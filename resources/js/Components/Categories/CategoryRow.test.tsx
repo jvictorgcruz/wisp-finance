@@ -3,6 +3,11 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import CategoryRow, { Category } from './CategoryRow';
+import { createInertiaMock } from '@/test-utils/inertia-mock';
+
+// If CategoryRow used useForm or usePage, we would mock it here too.
+// But it uses useTranslation which is already mocked.
+// For now, I'll just ensure it's compatible.
 
 // Mock useTranslation
 vi.mock('@/Hooks/useTranslation', () => ({

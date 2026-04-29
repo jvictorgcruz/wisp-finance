@@ -15,31 +15,12 @@ vi.mock('@/Hooks/useTranslation', () => ({
     }),
 }));
 
-const postMock = vi.fn();
-const putMock = vi.fn();
-const setDataMock = vi.fn();
+import { createInertiaMock } from '@/test-utils/inertia-mock';
 
-vi.mock('@inertiajs/react', () => ({
-    useForm: vi.fn(() => ({
-        data: {
-            name: '',
-            type: 'expense',
-            parent_id: null,
-            ui_metadata: {
-                icon: 'Package',
-                color: '#3b82f6',
-            }
-        },
-        setData: setDataMock,
-        post: postMock,
-        put: putMock,
-        processing: false,
-        errors: {},
-        reset: vi.fn(),
-        clearErrors: vi.fn(),
-    })),
-    usePage: vi.fn(() => ({ props: {} })),
-}));
+vi.mock('@inertiajs/react', async (importOriginal) => {
+    const { createInertiaMock } = await import('@/test-utils/inertia-mock');
+    return createInertiaMock();
+});
 
 describe('CategoryModal Component', () => {
     const mockOnClose = vi.fn();
@@ -146,7 +127,8 @@ describe('CategoryModal Component', () => {
         const input = screen.getByLabelText('categories.modal.name_label');
         fireEvent.change(input, { target: { value: 'Leisure' } });
         
-        expect(setDataMock).toHaveBeenCalledWith('name', 'Leisure');
+        const { setData } = (useForm as any)();
+        expect(setData).toHaveBeenCalledWith('name', 'Leisure');
     });
 
     it('calls post when submitting in create mode', async () => {
@@ -161,7 +143,8 @@ describe('CategoryModal Component', () => {
         const form = screen.getByTestId('input-name').closest('form');
         fireEvent.submit(form!);
         
-        expect(postMock).toHaveBeenCalledWith('/categories', expect.any(Object));
+        const { post } = (useForm as any)();
+        expect(post).toHaveBeenCalledWith('/categories', expect.any(Object));
     });
 
     it('calls put when submitting in edit mode', async () => {
@@ -177,16 +160,23 @@ describe('CategoryModal Component', () => {
         const form = screen.getByTestId('input-name').closest('form');
         fireEvent.submit(form!);
         
-        expect(putMock).toHaveBeenCalledWith(`/categories/${mockCategory.id}`, expect.any(Object));
+        const { put } = (useForm as any)();
+        expect(put).toHaveBeenCalledWith(`/categories/${mockCategory.id}`, expect.any(Object));
     });
 
     it('displays error message from Inertia errors', () => {
+        const { setData, post, put } = (useForm as any)();
         // We need to re-mock useForm for this specific test
         vi.mocked(useForm).mockReturnValue({
-            data: { name: '', type: 'expense', parent_id: null, ui_metadata: { icon: 'Package', color: '#000' } },
-            setData: setDataMock,
-            post: postMock,
-            put: putMock,
+            data: { 
+                name: '', 
+                type: 'expense', 
+                parent_id: null, 
+                ui_metadata: { icon: 'Package', color: '#000' } 
+            },
+            setData,
+            post,
+            put,
             processing: false,
             errors: { name: 'Name is required' },
             reset: vi.fn(),
