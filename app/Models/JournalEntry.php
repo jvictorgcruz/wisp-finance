@@ -11,6 +11,11 @@ class JournalEntry extends Model
 {
     /** @use HasFactory */
     use HasFactory, HasLedger;
+ 
+    /**
+     * The table is immutable; only created_at is maintained.
+     */
+    const UPDATED_AT = null;
 
     protected $fillable = [
         'ledger_id',

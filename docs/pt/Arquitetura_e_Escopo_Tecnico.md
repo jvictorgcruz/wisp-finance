@@ -8,11 +8,10 @@
 | Camada | Tecnologia | Justificativa |
 |---|---|---|
 | **Backend** | Laravel 12 (PHP 8.3) | Framework MVC robusto, ecossistema maduro para eventos e ORM |
-| **Frontend Web** | React 18 + TypeScript | Componentes tipados, ecossistema rico |
-| **Ponte Web** | Inertia.js (com SSR) | Elimina API REST para o frontend web; dados chegam via props do Controller |
+| **Frontend Web** | React 19 + TypeScript | Componentes tipados, ecossistema rico |
+| **Ponte Web** | Inertia.js | Elimina API REST para o frontend web; dados chegam via props do Controller
 | **Banco de Dados** | MySQL / MariaDB | Suporte amplo, fácil containerização |
-| **Autenticação** | Laravel Sanctum | Sessão para web + tokens para API mobile (Futuro) |
-| **SSR** | Node.js (Inertia SSR) | Pré-renderização para FCP rápido e SEO |
+| **Autenticação** | Laravel Session | Sessão nativa (Breeze/Fortify); Sanctum previsto para API Mobile (Futuro) |
 | **Containerização** | Docker (Laravel Sail) | Deploy reproduzível: `docker-compose up` sobe toda a stack |
 | **CSS / UI** | Tailwind CSS | Utilidades atômicas alinhadas ao ecossistema Laravel/Inertia |
 
@@ -23,7 +22,6 @@ O `docker-compose.yml` (via Laravel Sail customizado) deve subir os seguintes se
 - `app` — Laravel (PHP-FPM)
 - `mysql` — Banco de dados MySQL/MariaDB
 - `redis` — Driver de cache
-- `node-ssr` — Servidor Node.js para renderização SSR do Inertia
 
 ---
 
@@ -141,22 +139,25 @@ A tabela `accounts` serve tanto para **contas financeiras** (Conta Corrente, Car
 - Profundidade máxima: **2 níveis** (pai + filho).
 - Um nó raiz (sem `parent_id`) não pode ser filho de nenhuma outra conta. O plano base do sistema já preenche a raiz com contas genéricas reais.
 - Uma conta-filho não pode ter filhos — a tentativa dispara uma `ValidationException`.
-- Contas do plano base (`is_system = true`) não podem ser deletadas.
-- Deleção de contas com lançamentos históricos usa **Soft Delete** (`deleted_at`).
-
-**Exemplo de árvore:**
-```
-Alimentação (EXPENSE, raiz sistema, is_system=true)
-  ├─ iFood (filho)
-  └─ Mercado (filho)
-
-Transporte (EXPENSE, raiz sistema, is_system=true)
-  ├─ Uber (filho)
-  └─ Combustível (filho)
-
-Conta Corrente (ASSET, raiz sistema, is_system=true)
-  └─ Itaú (filho)
-```
+- Contas financeiras de primeiro nivel (Ativo, Passivo, Patrimônio) são marcadas como `is_system = true` e não podem ser excluídas ou editadas. Categorias de receita e despesa são criadas automaticamente no onboarding mas pertencem ao usuário — são marcadas como `is_system = false` e podem ser editadas, desativadas ou excluídas.
+- Deleção Segura e Inativação:
+  - **Contas sem histórico**: Podem ser excluídas definitivamente (Soft Delete via `deleted_at`).
+  - **Contas com histórico e saldo zerado**: São marcadas como `status = INACTIVE` (Inativação).
+  - **Contas com histórico e saldo pendente ou subcontas**: A operação é bloqueada para garantir a integridade do ledger.
+ 
+ **Exemplo de árvore:**
+ ```
+ Alimentação (EXPENSE, raiz criada no onboarding, is_system=false)
+   ├─ iFood (filho)
+   └─ Mercado (filho)
+ 
+ Transporte (EXPENSE, raiz criada no onboarding, is_system=false)
+   ├─ Uber (filho)
+   └─ Combustível (filho)
+ 
+ Conta Corrente (ASSET, raiz sistema, is_system=true)
+   └─ Itaú (filho)
+ ```
 
 ---
 
@@ -164,7 +165,7 @@ Conta Corrente (ASSET, raiz sistema, is_system=true)
 
 ### 4.1. Backend (API + Domínio)
 
-1. **Autenticação** — Registro, login, logout via Laravel Sanctum (sessão web + token API).
+1. **Autenticação** — Registro, login, logout via Laravel Session (nativa).
 2. **Onboarding de Ledger** — Criação automática de ledger + plano de contas padrão via Seeder ao registrar usuário.
 3. **CRUD de Contas/Categorias** — Com validação de profundidade máxima de 2 níveis.
 4. **CRUD de Cartões** — Gerenciamento de contas LIABILITY com metadados de cartão (`credit_card_details`).
@@ -208,3 +209,4 @@ A decisão de implementar ou não um app mobile será tomada ao longo do desenvo
 5. **Arquitetura Offline-First (Mobile Sync)** — SQLite local no app mobile com sincronização via outbox pattern.
 6. **Snapshot de Saldo** — Cache em Redis ou tabela `account_balance_snapshots` para otimizar o cálculo de saldo em contas com muitos lançamentos históricos.
 7. **Importação de Extrato (OFX/CSV)** — Parser de extratos bancários para lançamento em lote.
+8. **Inertia SSR** — Implementação de renderização no lado do servidor para melhor SEO e performance inicial (pós-MVP).

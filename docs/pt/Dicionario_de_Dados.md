@@ -46,6 +46,7 @@ No MVP, cada usuário terá exatamente 1 ledger criado automaticamente no onboar
 |:---|:---|:---|
 | `id` | BigInt (Unsigned) | PK, Auto-increment |
 | `name` | Varchar(255) | Ex: "Finanças da Família Silva" |
+| `slug` | Varchar(255) | Unique. Identificador amigável para URLs e roteamento |
 | `created_at` | Timestamp | |
 | `updated_at` | Timestamp | |
 
@@ -87,18 +88,21 @@ O **Plano de Contas unificado**. Atua como árvore recursiva, englobando:
 | `ui_metadata` | JSON | Nullable. Ex: `{"icon": "🍔", "color": "#FF5733"}` |
 | `created_at` | Timestamp | |
 | `updated_at` | Timestamp | |
-| `deleted_at` | Timestamp | Nullable. **Soft Delete** — Permitido apenas se **não houver** lançamentos. |
+| `deleted_at` | Timestamp | Nullable. **Soft Delete** — Apenas se **não houver** histórico contábil. Caso haja histórico, a conta deve ser **Inativada** (se saldo zero)
 
-**Contas raiz criadas automaticamente no onboarding (plano base, is_system = true):**
+**Plano Base de Contas (is_system = true):**
+O sistema inicializa automaticamente uma estrutura hierárquica baseada no `DefaultAccountDefinitions.php`. Os grupos principais são:
 
-| name | type |
-|---|---|
-| Conta Corrente | ASSET |
-| Carteira | ASSET |
-| Cartão de Crédito | LIABILITY |
-| Salário | REVENUE |
-| Alimentação | EXPENSE |
-| Transporte | EXPENSE |
+1. **Patrimônio (EQUITY)**: Saldo de Abertura.
+2. **Ativos (ASSETS)**:
+   - **Dinheiro**: Carteira.
+   - **Banco**: Conta Corrente.
+   - **Investimentos**: Poupança.
+3. **Passivos (LIABILITIES)**: Cartão de Crédito, Dívidas.
+4. **Receitas (REVENUE)**: Salário, Investimentos, Freelance.
+5. **Despesas (EXPENSE)**: Moradia, Alimentação, Transporte, Saúde, Entretenimento, Pessoal, Educação, Serviços, Outros.
+
+> **Nota:** A estrutura completa contém mais de 80 contas e subcategorias pré-definidas. A definição técnica exata de cada item (ícones, cores e hierarquia) reside em `app/Support/DefaultAccountDefinitions.php`.
 
 ---
 
