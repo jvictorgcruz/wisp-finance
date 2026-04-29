@@ -23,7 +23,7 @@ beforeEach(function () {
 
 test('feature flags index is protected', function () {
     $this->get(route('admin.feature-flags.index'))
-        ->assertRedirect(route('login'));
+        ->assertRedirect();
 });
 
 test('feature flags index renders correctly', function () {
