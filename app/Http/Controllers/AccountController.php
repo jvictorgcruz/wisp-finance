@@ -29,7 +29,7 @@ class AccountController extends Controller
             'ledger_id' => \App\Support\LedgerContext::currentId(),
         ]));
 
-        return redirect()->route('accounts.index')
+        return redirect()->back()
             ->with('success', __('Account created successfully.'));
     }
 
@@ -40,7 +40,7 @@ class AccountController extends Controller
     {
         $action->execute($request->validated(), $account);
 
-        return redirect()->route('accounts.index')
+        return redirect()->back()
             ->with('success', __('Account updated successfully.'));
     }
 
@@ -55,7 +55,7 @@ class AccountController extends Controller
             ? __('accounts.messages.inactivate_success') 
             : __('accounts.messages.delete_success');
 
-        return redirect()->route('accounts.index')
+        return redirect()->back()
             ->with('success', $message);
     }
 }

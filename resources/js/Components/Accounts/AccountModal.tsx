@@ -25,6 +25,8 @@ interface AccountModalProps {
     rootCategories?: any[];
     availableColors?: string[];
     availableIcons?: string[];
+    title?: string;
+    forceType?: string;
 }
 
 export default function AccountModal({ 
@@ -36,7 +38,9 @@ export default function AccountModal({
     rootAccounts = [],
     rootCategories = [],
     availableColors = [],
-    availableIcons = []
+    availableIcons = [],
+    title: customTitle,
+    forceType
 }: AccountModalProps) {
     const { t } = useTranslation();
     const { data, setData, post, put, transform, processing, errors, reset, clearErrors } = useForm({
@@ -93,19 +97,20 @@ export default function AccountModal({
                     }
                 });
             } else {
-                const defaultCat = rootCategories.find(c => c.key === 'bank')!;
+                const initialCatKey = forceType || 'bank';
+                const defaultCat = rootCategories.find(c => c.key === initialCatKey)!;
                 const parent = rootAccounts.find(r => r.name === defaultCat.name);
                 
                 setData({
                     name: '',
                     type: defaultCat.type,
-                    parent_Key: 'bank',
+                    parent_Key: initialCatKey,
                     parent_id: parent?.id || null,
                     ui_metadata: {
                         icon: '',
                         color: '#3b82f6',
                     },
-                    is_credit_card: false,
+                    is_credit_card: initialCatKey === 'credit_card',
                     credit_card_details: {
                         limit: 0,
                         closing_day: 10,
@@ -176,7 +181,7 @@ export default function AccountModal({
     };
 
     const initials = data.name ? data.name.substring(0, 3).toUpperCase() : '';
-    const title = mode === 'edit' 
+    const title = customTitle || (mode === 'edit' 
         ? t('accounts.modal.title_edit') 
         : (mode === 'subaccount' 
             ? t('accounts.modal.title_subaccount', { 
@@ -184,7 +189,7 @@ export default function AccountModal({
                     ? t(parentAccount.name) 
                     : parentAccount?.name || '' 
             }) 
-            : t('accounts.modal.title_create'));
+            : t('accounts.modal.title_create')));
 
     return (
         <Modal show={show} onClose={onClose} title={title} maxWidth="md">
@@ -214,8 +219,8 @@ export default function AccountModal({
                     </div>
                 </div>
 
-                {/* Account Type Cards - ONLY IN CREATE MODE */}
-                {mode === 'create' && (
+                {/* Account Type Cards - ONLY IN CREATE MODE AND NOT FORCED */}
+                {mode === 'create' && !forceType && (
                     <div className="space-y-4">
                         <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">
                             {t('accounts.modal.type_label')}
@@ -260,7 +265,7 @@ export default function AccountModal({
                     <div>
                         <TextField
                             id="name"
-                            label={t('accounts.modal.name_label')}
+                            label={data.parent_Key === 'credit_card' ? t('accounts.modal.name_card_label') : t('accounts.modal.name_label')}
                             value={data.name}
                             onChange={(val) => setData('name', val)}
                             placeholder={t(`accounts.modal.name_placeholders.${data.parent_Key}`) !== `accounts.modal.name_placeholders.${data.parent_Key}` 

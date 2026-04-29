@@ -71,6 +71,7 @@ Route::middleware('check_maintenance')->group(function () {
         Route::get('dashboard', fn() => redirect()->route('accounts.index'))->name('dashboard');
 
         Route::resource('accounts', \App\Http\Controllers\AccountController::class)->only(['index', 'store', 'update', 'destroy']);
+        Route::get('cards', [\App\Http\Controllers\CreditCardController::class, 'index'])->name('cards.index');
         Route::resource('categories', \App\Http\Controllers\CategoryController::class)->only(['index', 'store', 'update', 'destroy']);
 
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
