@@ -4,22 +4,12 @@ import { useForm } from '@inertiajs/react';
 import ResetPassword from './ResetPassword';
 import React from 'react';
 
-vi.mock('@inertiajs/react', () => ({
-    Head: ({ children }: any) => <>{children}</>,
-    Link: ({ children, href }: any) => <a href={href}>{children}</a>,
-    usePage: () => ({
-        url: '/en/reset-password/token',
-        props: {
-            auth: { user: null },
-            locale: 'en',
-            locales: { en: 'English', pt: 'Português' },
-        }
-    }),
-    useForm: vi.fn(),
-    router: {
-        post: vi.fn(),
-    }
-}));
+import { createInertiaMock } from '@/test-utils/inertia-mock';
+
+vi.mock('@inertiajs/react', async () => {
+    const { createInertiaMock } = await import('@/test-utils/inertia-mock');
+    return createInertiaMock({ url: '/en/reset-password/token' });
+});
 
 vi.mock('@/Hooks/useTranslation', () => ({
     useTranslation: () => ({

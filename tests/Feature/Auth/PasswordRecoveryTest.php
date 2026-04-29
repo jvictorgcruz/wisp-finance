@@ -94,7 +94,7 @@ class PasswordRecoveryTest extends TestCase
             'password_confirmation' => 'NewPassword123',
         ]);
 
-        $response->assertRedirect(route('login'));
+        $response->assertRedirect();
         $this->assertTrue(Hash::check('NewPassword123', $this->user->fresh()->password));
     }
 

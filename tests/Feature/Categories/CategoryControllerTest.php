@@ -13,12 +13,9 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     /** @var \Tests\TestCase $this */
-    $this->user = User::factory()->create();
-    $this->ledger = Ledger::factory()->create();
-    $this->ledger->users()->attach($this->user, ['role' => 'owner']);
-
-    Auth::login($this->user);
-    session(['current_ledger_id' => $this->ledger->id]);
+    $authenticated = createAuthenticatedLedger();
+    $this->user = $authenticated['user'];
+    $this->ledger = $authenticated['ledger'];
 });
 
 test('it can access the categories index page', function () {
@@ -238,4 +235,73 @@ test('it cannot delete a system category', function () {
     $response->assertRedirect();
     $response->assertSessionHas('error');
     $this->assertDatabaseHas('accounts', ['id' => $category->id, 'deleted_at' => null]);
+});
+
+test('it prevents creating a subcategory under a parent from another ledger', function () {
+    $otherLedger = Ledger::factory()->create();
+    $otherCategory = Account::withoutGlobalScopes()->create([
+        'ledger_id' => $otherLedger->id,
+        'name' => 'Other Ledger Category',
+        'type' => AccountType::EXPENSE,
+        'status' => AccountStatus::ACTIVE,
+    ]);
+
+    $response = $this->post(route('categories.store'), [
+        'name' => 'Should Fail',
+        'type' => AccountType::EXPENSE->value,
+        'parent_id' => $otherCategory->id,
+        'ui_metadata' => [
+            'icon' => '',
+            'color' => DefaultAccountDefinitions::getAvailableColors()[0],
+        ],
+    ]);
+
+    $response->assertSessionHasErrors(['parent_id']);
+});
+
+test('it prevents creating a subcategory with a different type than its parent', function () {
+    $parent = Account::create([
+        'name' => 'Expense Parent',
+        'type' => AccountType::EXPENSE,
+        'status' => AccountStatus::ACTIVE,
+    ]);
+
+    $response = $this->post(route('categories.store'), [
+        'name' => 'Revenue Child',
+        'type' => AccountType::REVENUE->value, // Mismatch
+        'parent_id' => $parent->id,
+        'ui_metadata' => [
+            'icon' => '',
+            'color' => DefaultAccountDefinitions::getAvailableColors()[0],
+        ],
+    ]);
+
+    $response->assertSessionHasErrors(['parent_id']);
+});
+
+test('it prevents creating a subcategory under another subcategory (max depth 2)', function () {
+    $root = Account::create([
+        'name' => 'Root',
+        'type' => AccountType::EXPENSE,
+        'status' => AccountStatus::ACTIVE,
+    ]);
+
+    $child = Account::create([
+        'name' => 'Child',
+        'type' => AccountType::EXPENSE,
+        'status' => AccountStatus::ACTIVE,
+        'parent_id' => $root->id,
+    ]);
+
+    $response = $this->post(route('categories.store'), [
+        'name' => 'Grandchild',
+        'type' => AccountType::EXPENSE->value,
+        'parent_id' => $child->id, // Attempt level 3
+        'ui_metadata' => [
+            'icon' => '',
+            'color' => DefaultAccountDefinitions::getAvailableColors()[0],
+        ],
+    ]);
+
+    $response->assertSessionHasErrors(['parent_id']);
 });

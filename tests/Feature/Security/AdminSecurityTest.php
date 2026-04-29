@@ -2,22 +2,28 @@
 
 use App\Models\User;
 use App\Enums\UserRole;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+uses(RefreshDatabase::class);
 
 
 beforeEach(function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $this->user = User::factory()->create(['role' => UserRole::USER]);
     $this->admin = User::factory()->create(['role' => UserRole::ADMIN]);
     $this->superAdmin = User::factory()->create(['role' => UserRole::SUPER_ADMIN]);
 });
 
 test('guest cannot access admin routes', function () {
+    /** @var TestCase $this */
     $this->get('/admin/feature-flags')->assertRedirect();
     $this->get('/admin/settings')->assertRedirect();
     $this->get('/admin/users')->assertRedirect();
 });
 
 test('regular user cannot access admin routes', function () {
+    /** @var TestCase $this */
     $this->actingAs($this->user)
         ->get('/admin/feature-flags')
         ->assertStatus(403);
@@ -32,6 +38,7 @@ test('regular user cannot access admin routes', function () {
 });
 
 test('admin can access general admin routes but not role management', function () {
+    /** @var TestCase $this */
     $this->actingAs($this->admin)
         ->get('/admin/feature-flags')
         ->assertStatus(200);
@@ -46,6 +53,7 @@ test('admin can access general admin routes but not role management', function (
 });
 
 test('super admin can access everything', function () {
+    /** @var TestCase $this */
     $this->actingAs($this->superAdmin)
         ->get('/admin/feature-flags')
         ->assertStatus(200);
@@ -60,6 +68,7 @@ test('super admin can access everything', function () {
 });
 
 test('super admin can update user roles', function () {
+    /** @var TestCase $this */
     $targetUser = User::factory()->create(['role' => UserRole::USER]);
 
     $this->actingAs($this->superAdmin)
@@ -72,6 +81,7 @@ test('super admin can update user roles', function () {
 });
 
 test('regular user cannot update user roles', function () {
+    /** @var TestCase $this */
     $targetUser = User::factory()->create(['role' => UserRole::USER]);
 
     $this->actingAs($this->user)
@@ -84,6 +94,7 @@ test('regular user cannot update user roles', function () {
 });
 
 test('super admin cannot promote a user to super admin via API', function () {
+    /** @var TestCase $this */
     $targetUser = User::factory()->create(['role' => UserRole::USER]);
 
     $this->actingAs($this->superAdmin)
@@ -96,6 +107,7 @@ test('super admin cannot promote a user to super admin via API', function () {
 });
 
 test('super admin cannot demote another super admin via API', function () {
+    /** @var TestCase $this */
     $anotherSuperAdmin = User::factory()->create(['role' => UserRole::SUPER_ADMIN]);
 
     $this->actingAs($this->superAdmin)

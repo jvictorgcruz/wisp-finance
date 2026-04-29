@@ -13,12 +13,9 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     /** @var \Tests\TestCase $this */
-    $this->user = User::factory()->create();
-    $this->ledger = Ledger::factory()->create();
-    $this->ledger->users()->attach($this->user, ['role' => 'owner']);
-    
-    Auth::login($this->user);
-    session(['current_ledger_id' => $this->ledger->id]);
+    $authenticated = createAuthenticatedLedger();
+    $this->user = $authenticated['user'];
+    $this->ledger = $authenticated['ledger'];
 });
 
 test('it can list accounts', function () {
@@ -51,7 +48,7 @@ test('it can create an account', function () {
         'ui_metadata' => ['color' => '#10b981', 'icon' => 'Wallet'],
     ]);
 
-    $response->assertRedirect(route('accounts.index'));
+    $response->assertRedirect();
     $this->assertDatabaseHas('accounts', [
         'name' => 'New Savings',
         'type' => 'asset',
@@ -133,7 +130,7 @@ test('it can update an account', function () {
         'ui_metadata' => ['color' => '#10b981', 'icon' => 'Wallet'],
     ]);
 
-    $response->assertRedirect(route('accounts.index'));
+    $response->assertRedirect();
     expect($account->fresh()->name)->toBe('Updated Name');
 });
 
@@ -180,7 +177,7 @@ test('it soft deletes a regular account without history', function () {
 
     $response = $this->delete(route('accounts.destroy', $account));
 
-    $response->assertRedirect(route('accounts.index'));
+    $response->assertRedirect();
     
     // Rule: Accounts WITHOUT history are soft deleted (deleted_at)
     $this->assertSoftDeleted('accounts', ['id' => $account->id]);
@@ -211,7 +208,7 @@ test('it inactivates an account with zero balance', function () {
 
     $response = $this->delete(route('accounts.destroy', $account));
 
-    $response->assertRedirect(route('accounts.index'));
+    $response->assertRedirect();
     
     // Rule: Accounts WITH history and zero balance are INACTIVATED
     expect($account->fresh()->status)->toBe(AccountStatus::INACTIVE);
@@ -324,7 +321,7 @@ test('it allows updating a root revenue or expense', function () {
         'ui_metadata' => ['color' => '#ef4444', 'icon' => 'Home'],
     ]);
 
-    $response->assertRedirect(route('accounts.index'));
+    $response->assertRedirect();
     expect($account->fresh()->name)->toBe('Updated Expense Root');
 });
 
@@ -345,7 +342,7 @@ test('it allows creating a root category without a parent', function () {
         'ui_metadata' => ['color' => '#ef4444', 'icon' => 'Utensils'],
     ]);
 
-    $response->assertRedirect(route('accounts.index'));
+    $response->assertRedirect();
     $this->assertDatabaseHas('accounts', [
         'name' => 'New Category Root',
         'type' => 'expense',

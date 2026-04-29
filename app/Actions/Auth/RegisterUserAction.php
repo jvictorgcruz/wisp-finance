@@ -36,6 +36,11 @@ class RegisterUserAction
 
             $ledger->users()->attach($user, ['role' => 'owner']);
 
+            session([
+                'locale' => $user->locale,
+                'current_ledger_id' => $ledger->id,
+            ]);
+
             return $user;
         });
     }
