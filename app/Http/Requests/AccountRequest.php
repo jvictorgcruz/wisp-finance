@@ -76,6 +76,19 @@ class AccountRequest extends FormRequest
                 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/',
                 Rule::in(\App\Support\DefaultAccountDefinitions::getAvailableColors())
             ],
+            'is_credit_card' => ['sometimes', 'boolean'],
+            'credit_card_details' => [
+                'required_if:is_credit_card,true',
+                'array',
+                function ($attribute, $value, $fail) {
+                    if ($this->input('is_credit_card') && $this->input('type') !== AccountType::LIABILITY->value) {
+                        $fail(__('Credit cards must be of type Liability.'));
+                    }
+                }
+            ],
+            'credit_card_details.limit' => ['required_if:is_credit_card,true', 'integer', 'min:0'],
+            'credit_card_details.closing_day' => ['required_if:is_credit_card,true', 'integer', 'min:1', 'max:31'],
+            'credit_card_details.due_day' => ['required_if:is_credit_card,true', 'integer', 'min:1', 'max:31'],
         ];
     }
 

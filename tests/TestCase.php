@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\Models\Account;
 use App\Models\User;
 use App\Models\Ledger;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -15,4 +16,5 @@ abstract class TestCase extends BaseTestCase
     public $action;
     public $driver;
     public $data;
+    public ?Account $parentAccount = null;
 }
