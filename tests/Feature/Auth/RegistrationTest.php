@@ -54,12 +54,21 @@ test('registration seeds default hierarchical accounts with translations', funct
         ->get();
 
     $topLevelNames = $topLevelAccounts->pluck('name');
-    expect($topLevelNames)->toContain('accounts.cash');
-    expect($topLevelNames)->toContain('accounts.salary');
-    expect($topLevelNames)->toContain('categories.housing');
+
+    // System accounts (ASSET/LIABILITY/EQUITY) persist raw translation keys by design.
+    // This is intentional: the hybrid localization strategy stores keys so names
+    // update automatically when the user changes language (resolved at runtime on frontend).
+    $cashTranslationKey = 'accounts.cash';
+    expect($topLevelNames)->toContain($cashTranslationKey);
+
+    // Category accounts (REVENUE/EXPENSE) persist translated strings at creation time
+    // using the user's locale at the moment of registration (en in this test).
+    expect($topLevelNames)->toContain(__('accounts.salary'));
+    expect($topLevelNames)->toContain(__('categories.housing'));
+
 
     // Check for nested accounts
-    $housingCategoryName = 'categories.housing';
+    $housingCategoryName = __('categories.housing');
     $housing = Account::withoutGlobalScopes()
         ->where('ledger_id', $ledger->id)
         ->where('name', $housingCategoryName)
@@ -70,8 +79,8 @@ test('registration seeds default hierarchical accounts with translations', funct
         ->get();
 
     $housingChildrenNames = $housingChildren->pluck('name');
-    expect($housingChildrenNames)->toContain('categories.rent');
-    expect($housingChildrenNames)->toContain('categories.electricity');
+    expect($housingChildrenNames)->toContain(__('categories.rent'));
+    expect($housingChildrenNames)->toContain(__('categories.electricity'));
 });
 
 test('registration is atomic and rolls back on failure', function () {

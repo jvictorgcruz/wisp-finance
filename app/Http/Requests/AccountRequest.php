@@ -15,6 +15,22 @@ class AccountRequest extends FormRequest
      */
     public function authorize(): bool
     {
+        if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
+            $account = $this->route('account') ?: $this->route('category');
+
+            if (!$account) {
+                return false;
+            }
+            
+            $isChildAccount = $account->parent_id !== null;
+            if ($isChildAccount) {
+                return true;
+            }
+
+            $isCategoryAccount = in_array($account->type->value, [AccountType::REVENUE->value, AccountType::EXPENSE->value]);
+            return $isCategoryAccount;
+        }
+
         return true;
     }
 
@@ -25,15 +41,40 @@ class AccountRequest extends FormRequest
      */
     public function rules(): array
     {
-        $ledgerId = session('current_ledger_id');
+        $ledgerId = \App\Support\LedgerContext::currentId();
 
         return [
             'name' => ['required', 'string', 'min:2', 'max:255'],
-            'type' => ['required', new Enum(AccountType::class)],
+            'type' => [
+                'required', 
+                new Enum(AccountType::class),
+                function ($attribute, $value, $fail) {
+                    if (($this->isMethod('PUT') || $this->isMethod('PATCH')) && $this->route('account') || $this->route('category')) {
+                        $account = $this->route('account') ?: $this->route('category');
+                        if ($account && $account->type->value !== $value) {
+                            $fail(__('The account type cannot be changed after creation.'));
+                        }
+                    }
+                }
+            ],
             'parent_id' => [
+                'required_if:type,asset,liability',
                 'nullable',
                 Rule::exists('accounts', 'id')->where(fn ($query) => $query->where('ledger_id', $ledgerId)),
                 fn ($attribute, $value, $fail) => $this->validateHierarchy($value, $fail),
+            ],
+            'ui_metadata' => ['required', 'array'],
+            'ui_metadata.icon' => [
+                'nullable', 
+                'string',
+                Rule::requiredIf(fn() => $this->input('parent_id') === null && !in_array($this->type, [AccountType::ASSET, AccountType::LIABILITY])),
+                Rule::in(\App\Support\DefaultAccountDefinitions::getAvailableIcons())
+            ],
+            'ui_metadata.color' => [
+                'required', 
+                'string', 
+                'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/',
+                Rule::in(\App\Support\DefaultAccountDefinitions::getAvailableColors())
             ],
         ];
     }
@@ -65,7 +106,10 @@ class AccountRequest extends FormRequest
 
         // Rule 2: Structural Lock (Parents cannot become children)
         if ($this->isMethod('PUT') && $this->isAccountAParent()) {
-            $fail(__('This account has children and cannot be moved under another parent.'));
+            $account = $this->route('account') ?: $this->route('category');
+            if ($account->parent_id != $parentId) {
+                $fail(__('This account has children and cannot be moved under another parent.'));
+            }
         }
     }
 
@@ -74,7 +118,7 @@ class AccountRequest extends FormRequest
      */
     private function isAccountAParent(): bool
     {
-        $account = $this->route('account');
+        $account = $this->route('account') ?: $this->route('category');
 
         return $account instanceof Account && $account->children()->exists();
     }

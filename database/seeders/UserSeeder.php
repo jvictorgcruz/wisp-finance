@@ -20,8 +20,11 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Wisp Test User',
                 'password' => Hash::make('password'),
+                'locale' => 'pt'
             ]
         );
+
+        \Illuminate\Support\Facades\App::setLocale($user->locale);
 
         // Create a default ledger for the user if it doesn't exist
         $ledger = Ledger::firstOrCreate(

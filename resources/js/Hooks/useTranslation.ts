@@ -34,9 +34,9 @@ export function useTranslation() {
     };
 
     /**
-     * Helper to generate localized URLs.
+     * Helper to generate localized URLs (e.g. /pt/home).
      */
-    const route = (path: string) => `/${locale}${path.startsWith('/') ? '' : '/'}${path}`;
+    const localeRoute = (path: string) => `/${locale}${path.startsWith('/') ? '' : '/'}${path}`;
 
-    return { t, route, locale, locales: props.locales || {} };
+    return { t, localeRoute, locale, locales: props.locales || {} };
 }

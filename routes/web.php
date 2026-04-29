@@ -19,7 +19,7 @@ Route::get('/home', function () {
     return redirect("/{$locale}/home");
 });
 
-Route::prefix('{locale}')->where(['locale' => 'en|pt'])->group(function () {
+Route::prefix('{locale}')->where(['locale' => 'en|pt'])->middleware('set_locale')->group(function () {
     Route::get('/home', fn() => Inertia::render('Home'))->name('home');
 });
 
@@ -36,7 +36,7 @@ Route::middleware('guest')->group(function () {
         })->name('register');
     });
 
-    Route::prefix('{locale}')->where(['locale' => 'en|pt'])->group(function () {
+    Route::prefix('{locale}')->where(['locale' => 'en|pt'])->middleware('set_locale')->group(function () {
         Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login.locale');
         Route::post('login', [AuthenticatedSessionController::class, 'store'])->name('login.store.locale');
         Route::get('forgot-password', [\App\Http\Controllers\Auth\PasswordResetLinkController::class, 'create'])->name('password.request.locale');
@@ -71,8 +71,7 @@ Route::middleware('check_maintenance')->group(function () {
         Route::get('dashboard', fn() => redirect()->route('accounts.index'))->name('dashboard');
 
         Route::resource('accounts', \App\Http\Controllers\AccountController::class)->only(['index', 'store', 'update', 'destroy']);
-
-
+        Route::resource('categories', \App\Http\Controllers\CategoryController::class)->only(['index', 'store', 'update', 'destroy']);
 
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
         

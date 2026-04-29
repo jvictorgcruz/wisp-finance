@@ -28,5 +28,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         \App\Models\Ledger::observe(\App\Observers\LedgerObserver::class);
+
+        $this->app->useLangPath($this->app->basePath('lang'));
     }
 }

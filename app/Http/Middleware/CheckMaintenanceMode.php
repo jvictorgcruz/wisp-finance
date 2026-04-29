@@ -19,7 +19,7 @@ class CheckMaintenanceMode
     public function handle(Request $request, Closure $next): Response
     {
         $isMaintenanceActive = SettingManager::isActive('maintenance_mode');
-        $hasBypass = FeatureManager::isAvailable('bypass_maintenance');
+        $hasBypass = $request->user()?->isSuperAdmin() || FeatureManager::isAvailable('bypass_maintenance');
 
         if ($isMaintenanceActive && !$hasBypass) {
             return Inertia::render('Maintenance')->toResponse($request)->setStatusCode(503);

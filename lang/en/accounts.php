@@ -1,12 +1,20 @@
 <?php
+/*
+|--------------------------------------------------------------------------
+| Account Types and Labels
+|--------------------------------------------------------------------------
+| These are used for financial account categorization.
+*/
 
 return [
     'opening_balance' => 'Opening Balance',
     'cash' => 'Cash',
     'bank' => 'Bank',
     'credit_card' => 'Credit Card',
-    'loans' => 'Loans',
+    'debts' => 'Debts',
     'investments' => 'Investments',
+    'checking_account' => 'Checking Account',
+    'wallet' => 'Wallet',
     'savings' => 'Savings',
     'fixed_income' => 'Fixed Income',
     'variable_income' => 'Variable Income',
@@ -23,6 +31,20 @@ return [
     'personal' => 'Personal',
     'services' => 'Services',
     'other_expenses' => 'Other Expenses',
+    'type' => [
+        'asset' => 'Asset',
+        'liability' => 'Liability',
+        'revenue' => 'Revenue',
+        'expense' => 'Expense',
+        'equity' => 'Equity',
+    ],
+    'cards' => [
+        'cash' => 'Cash',
+        'bank' => 'Bank',
+        'investments' => 'Investments',
+        'credit_card' => 'Credit Card',
+        'debts' => 'Debts',
+    ],
     'default_ledger_name' => ':name\'s Wallet',
     'page' => [
         'title' => 'Accounts',
@@ -33,7 +55,44 @@ return [
         'liabilities_desc' => 'Your total obligations and credit limits currently in use.',
         'empty_title' => 'No accounts found',
         'empty_desc' => 'Start by creating your first real account or use the system accounts generated in the setup.',
-        'tree_header_name' => 'Account Name',
+        'tree_header_name' => 'Account / Category',
         'tree_header_balance' => 'Balance',
+        'children_count' => 'accounts',
+        'children_count_singular' => 'account',
+        'total_balance' => 'Total balance',
+    ],
+    'modal' => [
+        'title_create' => 'Create Account',
+        'title_edit' => 'Edit Account',
+        'title_subaccount' => 'Add Subaccount to :parent',
+        'name_label' => 'Account Name',
+        'name_placeholder' => 'e.g. Main Bank, Savings, Credit Card',
+        'name_placeholders' => [
+            'bank' => 'E.g., Chase, Wells Fargo, Bank of America',
+            'cash' => 'E.g., Cash on Hand, Petty Cash',
+            'credit_card' => 'E.g., Visa Gold, Mastercard Platinum',
+            'investments' => 'E.g., Robinhood, E*TRADE, Vanguard',
+            'debts' => 'E.g., Personal Loan, Mortgage',
+        ],
+        'preview_name_placeholder' => 'Account Name',
+        'type_label' => 'Account Type',
+        'icon_label' => 'Icon',
+        'color_label' => 'Design Color',
+        'submit_create' => 'Create Account',
+        'submit_edit' => 'Save Changes',
+        'cancel' => 'Cancel',
+    ],
+    'actions' => [
+        'edit' => 'Edit',
+        'delete' => 'Delete',
+        'inactivate' => 'Inactivate',
+    ],
+    'messages' => [
+        'confirm_delete' => 'Are you sure you want to delete this account? This action is permanent.',
+        'confirm_inactivate' => 'This account has history and will be inactivated instead of deleted. Do you want to continue?',
+        'inactivate_success' => 'Account inactivated successfully.',
+        'delete_success' => 'Account deleted successfully.',
+        'inactivate_tooltip' => 'Accounts with transactions cannot be deleted, only inactivated.',
+        'cannot_inactivate' => 'Cannot inactivate account with balance greater than 0',
     ],
 ];

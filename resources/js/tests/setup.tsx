@@ -4,6 +4,8 @@ import { cleanup } from '@testing-library/react';
 import * as matchers from '@testing-library/jest-dom/matchers';
 import React from 'react';
 
+import { createInertiaMock } from '../test-utils/inertia-mock';
+
 // Extende os matchers do Vitest com os do Testing Library
 expect.extend(matchers);
 
@@ -13,17 +15,11 @@ afterEach(() => {
 });
 
 // Mock Global do Inertia
-vi.mock('@inertiajs/react', () => ({
-  useForm: vi.fn(),
-  usePage: () => ({
-    props: {
-      auth: { user: null },
-      locale: 'en',
-      translations: {},
-    },
-  }),
-  Link: ({ children, href }: { children: React.ReactNode; href: string }) => (
-    <a href={href}>{children}</a>
-  ),
-  Head: ({ title }: { title: string }) => <title>{title}</title>,
-}));
+vi.mock('@inertiajs/react', () => createInertiaMock());
+
+// Mock ResizeObserver para evitar erros no Headless UI
+global.ResizeObserver = class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};

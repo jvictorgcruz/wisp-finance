@@ -10,14 +10,14 @@ interface Props {
 }
 
 export default function ForgotPassword({ status }: Props) {
-    const { t, route } = useTranslation();
+    const { t, localeRoute } = useTranslation();
     const { data, setData, post, processing, errors } = useForm({
         email: '',
     });
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('/forgot-password'));
+        post(localeRoute('/forgot-password'));
     };
 
     return (
@@ -70,7 +70,7 @@ export default function ForgotPassword({ status }: Props) {
 
                 <div className="text-center">
                     <Link
-                        href={route('/login')}
+                        href={localeRoute('/login')}
                         className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-primary transition-colors group"
                     >
                         <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />

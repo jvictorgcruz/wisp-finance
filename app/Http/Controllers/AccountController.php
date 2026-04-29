@@ -26,7 +26,7 @@ class AccountController extends Controller
     public function store(AccountRequest $request, UpsertAccountAction $action): RedirectResponse
     {
         $action->execute(array_merge($request->validated(), [
-            'ledger_id' => session('current_ledger_id'),
+            'ledger_id' => \App\Support\LedgerContext::currentId(),
         ]));
 
         return redirect()->route('accounts.index')
@@ -51,7 +51,11 @@ class AccountController extends Controller
     {
         $action->execute($account);
 
+        $message = $account->exists 
+            ? __('accounts.messages.inactivate_success') 
+            : __('accounts.messages.delete_success');
+
         return redirect()->route('accounts.index')
-            ->with('success', __('Account deleted successfully.'));
+            ->with('success', $message);
     }
 }

@@ -6,7 +6,7 @@ import { User, Mail, Lock, UserPlus } from 'lucide-react';
 import { useTranslation } from '@/Hooks/useTranslation';
 
 export default function Register() {
-    const { t, route } = useTranslation();
+    const { t, localeRoute } = useTranslation();
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
@@ -16,7 +16,7 @@ export default function Register() {
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('/register'), {
+        post(localeRoute('/register'), {
             onFinish: () => reset('password', 'password_confirmation'),
         });
     };
@@ -106,7 +106,7 @@ export default function Register() {
                 <p className="text-center text-sm text-slate-500">
                     {t('auth.already_registered')}{' '}
                     <Link
-                        href={route('/login')}
+                        href={localeRoute('/login')}
                         className="font-semibold text-primary hover:text-primary/80 transition-colors underline underline-offset-4 decoration-primary/30"
                     >
                         {t('auth.login_now')}

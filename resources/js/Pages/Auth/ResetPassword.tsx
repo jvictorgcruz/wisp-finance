@@ -11,7 +11,7 @@ interface Props {
 }
 
 export default function ResetPassword({ token, email }: Props) {
-    const { t, route } = useTranslation();
+    const { t, localeRoute } = useTranslation();
     const { data, setData, post, processing, errors, reset } = useForm({
         token: token,
         email: email,
@@ -27,7 +27,7 @@ export default function ResetPassword({ token, email }: Props) {
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('/reset-password'));
+        post(localeRoute('/reset-password'));
     };
 
     return (

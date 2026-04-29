@@ -12,5 +12,7 @@ abstract class TestCase extends BaseTestCase
     public ?User $admin = null;
     public ?User $superAdmin = null;
     public ?Ledger $ledger = null;
+    public $action;
     public $driver;
+    public $data;
 }

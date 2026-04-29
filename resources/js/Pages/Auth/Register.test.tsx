@@ -4,28 +4,18 @@ import { useForm } from '@inertiajs/react';
 import Register from './Register';
 import React from 'react';
 
-vi.mock('@inertiajs/react', () => ({
-    Head: ({ children }: any) => <>{children}</>,
-    Link: ({ children, href }: any) => <a href={href}>{children}</a>,
-    usePage: () => ({
-        url: '/en/register',
-        props: {
-            auth: { user: null },
-            locale: 'en',
-            locales: { en: 'English', pt: 'Português' },
-        }
-    }),
-    useForm: vi.fn(),
-    router: {
-        visit: vi.fn(),
-        post: vi.fn(),
-    }
-}));
+import { createInertiaMock } from '@/test-utils/inertia-mock';
+
+vi.mock('@inertiajs/react', async () => {
+    const { createInertiaMock } = await import('@/test-utils/inertia-mock');
+    return createInertiaMock({ url: '/en/register' });
+});
 
 vi.mock('@/Hooks/useTranslation', () => ({
     useTranslation: () => ({
         t: (key: string) => key,
-        locale: 'en'
+        locale: 'en',
+        localeRoute: (path: string) => path
     })
 }));
 

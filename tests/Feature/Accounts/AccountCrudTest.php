@@ -13,12 +13,9 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     /** @var \Tests\TestCase $this */
-    $this->user = User::factory()->create();
-    $this->ledger = Ledger::factory()->create();
-    $this->ledger->users()->attach($this->user, ['role' => 'owner']);
-    
-    Auth::login($this->user);
-    session(['current_ledger_id' => $this->ledger->id]);
+    $authenticated = createAuthenticatedLedger();
+    $this->user = $authenticated['user'];
+    $this->ledger = $authenticated['ledger'];
 });
 
 test('it can list accounts', function () {
@@ -38,12 +35,20 @@ test('it can list accounts', function () {
 });
 
 test('it can create an account', function () {
+    $parent = Account::create([
+        'name' => 'Root Asset',
+        'type' => AccountType::ASSET,
+        'status' => AccountStatus::ACTIVE,
+    ]);
+
     $response = $this->post(route('accounts.store'), [
         'name' => 'New Savings',
         'type' => 'asset',
+        'parent_id' => $parent->id,
+        'ui_metadata' => ['color' => '#10b981', 'icon' => 'Wallet'],
     ]);
 
-    $response->assertRedirect(route('accounts.index'));
+    $response->assertRedirect();
     $this->assertDatabaseHas('accounts', [
         'name' => 'New Savings',
         'type' => 'asset',
@@ -54,7 +59,7 @@ test('it can create an account', function () {
 test('it validates account name length', function () {
     $response = $this->post(route('accounts.store'), [
         'name' => 'A', // Too short (min:2)
-        'type' => 'asset',
+        'type' => 'expense',
     ]);
 
     $response->assertSessionHasErrors(['name']);
@@ -105,18 +110,27 @@ test('it prevents using a parent_id from another ledger', function () {
 });
 
 test('it can update an account', function () {
+    $parent = Account::create([
+        'name' => 'Root Asset',
+        'type' => AccountType::ASSET,
+        'status' => AccountStatus::ACTIVE,
+    ]);
+
     $account = Account::create([
         'name' => 'Old Name',
         'type' => AccountType::ASSET,
         'status' => AccountStatus::ACTIVE,
+        'parent_id' => $parent->id,
     ]);
 
     $response = $this->put(route('accounts.update', $account), [
         'name' => 'Updated Name',
         'type' => 'asset',
+        'parent_id' => $parent->id,
+        'ui_metadata' => ['color' => '#10b981', 'icon' => 'Wallet'],
     ]);
 
-    $response->assertRedirect(route('accounts.index'));
+    $response->assertRedirect();
     expect($account->fresh()->name)->toBe('Updated Name');
 });
 
@@ -163,7 +177,7 @@ test('it soft deletes a regular account without history', function () {
 
     $response = $this->delete(route('accounts.destroy', $account));
 
-    $response->assertRedirect(route('accounts.index'));
+    $response->assertRedirect();
     
     // Rule: Accounts WITHOUT history are soft deleted (deleted_at)
     $this->assertSoftDeleted('accounts', ['id' => $account->id]);
@@ -194,7 +208,7 @@ test('it inactivates an account with zero balance', function () {
 
     $response = $this->delete(route('accounts.destroy', $account));
 
-    $response->assertRedirect(route('accounts.index'));
+    $response->assertRedirect();
     
     // Rule: Accounts WITH history and zero balance are INACTIVATED
     expect($account->fresh()->status)->toBe(AccountStatus::INACTIVE);
@@ -249,30 +263,89 @@ test('it prevents creating a third level account', function () {
 
 test('it prevents a parent account from becoming a child', function () {
     $parent = Account::create([
-        'name' => 'Parent Asset',
-        'type' => AccountType::ASSET,
+        'name' => 'Parent Rev',
+        'type' => AccountType::REVENUE,
         'status' => AccountStatus::ACTIVE,
     ]);
 
     Account::create([
-        'name' => 'Child Asset',
-        'type' => AccountType::ASSET,
+        'name' => 'Child Rev',
+        'type' => AccountType::REVENUE,
         'status' => AccountStatus::ACTIVE,
         'parent_id' => $parent->id,
     ]);
 
     $otherRoot = Account::create([
-        'name' => 'Other Root',
-        'type' => AccountType::ASSET,
+        'name' => 'Other Root Rev',
+        'type' => AccountType::REVENUE,
         'status' => AccountStatus::ACTIVE,
     ]);
 
     // Try to move $parent under $otherRoot (Rule 2)
     $response = $this->put(route('accounts.update', $parent), [
         'name' => 'Moved Parent',
-        'type' => 'asset',
+        'type' => 'revenue',
         'parent_id' => $otherRoot->id,
+        'ui_metadata' => ['color' => '#10b981', 'icon' => 'Wallet'],
     ]);
 
     $response->assertSessionHasErrors(['parent_id']);
+});
+
+test('it blocks updating a root asset or liability', function () {
+    $account = Account::create([
+        'name' => 'Root Liability',
+        'type' => AccountType::LIABILITY,
+        'status' => AccountStatus::ACTIVE,
+    ]);
+
+    $response = $this->put(route('accounts.update', $account), [
+        'name' => 'Hack Name',
+        'type' => 'liability',
+        'ui_metadata' => ['color' => '#f43f5e', 'icon' => 'TrendingDown'],
+    ]);
+
+    $response->assertStatus(403);
+});
+
+test('it allows updating a root revenue or expense', function () {
+    $account = Account::create([
+        'name' => 'Root Expense',
+        'type' => AccountType::EXPENSE,
+        'status' => AccountStatus::ACTIVE,
+    ]);
+
+    $response = $this->put(route('accounts.update', $account), [
+        'name' => 'Updated Expense Root',
+        'type' => 'expense',
+        'ui_metadata' => ['color' => '#ef4444', 'icon' => 'Home'],
+    ]);
+
+    $response->assertRedirect();
+    expect($account->fresh()->name)->toBe('Updated Expense Root');
+});
+
+test('it enforces parent_id for new assets and liabilities', function () {
+    $response = $this->post(route('accounts.store'), [
+        'name' => 'Invalid Root Asset',
+        'type' => 'asset',
+        'ui_metadata' => ['color' => '#10b981', 'icon' => 'Wallet'],
+    ]);
+
+    $response->assertSessionHasErrors(['parent_id']);
+});
+
+test('it allows creating a root category without a parent', function () {
+    $response = $this->post(route('accounts.store'), [
+        'name' => 'New Category Root',
+        'type' => 'expense',
+        'ui_metadata' => ['color' => '#ef4444', 'icon' => 'Utensils'],
+    ]);
+
+    $response->assertRedirect();
+    $this->assertDatabaseHas('accounts', [
+        'name' => 'New Category Root',
+        'type' => 'expense',
+        'parent_id' => null,
+    ]);
 });

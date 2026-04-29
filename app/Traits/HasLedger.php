@@ -28,15 +28,7 @@ trait HasLedger
      */
     protected static function resolveLedgerId(): ?int
     {
-        if (request()->hasSession() && session()->has('current_ledger_id')) {
-            return (int) session('current_ledger_id');
-        }
-
-        if (Auth::check()) {
-            return Auth::user()->currentLedger()?->id;
-        }
-
-        return null;
+        return \App\Support\LedgerContext::currentId();
     }
 
     /**

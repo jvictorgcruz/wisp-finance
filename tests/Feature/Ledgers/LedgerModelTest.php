@@ -4,6 +4,10 @@ use App\Models\Ledger;
 use App\Models\User;
 use App\Models\Account;
 use App\Support\DefaultAccountDefinitions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+uses(RefreshDatabase::class);
 
 test('it can create a ledger', function () {
     $ledger = Ledger::create([
@@ -30,17 +34,18 @@ test('ledger has many accounts', function () {
     Account::factory()->count(3)->create(['ledger_id' => $ledger->id]);
 
     // Validate system accounts
-    expect($ledger->accounts()->where('is_system', true)->count())->toBe(DefaultAccountDefinitions::count());
+    expect($ledger->accounts()->where('is_system', true)->count())->toBe(DefaultAccountDefinitions::countRoots());
     
-    // Validate custom accounts
-    expect($ledger->accounts()->where('is_system', false)->count())->toBe(3);
+    // Validate custom accounts (3 custom + default children)
+    $expectedNonSystem = 3 + DefaultAccountDefinitions::countChildren();
+    expect($ledger->accounts()->where('is_system', false)->count())->toBe($expectedNonSystem);
 });
 
 test('it does not duplicate system accounts when synced multiple times', function () {
     $ledger = Ledger::factory()->create();
     $action = app(\App\Actions\Ledgers\CreateDefaultAccountsAction::class);
     
-    $initialCount = DefaultAccountDefinitions::count();
+    $initialCount = DefaultAccountDefinitions::countRoots();
     
     // Action should have been called by factory/observer already
     expect($ledger->accounts()->where('is_system', true)->count())->toBe($initialCount);

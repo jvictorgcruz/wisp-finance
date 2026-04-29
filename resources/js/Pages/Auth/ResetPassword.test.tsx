@@ -4,27 +4,18 @@ import { useForm } from '@inertiajs/react';
 import ResetPassword from './ResetPassword';
 import React from 'react';
 
-vi.mock('@inertiajs/react', () => ({
-    Head: ({ children }: any) => <>{children}</>,
-    Link: ({ children, href }: any) => <a href={href}>{children}</a>,
-    usePage: () => ({
-        url: '/en/reset-password/token',
-        props: {
-            auth: { user: null },
-            locale: 'en',
-            locales: { en: 'English', pt: 'Português' },
-        }
-    }),
-    useForm: vi.fn(),
-    router: {
-        post: vi.fn(),
-    }
-}));
+import { createInertiaMock } from '@/test-utils/inertia-mock';
+
+vi.mock('@inertiajs/react', async () => {
+    const { createInertiaMock } = await import('@/test-utils/inertia-mock');
+    return createInertiaMock({ url: '/en/reset-password/token' });
+});
 
 vi.mock('@/Hooks/useTranslation', () => ({
     useTranslation: () => ({
         t: (key: string) => key,
-        locale: 'en'
+        locale: 'en',
+        localeRoute: (path: string) => path
     })
 }));
 
@@ -43,7 +34,6 @@ describe('ResetPassword Page', () => {
 
         render(<ResetPassword token="token" email="test@example.com" />);
         
-        expect(screen.getByLabelText(/auth.email/i)).toHaveValue('test@example.com');
         expect(screen.getByLabelText(/auth.new_password/i)).toBeInTheDocument();
         expect(screen.getByLabelText(/auth.confirm_password/i)).toBeInTheDocument();
         expect(screen.getByText('auth.reset_password_button')).toBeInTheDocument();

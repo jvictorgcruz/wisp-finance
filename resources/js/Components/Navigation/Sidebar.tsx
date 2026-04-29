@@ -8,7 +8,8 @@ import {
     ChevronDown, Menu,
     X, Shield,
     Settings,
-    Users
+    Users,
+    Tags
 } from 'lucide-react';
 import Logo from '@/Components/Common/Logo';
 import { useTranslation } from '@/Hooks/useTranslation';
@@ -55,9 +56,10 @@ export default function Sidebar() {
 
     const navLinks = [
         { name: t('home.nav.dashboard'), href: '/dashboard', icon: LayoutDashboard },
-        { name: t('home.nav.accounts'), href: '/accounts', icon: Wallet },
         { name: t('home.nav.transactions'), href: '/transactions', icon: ArrowLeftRight },
+        { name: t('home.nav.accounts'), href: '/accounts', icon: Wallet },
         { name: t('home.nav.cards'), href: '/cards', icon: CreditCard },
+        { name: t('home.nav.categories'), href: '/categories', icon: Tags },
     ];
 
     const adminLinks = [
@@ -83,7 +85,7 @@ export default function Sidebar() {
 
             {/* Sidebar Container */}
             <aside className={cn(
-                "fixed inset-y-0 left-0 z-40 w-64 bg-surface border-r border-surface-low flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 shadow-sm",
+                "fixed inset-y-0 left-0 z-40 w-64 bg-surface-lowest border-r border-surface-low flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 shadow-sm",
                 isOpen ? "translate-x-0" : "-translate-x-full"
             )}>
                 <div className="h-20 flex items-center px-6">

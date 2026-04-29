@@ -53,11 +53,7 @@ class HandleInertiaRequests extends Middleware
         session(['locale' => $locale]);
 
         $user = $request->user();
-        $currentLedgerId = session('current_ledger_id');
-
-        if (!$currentLedgerId && $user) {
-            $currentLedgerId = $user->currentLedger()?->id;
-        }
+        $currentLedgerId = \App\Support\LedgerContext::currentId();
 
         return array_merge(parent::share($request), [
             'features' => \App\Support\FeatureFlags\FeatureManager::allFlags(),
