@@ -66,11 +66,37 @@ class Account extends Model
     }
 
     /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::deleting(function (Account $account) {
+            if ($account->forceDeleting) {
+                $account->creditCardDetail()->forceDelete();
+            } else {
+                $account->creditCardDetail()->delete();
+            }
+        });
+
+        static::restoring(function (Account $account) {
+            $account->creditCardDetail()->restore();
+        });
+    }
+
+    /**
      * Determine if this account can have direct journal entries.
      * Rule: Root accounts (parents) cannot have direct transactions.
      */
     public function canHaveJournalEntries(): bool
     {
         return $this->parent_id !== null;
+    }
+
+    /**
+     * Get the credit card details for this account.
+     */
+    public function creditCardDetail(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(CreditCardDetail::class);
     }
 }
