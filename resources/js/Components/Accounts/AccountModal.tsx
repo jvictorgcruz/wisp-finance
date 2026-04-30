@@ -222,7 +222,7 @@ export default function AccountModal({
                 {/* Account Type Cards - ONLY IN CREATE MODE AND NOT FORCED */}
                 {mode === 'create' && !forceType && (
                     <div className="space-y-4">
-                        <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">
+                        <label className="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-1.5 ml-1">
                             {t('accounts.modal.type_label')}
                         </label>
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -280,7 +280,7 @@ export default function AccountModal({
                     <div className="grid grid-cols-2 gap-6">
                         {/* Compact Icon Selector */}
                         <div className="space-y-3">
-                            <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">
+                            <label className="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-1.5 ml-1">
                                 Ícone
                             </label>
                             <DropdownSelector 
@@ -321,7 +321,7 @@ export default function AccountModal({
 
                         {/* Compact Color Selector */}
                         <div className="space-y-3">
-                            <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">
+                            <label className="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-1.5 ml-1">
                                 {t('accounts.modal.color_label')}
                             </label>
                             <DropdownSelector 

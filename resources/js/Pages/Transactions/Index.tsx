@@ -149,21 +149,34 @@ export default function Index({ transactions, filters }: Props) {
                                                     <span className="font-bold text-slate-900 group-hover:text-primary transition-colors">
                                                         {transaction.description}
                                                     </span>
-                                                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                                                        {t(transaction.main_account)}
-                                                    </span>
+                                                    <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                                                        {transaction.type === 'TRANSFER' ? (
+                                                            <>
+                                                                {t(transaction.other_account)}
+                                                                <ChevronRight className="w-3 h-3" />
+                                                                {t(transaction.main_account)}
+                                                            </>
+                                                        ) : (
+                                                            t(transaction.main_account)
+                                                        )}
+                                                    </div>
                                                 </div>
                                                 
-                                                <div className="flex items-center gap-4 justify-between md:justify-end">
-                                                    <span className="hidden sm:inline-block px-3 py-1 bg-slate-50 text-[9px] font-black rounded-full text-slate-400 uppercase tracking-widest">
-                                                        {t(transaction.other_account)}
-                                                    </span>
+                                                <div className="flex flex-col items-end gap-1 justify-center">
                                                     <span className={cn(
                                                         "text-lg font-black tracking-tight",
-                                                        transaction.type === 'INCOME' ? "text-emerald-600" : "text-rose-600"
+                                                        transaction.type === 'INCOME' ? "text-emerald-600" : 
+                                                        transaction.type === 'EXPENSE' ? "text-rose-600" : 
+                                                        "text-slate-900"
                                                     )}>
-                                                        {transaction.type === 'INCOME' ? '+' : '-'} {formatCurrency(Math.abs(transaction.amount))}
+                                                        {transaction.type === 'INCOME' ? '+ ' : transaction.type === 'EXPENSE' ? '- ' : ''} 
+                                                        {formatCurrency(Math.abs(transaction.amount))}
                                                     </span>
+                                                    {transaction.type !== 'TRANSFER' && (
+                                                        <span className="py-0.5 bg-slate-50 text-[9px] font-black rounded-full text-slate-400 uppercase tracking-widest">
+                                                            {t(transaction.other_account)}
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>

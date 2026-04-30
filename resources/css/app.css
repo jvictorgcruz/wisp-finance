@@ -49,6 +49,11 @@
 }
 
 @layer base {
+    /* Remove forced scrollbar to prevent conflicts with modal libraries */
+    html {
+        scrollbar-gutter: stable;
+    }
+
     *:focus {
         @apply outline-primary;
     }

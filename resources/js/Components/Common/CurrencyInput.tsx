@@ -6,9 +6,10 @@ interface Props {
     label?: string;
     error?: string;
     className?: string;
+    autoFocus?: boolean;
 }
 
-export default function CurrencyInput({ value, onChange, label, error, className = "" }: Props) {
+export default function CurrencyInput({ value, onChange, label, error, className = "", autoFocus }: Props) {
     const [displayValue, setDisplayValue] = useState('');
 
     useEffect(() => {
@@ -38,6 +39,7 @@ export default function CurrencyInput({ value, onChange, label, error, className
             <div className="relative">
                 <input
                     type="text"
+                    autoFocus={autoFocus}
                     value={displayValue}
                     onChange={handleChange}
                     className={`w-full bg-slate-50 border-none focus:ring-2 focus:ring-primary/20 rounded-2xl px-4 py-4 text-2xl font-black text-slate-900 placeholder:text-slate-300 transition-all ${error ? 'ring-2 ring-rose-500/20' : ''}`}

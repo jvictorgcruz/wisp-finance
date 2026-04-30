@@ -182,7 +182,7 @@ export default function Index({ settings }: SettingsProps) {
                     />
                 </div>
                 <div className="w-full md:w-64 relative group">
-                    <label className="absolute left-3 top-[-8px] px-1 bg-white text-[10px] font-black text-slate-400 uppercase tracking-widest z-10 transition-colors group-focus-within:text-primary">
+                    <label className="absolute left-3 top-[-8px] px-1 bg-white block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 z-10 transition-colors group-focus-within:text-primary">
                         {t('settings.filter_status')}
                     </label>
                     <select
@@ -276,7 +276,7 @@ export default function Index({ settings }: SettingsProps) {
                     </div>
 
                     <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                        <label className="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-1.5 ml-1">
                             {t('settings.setting_value')}
                         </label>
                         <input

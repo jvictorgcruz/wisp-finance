@@ -5,6 +5,7 @@ import Modal from '@/Components/Common/Modal';
 import CurrencyInput from '@/Components/Common/CurrencyInput';
 import FinancialSelect from './FinancialSelect';
 import TextField from '@/Components/Common/TextField';
+import DatePicker from '@/Components/Common/DatePicker';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -98,49 +99,91 @@ export default function TransactionModal({ show, onClose }: Props) {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+                <DatePicker
+                    label={t('transactions.modal.date_label')}
+                    value={data.date}
+                    onChange={(val) => setData('date', val)}
+                    error={errors.date}
+                    className="bg-slate-50 border-none rounded-2xl h-14"
+                />
+
+                <TextField
+                    label={t('transactions.modal.description_label')}
+                    placeholder={t('transactions.modal.description_placeholder')}
+                    value={data.description}
+                    onChange={(val) => setData('description', val)}
+                    error={errors.description}
+                    className="bg-slate-50 border-none rounded-2xl h-14"
+                />
+
                 <CurrencyInput
+                    autoFocus
                     value={data.amount}
                     onChange={(val) => setData('amount', val)}
                     label={t('transactions.modal.amount_label')}
                     error={errors.amount}
                 />
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <FinancialSelect
-                        label={t(`transactions.modal.source_label.${activeTab.toLowerCase()}`)}
-                        placeholder="Selecione..."
-                        items={filteredSourceItems}
-                        value={data.source_account_id}
-                        onChange={(val) => setData('source_account_id', val)}
-                        error={errors.source_account_id}
-                    />
-                    <FinancialSelect
-                        label={t(`transactions.modal.destination_label.${activeTab.toLowerCase()}`)}
-                        placeholder="Selecione..."
-                        items={filteredDestinationItems}
-                        value={data.destination_account_id}
-                        onChange={(val) => setData('destination_account_id', val)}
-                        error={errors.destination_account_id}
-                    />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <TextField
-                        type="date"
-                        label={t('transactions.modal.date_label')}
-                        value={data.date}
-                        onChange={(val) => setData('date', val)}
-                        error={errors.date}
-                        className="bg-slate-50 border-none rounded-2xl h-14"
-                    />
-                    <TextField
-                        label={t('transactions.modal.description_label')}
-                        placeholder={t('transactions.modal.description_placeholder')}
-                        value={data.description}
-                        onChange={(val) => setData('description', val)}
-                        error={errors.description}
-                        className="bg-slate-50 border-none rounded-2xl h-14"
-                    />
+                <div className="space-y-6">
+                    {/* Render Category/Account with Category always on top for Income/Expense */}
+                    {activeTab === 'EXPENSE' ? (
+                        <>
+                            <FinancialSelect
+                                label={t('transactions.modal.destination_label.expense')}
+                                placeholder={t('transactions.modal.select_placeholder')}
+                                items={filteredDestinationItems}
+                                value={data.destination_account_id}
+                                onChange={(val) => setData('destination_account_id', val)}
+                                error={errors.destination_account_id}
+                            />
+                            <FinancialSelect
+                                label={t('transactions.modal.source_label.expense')}
+                                placeholder={t('transactions.modal.select_placeholder')}
+                                items={filteredSourceItems}
+                                value={data.source_account_id}
+                                onChange={(val) => setData('source_account_id', val)}
+                                error={errors.source_account_id}
+                            />
+                        </>
+                    ) : activeTab === 'INCOME' ? (
+                        <>
+                            <FinancialSelect
+                                label={t('transactions.modal.source_label.income')}
+                                placeholder={t('transactions.modal.select_placeholder')}
+                                items={filteredSourceItems}
+                                value={data.source_account_id}
+                                onChange={(val) => setData('source_account_id', val)}
+                                error={errors.source_account_id}
+                            />
+                            <FinancialSelect
+                                label={t('transactions.modal.destination_label.income')}
+                                placeholder={t('transactions.modal.select_placeholder')}
+                                items={filteredDestinationItems}
+                                value={data.destination_account_id}
+                                onChange={(val) => setData('destination_account_id', val)}
+                                error={errors.destination_account_id}
+                            />
+                        </>
+                    ) : (
+                        <>
+                            <FinancialSelect
+                                label={t('transactions.modal.source_label.transfer')}
+                                placeholder={t('transactions.modal.select_placeholder')}
+                                items={filteredSourceItems}
+                                value={data.source_account_id}
+                                onChange={(val) => setData('source_account_id', val)}
+                                error={errors.source_account_id}
+                            />
+                            <FinancialSelect
+                                label={t('transactions.modal.destination_label.transfer')}
+                                placeholder={t('transactions.modal.select_placeholder')}
+                                items={filteredDestinationItems}
+                                value={data.destination_account_id}
+                                onChange={(val) => setData('destination_account_id', val)}
+                                error={errors.destination_account_id}
+                            />
+                        </>
+                    )}
                 </div>
 
                 <div className="flex items-center justify-end gap-3 pt-6">
@@ -161,7 +204,7 @@ export default function TransactionModal({ show, onClose }: Props) {
                             "bg-indigo-600 shadow-indigo-600/20"
                         )}
                     >
-                        {t(`transactions.modal.submit.${activeTab.toLowerCase()}`)}
+                        {t(`transactions.modal.submit`)}
                     </button>
                 </div>
             </form>

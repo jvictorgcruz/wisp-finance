@@ -128,7 +128,7 @@ export default function CategoryModal({
                     <div className="space-y-6">
                         {/* Type Selection or Parent Label */}
                         <div className="space-y-3">
-                            <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] block">
+                            <label className="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-1.5 ml-1">
                                 {isSub ? t('categories.modal.parent_label') : t('categories.modal.type_label')}
                             </label>
                             
@@ -192,7 +192,7 @@ export default function CategoryModal({
 
                         <div className="grid grid-cols-2 gap-6">
                             <div className="space-y-3">
-                                <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">
+                                <label className="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-1.5 ml-1">
                                     {t('categories.modal.icon_label')}
                                 </label>
                                 <DropdownSelector 
@@ -220,7 +220,7 @@ export default function CategoryModal({
                             </div>
 
                             <div className="space-y-3">
-                                <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">
+                                <label className="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-1.5 ml-1">
                                     {t('categories.modal.color_label')}
                                 </label>
                                 <DropdownSelector 

@@ -56,6 +56,8 @@ return [
         'liabilities_desc' => 'Your total obligations and credit limits currently in use.',
         'empty_title' => 'No accounts found',
         'empty_desc' => 'Start by creating your first real account or use the system accounts generated in the setup.',
+        'empty_card_title' => 'No cards found',
+        'empty_card_desc' => 'Start by creating your first card to manage your limits and bills.',
         'tree_header_name' => 'Account / Category',
         'tree_header_balance' => 'Balance',
         'children_count' => 'accounts',

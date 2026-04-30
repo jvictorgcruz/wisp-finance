@@ -84,9 +84,9 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                     <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-6">
                         <CardIcon className="w-8 h-8 text-slate-300" />
                     </div>
-                    <h3 className="text-lg font-bold text-slate-900 mb-2">{t('accounts.page.empty_title')}</h3>
+                    <h3 className="text-lg font-bold text-slate-900 mb-2">{t('accounts.page.empty_card_title')}</h3>
                     <p className="text-sm text-slate-500 max-w-sm mb-8 font-medium leading-relaxed">
-                        {t('accounts.page.empty_desc')}
+                        {t('accounts.page.empty_card_desc')}
                     </p>
                     <button 
                         onClick={openCreate}

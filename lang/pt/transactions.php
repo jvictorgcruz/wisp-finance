@@ -2,7 +2,7 @@
 
 return [
     'modal' => [
-        'title' => 'Novo Lançamento',
+        'title' => 'Nova Transação',
         'tabs' => [
             'expense' => 'Despesa',
             'income' => 'Receita',
@@ -12,28 +12,25 @@ return [
         'date_label' => 'Data',
         'description_label' => 'Descrição',
         'description_placeholder' => 'Ex: Aluguel, Supermercado...',
+        'select_placeholder' => 'Selecione...',
         'source_label' => [
             'expense' => 'Pagar com',
-            'income' => 'Receber em',
+            'income' => 'Categoria',
             'transfer' => 'Origem',
         ],
         'destination_label' => [
             'expense' => 'Categoria',
-            'income' => 'Categoria',
+            'income' => 'Receber em',
             'transfer' => 'Destino',
         ],
-        'submit' => [
-            'expense' => 'Registrar Despesa',
-            'income' => 'Registrar Receita',
-            'transfer' => 'Confirmar Transferência',
-        ],
+        'submit' => 'Salvar Transação',
         'cancel' => 'Cancelar',
         'success' => [
             'expense' => 'Despesa registrada com sucesso!',
             'income' => 'Receita registrada com sucesso!',
             'transfer' => 'Transferência concluída com sucesso!',
         ],
-        'cta' => 'Novo Lançamento',
+        'cta' => 'Nova Transação',
     ],
     'dashboard' => [
         'title' => 'Dashboard',

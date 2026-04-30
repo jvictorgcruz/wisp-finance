@@ -12,21 +12,18 @@ return [
         'date_label' => 'Date',
         'description_label' => 'Description',
         'description_placeholder' => 'e.g. Rent, Groceries...',
+        'select_placeholder' => 'Select...',
         'source_label' => [
             'expense' => 'Pay from',
-            'income' => 'Receive at',
+            'income' => 'Category',
             'transfer' => 'Source',
         ],
         'destination_label' => [
             'expense' => 'Category',
-            'income' => 'Category',
+            'income' => 'Receive at',
             'transfer' => 'Destination',
         ],
-        'submit' => [
-            'expense' => 'Record Expense',
-            'income' => 'Record Income',
-            'transfer' => 'Confirm Transfer',
-        ],
+        'submit' => 'Save Transaction',
         'cancel' => 'Cancel',
         'success' => [
             'expense' => 'Expense recorded successfully!',

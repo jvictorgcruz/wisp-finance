@@ -25,19 +25,33 @@ interface Props {
     label: string;
     placeholder: string;
     error?: string;
+    className?: string;
+    containerClassName?: string;
 }
 
-export default function FinancialSelect({ items, value, onChange, label, placeholder, error }: Props) {
+export default function FinancialSelect({ 
+    items, 
+    value, 
+    onChange, 
+    label, 
+    placeholder, 
+    error,
+    className,
+    containerClassName
+}: Props) {
     const selectedItem = items.find(i => i.id === value);
 
     return (
-        <div className="space-y-1.5">
-            <label className="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-1.5 ml-1">
-                {label}
-            </label>
+        <div className={cn("space-y-1.5", containerClassName)}>
+            {label && (
+                <label className="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-1.5 ml-1">
+                    {label}
+                </label>
+            )}
             <DropdownSelector value={value} onChange={onChange}>
                 <DropdownSelector.Trigger className={cn(
                     "w-full bg-slate-50 border-none px-4 py-3 h-14 rounded-2xl flex items-center justify-between",
+                    className,
                     error ? "ring-2 ring-rose-500/20" : ""
                 )}>
                     {selectedItem ? (

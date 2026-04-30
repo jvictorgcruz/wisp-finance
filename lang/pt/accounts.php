@@ -56,6 +56,8 @@ return [
         'liabilities_desc' => 'Suas obrigações totais e limites de crédito em uso.',
         'empty_title' => 'Nenhuma conta encontrada',
         'empty_desc' => 'Comece criando sua primeira conta para gerenciar suas finanças.',
+        'empty_card_title' => 'Nenhum cartão encontrado',
+        'empty_card_desc' => 'Comece criando seu primeiro cartão para gerenciar seus limites e faturas.',
         'tree_header_name' => 'Conta / Categoria',
         'tree_header_balance' => 'Saldo',
         'children_count' => 'contas',
