@@ -73,7 +73,8 @@ return [
         'view_bill' => 'Ver Fatura',
         'create_card_btn' => 'Novo Cartão',
         'add_card_title' => 'Adicionar Novo Cartão',
-        'add_card_desc' => 'Vincule um novo banco à sua conta',
+        'add_card_desc' => 'Vincule um novo cartão à sua conta',
+        'invoice_control_disabled' => 'Controle de Fatura Desativado'
     ],
     'modal' => [
         'title_create' => 'Criar Conta',
@@ -102,6 +103,8 @@ return [
         'closing_day_label' => 'Fechamento da fatura',
         'limit_label' => 'Limite de Crédito',
         'limit_placeholder' => 'R$ 0,00',
+        'invoice_control_label' => 'Controle de Fatura',
+        'invoice_control_desc' => 'Gerar faturas automaticamente e controlar o limite disponível.'
     ],
     'actions' => [
         'edit' => 'Editar',

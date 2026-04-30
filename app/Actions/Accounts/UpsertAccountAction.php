@@ -41,11 +41,20 @@ class UpsertAccountAction
             }
 
             if ($isCreditCard && isset($data['credit_card_details'])) {
+                $details = $data['credit_card_details'];
+
+                // Ensure flag exists (default true)
+                $details['invoice_control_enabled'] = $details['invoice_control_enabled'] ?? true;
+
+                // If invoice control disabled, explicitely set to null to clear database
+                if (! $details['invoice_control_enabled']) {
+                    $details['closing_day'] = null;
+                    $details['due_day'] = null;
+                }
+
                 $account->creditCardDetail()->updateOrCreate(
                     ['account_id' => $account->id],
-                    array_merge($data['credit_card_details'], [
-                        'ledger_id' => $account->ledger_id
-                    ])
+                    array_merge($details, ['ledger_id' => $account->ledger_id])
                 );
             }
 

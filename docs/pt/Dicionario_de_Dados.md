@@ -114,8 +114,9 @@ Extensão 1:1 de `accounts` para contas do tipo `LIABILITY` que representam cart
 | `id` | BigInt (Unsigned) | PK, Auto-increment |
 | `account_id` | BigInt (Unsigned) | FK -> `accounts(id)`. **Unique** (relação 1:1) |
 | `credit_limit` | BigInt | Limite total em **centavos**. Nullable (opcional no MVP) |
-| `closing_day` | TinyInt (1–31) | Dia do mês em que a fatura fecha |
-| `due_day` | TinyInt (1–31) | Dia do mês em que a fatura vence |
+| `closing_day` | TinyInt (1–31) | Dia do mês em que a fatura fecha. Nullable se controle de fatura inativo |
+| `due_day` | TinyInt (1–31) | Dia do mês em que a fatura vence. Nullable se controle de fatura inativo |
+| `invoice_control_enabled` | Boolean | Se `true`, a conta funciona como cartão de crédito com faturas. Se `false`, atua como passivo simples. |
 | `created_at` | Timestamp | |
 | `updated_at` | Timestamp | |
 
@@ -132,12 +133,12 @@ Representa a **fatura mensal** de um cartão de crédito como uma entidade próp
 | `ledger_id` | BigInt (Unsigned) | FK -> `ledgers(id)` |
 | `account_id` | BigInt (Unsigned) | FK -> `accounts(id)`. A conta LIABILITY do cartão |
 | `reference_month` | Date | Primeiro dia do mês de referência (ex: `2025-08-01` para "Fatura Ago/25"). **Unique** por (`account_id`, `reference_month`) |
-| `closing_date` | Date | Data de fechamento calculada automaticamente |
-| `due_date` | Date | Data de vencimento calculada automaticamente |
-| `status` | Enum | `OPEN` (aceitando lançamentos), `CLOSED` (fechada, aguardando pagamento), `PAID` (quitada) |
-| `paid_transaction_id` | BigInt (Unsigned) | FK -> `transactions(id)`. Nullable. Aponta para a transação de pagamento da fatura |
+| `closing_date` | Date | Data de fechamento base |
+| `due_date` | Date | Data de vencimento limite |
 | `created_at` | Timestamp | |
 | `updated_at` | Timestamp | |
+
+> **⚠️ Nota Arquitetural:** Não existe mais a coluna de status (OPEN/CLOSED/PAID) nem dependência de rotinas de cronjob. O estado da fatura é computado via _Query_ (Accessor), confrontando as datas com o timestamp atual e calculando os `expected_cash_flows` (gastos vs. pagamentos recebidos). Faturas não "fecham" fisicamente, apenas superam a data. Pagamentos de fatura geram cashflows contrários (receitas).
 
 ---
 

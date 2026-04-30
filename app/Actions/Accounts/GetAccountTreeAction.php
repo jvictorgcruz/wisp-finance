@@ -50,6 +50,7 @@ class GetAccountTreeAction
                         'limit' => $child->creditCardDetail->limit,
                         'closing_day' => $child->creditCardDetail->closing_day,
                         'due_day' => $child->creditCardDetail->due_day,
+                        'invoice_control_enabled' => $child->creditCardDetail->invoice_control_enabled,
                     ] : null,
                 ];
             });
@@ -73,6 +74,7 @@ class GetAccountTreeAction
                     'limit' => $account->creditCardDetail->limit,
                     'closing_day' => $account->creditCardDetail->closing_day,
                     'due_day' => $account->creditCardDetail->due_day,
+                    'invoice_control_enabled' => $account->creditCardDetail->invoice_control_enabled,
                 ] : null,
                 'children' => $mappedChildren,
             ];

@@ -73,7 +73,8 @@ return [
         'view_bill' => 'View Statement',
         'create_card_btn' => 'New Card',
         'add_card_title' => 'Add New Card',
-        'add_card_desc' => 'Link a new bank to your account',
+        'add_card_desc' => 'Link a new card to your account',
+        'invoice_control_disabled' => 'Invoice Control Disabled'
     ],
     'modal' => [
         'title_create' => 'Create Account',
@@ -102,6 +103,8 @@ return [
         'closing_day_label' => 'Closing day',
         'limit_label' => 'Credit Limit',
         'limit_placeholder' => '$ 0.00',
+        'invoice_control_label' => 'Invoice Control',
+        'invoice_control_desc' => 'Automatically generate invoices and track available limit.'
     ],
     'actions' => [
         'edit' => 'Edit',

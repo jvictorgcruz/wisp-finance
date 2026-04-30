@@ -26,6 +26,7 @@ class CreditCardDetail extends Model
         'limit',
         'closing_day',
         'due_day',
+        'invoice_control_enabled',
     ];
 
     /**
@@ -39,8 +40,10 @@ class CreditCardDetail extends Model
             'limit' => Money::class,
             'closing_day' => 'integer',
             'due_day' => 'integer',
+            'invoice_control_enabled' => 'boolean',
         ];
     }
+
 
     /**
      * Get the account that owns the credit card details.

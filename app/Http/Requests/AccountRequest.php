@@ -77,18 +77,22 @@ class AccountRequest extends FormRequest
                 Rule::in(\App\Support\DefaultAccountDefinitions::getAvailableColors())
             ],
             'is_credit_card' => ['sometimes', 'boolean'],
-            'credit_card_details' => [
-                'required_if:is_credit_card,true',
-                'array',
-                function ($attribute, $value, $fail) {
-                    if ($this->input('is_credit_card') && $this->input('type') !== AccountType::LIABILITY->value) {
-                        $fail(__('Credit cards must be of type Liability.'));
-                    }
-                }
-            ],
+            // New flag – enabled by default, but must be present when creating a credit card
+            'credit_card_details.invoice_control_enabled' => ['required_if:is_credit_card,true', 'boolean'],
             'credit_card_details.limit' => ['required_if:is_credit_card,true', 'integer', 'min:0'],
-            'credit_card_details.closing_day' => ['required_if:is_credit_card,true', 'integer', 'min:1', 'max:31'],
-            'credit_card_details.due_day' => ['required_if:is_credit_card,true', 'integer', 'min:1', 'max:31'],
+            // Conditional validation based on the new flag
+            'credit_card_details.closing_day' => [
+                Rule::requiredIf(fn () => $this->input('is_credit_card') && $this->input('credit_card_details.invoice_control_enabled')),
+                'integer',
+                'min:1',
+                'max:31',
+            ],
+            'credit_card_details.due_day' => [
+                Rule::requiredIf(fn () => $this->input('is_credit_card') && $this->input('credit_card_details.invoice_control_enabled')),
+                'integer',
+                'min:1',
+                'max:31',
+            ],
         ];
     }
 

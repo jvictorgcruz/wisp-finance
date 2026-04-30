@@ -29,6 +29,7 @@ export interface Account {
         limit: number;
         closing_day: number;
         due_day: number;
+        invoice_control_enabled?: boolean;
     } | null;
     children?: Account[];
 }

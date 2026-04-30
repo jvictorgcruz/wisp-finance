@@ -79,24 +79,7 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                 </button>
             </div>
 
-            {cards.length === 0 ? (
-                <div className="mt-12 bg-white rounded-4xl p-12 border border-dashed border-slate-200 flex flex-col items-center text-center">
-                    <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-6">
-                        <CardIcon className="w-8 h-8 text-slate-300" />
-                    </div>
-                    <h3 className="text-lg font-bold text-slate-900 mb-2">{t('accounts.page.empty_card_title')}</h3>
-                    <p className="text-sm text-slate-500 max-w-sm mb-8 font-medium leading-relaxed">
-                        {t('accounts.page.empty_card_desc')}
-                    </p>
-                    <button 
-                        onClick={openCreate}
-                        className="text-primary font-bold text-sm flex items-center gap-2 hover:underline"
-                    >
-                        {t('accounts.page.create_card_btn')}
-                    </button>
-                </div>
-            ) : (
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 pt-8">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 pt-8">
                     {cards.map(card => (
                         <div 
                             key={card.id}
@@ -167,36 +150,63 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                                 </DropdownSelector>
                             </div>
 
-                            <div>
-                                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">
-                                    {t('accounts.page.current_bill')}
-                                </p>
-                                <div className="flex items-baseline gap-1">
-                                    <span className="text-xl font-bold text-slate-900">R$</span>
-                                    <span className="text-4xl font-black tracking-tighter text-slate-900">
-                                        {formatCurrency(Math.abs(card.balance)).replace('R$', '').trim()}
-                                    </span>
-                                </div>
-                            </div>
+                            {card.credit_card_details?.invoice_control_enabled ? (
+                                <div className="flex flex-col gap-6 flex-1">
+                                    <div>
+                                        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">
+                                            {t('accounts.page.current_bill')}
+                                        </p>
+                                        <div className="flex items-baseline gap-1">
+                                            <span className="text-xl font-bold text-slate-900">R$</span>
+                                            <span className="text-4xl font-black tracking-tighter text-slate-900">
+                                                {formatCurrency(Math.abs(card.balance)).replace('R$', '').trim()}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">
+                                                {t('accounts.page.closing')}
+                                            </p>
+                                            <p className="font-bold text-sm text-slate-900">
+                                                Dia {card.credit_card_details?.closing_day}
+                                            </p>
+                                        </div>
+                                        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">
+                                                {t('accounts.page.due_date')}
+                                            </p>
+                                            <p className="font-bold text-sm text-rose-500">
+                                                Dia {card.credit_card_details?.due_day}
+                                            </p>
+                                        </div>
+                                    </div>
 
-                            <div className="grid grid-cols-2 gap-3">
-                                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                                    <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">
-                                        {t('accounts.page.closing')}
-                                    </p>
-                                    <p className="font-bold text-sm text-slate-900">
-                                        Dia {card.credit_card_details?.closing_day}
-                                    </p>
+                                    <div className="flex gap-3 mt-auto pt-2">
+                                        <Button 
+                                            disabled 
+                                            variant="primary"
+                                            className="flex-1"
+                                        >
+                                            {t('accounts.page.pay_bill')}
+                                        </Button>
+                                        <Button 
+                                            disabled 
+                                            variant="outline"
+                                            className="flex-1"
+                                        >
+                                            {t('accounts.page.view_bill')}
+                                        </Button>
+                                    </div>
                                 </div>
-                                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                                    <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">
-                                        {t('accounts.page.due_date')}
-                                    </p>
-                                    <p className="font-bold text-sm text-rose-500">
-                                        Dia {card.credit_card_details?.due_day}
-                                    </p>
+                            ) : (
+                                <div className="bg-slate-50 p-4 rounded-2xl border border-dashed border-slate-200 flex flex-col items-center justify-center flex-1 min-h-[220px]">
+                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 text-center">
+                                        {t('accounts.page.invoice_control_disabled')}
+                                    </p>    
                                 </div>
-                            </div>
+                            )}
 
                             {card.credit_card_details && card.credit_card_details.limit > 0 && (
                                 <div className="space-y-3">
@@ -219,23 +229,6 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                                     </div>
                                 </div>
                             )}
-
-                            <div className="flex gap-3 mt-auto pt-2">
-                                <Button 
-                                    disabled 
-                                    variant="primary"
-                                    className="flex-1"
-                                >
-                                    {t('accounts.page.pay_bill')}
-                                </Button>
-                                <Button 
-                                    disabled 
-                                    variant="outline"
-                                    className="flex-1"
-                                >
-                                    {t('accounts.page.view_bill')}
-                                </Button>
-                            </div>
                         </div>
                     ))}
 
@@ -253,7 +246,6 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                         </div>
                     </div>
                 </div>
-            )}
 
             <AccountModal 
                 show={modal.show}

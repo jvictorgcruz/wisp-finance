@@ -56,7 +56,8 @@ export default function AccountModal({
         credit_card_details: {
             limit: 0,
             closing_day: 10,
-            due_day: 17
+            due_day: 17,
+            invoice_control_enabled: true
         }
     });
 
@@ -73,10 +74,11 @@ export default function AccountModal({
                         color: account.ui_metadata?.color || '#3b82f6',
                     },
                     is_credit_card: account.is_credit_card || false,
-                    credit_card_details: account.credit_card_details || {
-                        limit: 0,
-                        closing_day: 10,
-                        due_day: 17
+                    credit_card_details: {
+                        limit: account.credit_card_details?.limit ?? 0,
+                        closing_day: account.credit_card_details?.closing_day ?? 10,
+                        due_day: account.credit_card_details?.due_day ?? 17,
+                        invoice_control_enabled: account.credit_card_details?.invoice_control_enabled ?? true
                     }
                 });
             } else if (mode === 'subaccount' && parentAccount) {
@@ -93,7 +95,8 @@ export default function AccountModal({
                     credit_card_details: {
                         limit: 0,
                         closing_day: 10,
-                        due_day: 17
+                        due_day: 17,
+                        invoice_control_enabled: true
                     }
                 });
             } else {
@@ -114,7 +117,8 @@ export default function AccountModal({
                     credit_card_details: {
                         limit: 0,
                         closing_day: 10,
-                        due_day: 17
+                        due_day: 17,
+                        invoice_control_enabled: true
                     }
                 });
             }
@@ -370,34 +374,60 @@ export default function AccountModal({
                                 placeholder={t('accounts.modal.limit_placeholder')}
                                 error={errors['credit_card_details.limit' as keyof typeof errors]}
                             />
-                            <div className="grid grid-cols-2 gap-6">
-                                <TextField
-                                    id="closing_day"
-                                    type="number"
-                                    min="1"
-                                    max="31"
-                                    label={t('accounts.modal.closing_day_label')}
-                                    value={data.credit_card_details.closing_day.toString()}
-                                    onChange={(val) => setData(d => ({
-                                        ...d,
-                                        credit_card_details: { ...d.credit_card_details, closing_day: parseInt(val) || 0 }
-                                    }))}
-                                    error={errors['credit_card_details.closing_day' as keyof typeof errors]}
-                                />
-                                <TextField
-                                    id="due_day"
-                                    type="number"
-                                    min="1"
-                                    max="31"
-                                    label={t('accounts.modal.due_day_label')}
-                                    value={data.credit_card_details.due_day.toString()}
-                                    onChange={(val) => setData(d => ({
-                                        ...d,
-                                        credit_card_details: { ...d.credit_card_details, due_day: parseInt(val) || 0 }
-                                    }))}
-                                    error={errors['credit_card_details.due_day' as keyof typeof errors]}
-                                />
+                            
+                            <div className="flex items-center gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                <label className="relative inline-flex items-center cursor-pointer">
+                                    <input 
+                                        type="checkbox" 
+                                        className="sr-only peer"
+                                        checked={data.credit_card_details.invoice_control_enabled}
+                                        onChange={(e) => setData(d => ({
+                                            ...d,
+                                            credit_card_details: { ...d.credit_card_details, invoice_control_enabled: e.target.checked }
+                                        }))}
+                                    />
+                                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                </label>
+                                <div className="flex flex-col">
+                                    <span className="text-xs font-black uppercase tracking-widest text-slate-700">
+                                        {t('accounts.modal.invoice_control_label')}
+                                    </span>
+                                    <span className="text-[10px] text-slate-400 font-medium">
+                                        {t('accounts.modal.invoice_control_desc')}
+                                    </span>
+                                </div>
                             </div>
+
+                            {data.credit_card_details.invoice_control_enabled && (
+                                <div className="grid grid-cols-2 gap-6 animate-in fade-in slide-in-from-top-1">
+                                    <TextField
+                                        id="closing_day"
+                                        type="number"
+                                        min="1"
+                                        max="31"
+                                        label={t('accounts.modal.closing_day_label')}
+                                        value={data.credit_card_details.closing_day.toString()}
+                                        onChange={(val) => setData(d => ({
+                                            ...d,
+                                            credit_card_details: { ...d.credit_card_details, closing_day: parseInt(val) || 0 }
+                                        }))}
+                                        error={errors['credit_card_details.closing_day' as keyof typeof errors]}
+                                    />
+                                    <TextField
+                                        id="due_day"
+                                        type="number"
+                                        min="1"
+                                        max="31"
+                                        label={t('accounts.modal.due_day_label')}
+                                        value={data.credit_card_details.due_day.toString()}
+                                        onChange={(val) => setData(d => ({
+                                            ...d,
+                                            credit_card_details: { ...d.credit_card_details, due_day: parseInt(val) || 0 }
+                                        }))}
+                                        error={errors['credit_card_details.due_day' as keyof typeof errors]}
+                                    />
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

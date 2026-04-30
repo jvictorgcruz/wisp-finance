@@ -42,6 +42,7 @@ class GetCreditCardsAction
                         'limit' => $card->creditCardDetail->limit,
                         'closing_day' => $card->creditCardDetail->closing_day,
                         'due_day' => $card->creditCardDetail->due_day,
+                        'invoice_control_enabled' => $card->creditCardDetail->invoice_control_enabled,
                     ] : null,
                 ];
             });
