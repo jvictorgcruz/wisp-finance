@@ -79,6 +79,8 @@ Route::middleware('check_maintenance')->group(function () {
             Route::post('expense', [\App\Http\Controllers\TransactionController::class, 'storeExpense'])->name('store-expense');
             Route::post('income', [\App\Http\Controllers\TransactionController::class, 'storeIncome'])->name('store-income');
             Route::post('transfer', [\App\Http\Controllers\TransactionController::class, 'storeTransfer'])->name('store-transfer');
+            Route::put('{transaction}', [\App\Http\Controllers\TransactionController::class, 'update'])->name('update');
+            Route::delete('{transaction}', [\App\Http\Controllers\TransactionController::class, 'destroy'])->name('destroy');
         });
 
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');

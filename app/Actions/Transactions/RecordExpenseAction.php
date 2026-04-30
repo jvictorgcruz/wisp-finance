@@ -30,8 +30,11 @@ class RecordExpenseAction extends BaseFinancialAction
         return DB::transaction(function () use ($sourceAccount, $categoryAccount, $amount, $date, $description, $metadata) {
             $transaction = Transaction::create([
                 'ledger_id' => $sourceAccount->ledger_id,
+                'created_by_user_id' => auth()->id(),
                 'date' => $date,
                 'description' => $description,
+                'type' => \App\Enums\TransactionType::EXPENSE,
+                'status' => \App\Enums\TransactionStatus::ACTIVE,
                 'metadata' => $metadata,
             ]);
 

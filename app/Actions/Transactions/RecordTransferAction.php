@@ -30,8 +30,11 @@ class RecordTransferAction extends BaseFinancialAction
         return DB::transaction(function () use ($sourceAccount, $destinationAccount, $amount, $date, $description, $metadata) {
             $transaction = Transaction::create([
                 'ledger_id' => $sourceAccount->ledger_id,
+                'created_by_user_id' => auth()->id(),
                 'date' => $date,
                 'description' => $description,
+                'type' => \App\Enums\TransactionType::TRANSFER,
+                'status' => \App\Enums\TransactionStatus::ACTIVE,
                 'metadata' => $metadata,
             ]);
 

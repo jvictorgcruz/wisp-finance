@@ -35,6 +35,7 @@ interface Props {
     error?: string;
     className?: string;
     containerClassName?: string;
+    placement?: 'top' | 'bottom';
 }
 
 const FinancialSelect = forwardRef<HTMLButtonElement, Props>(({ 
@@ -46,7 +47,8 @@ const FinancialSelect = forwardRef<HTMLButtonElement, Props>(({
     placeholder, 
     error,
     className,
-    containerClassName
+    containerClassName,
+    placement = 'top'
 }, ref) => {
     const { t } = useTranslation();
     const [selectedParentName, setSelectedParentName] = useState<string | null>(null);
@@ -201,7 +203,10 @@ const FinancialSelect = forwardRef<HTMLButtonElement, Props>(({
                     {label}
                 </label>
             )}
-            <DropdownSelector value={value} onChange={onChange}>
+            <DropdownSelector value={value} onChange={(id) => {
+                onChange(id);
+                onSelect?.();
+            }}>
                 {({ open }: { open: boolean }) => (
                     <FinancialSelectContent 
                         open={open}
@@ -223,6 +228,7 @@ const FinancialSelect = forwardRef<HTMLButtonElement, Props>(({
                         highlightedIndex={highlightedIndex}
                         setHighlightedIndex={setHighlightedIndex}
                         value={value}
+                        placement={placement}
                     />
                 )}
             </DropdownSelector>
@@ -260,6 +266,7 @@ interface ContentProps {
     highlightedIndex: number;
     setHighlightedIndex: (val: number) => void;
     value: number | null;
+    placement: 'top' | 'bottom';
 }
 
 function FinancialSelectContent({ 
@@ -281,7 +288,8 @@ function FinancialSelectContent({
     groupedItems,
     highlightedIndex,
     setHighlightedIndex,
-    value
+    value,
+    placement
 }: ContentProps) {
     // Auto-focus search input when panel opens
     useEffect(() => {
@@ -298,7 +306,7 @@ function FinancialSelectContent({
             <DropdownSelector.Trigger 
                 ref={internalTriggerRef}
                 className={cn(
-                    "w-full bg-slate-50 border-none px-4 py-3 h-14 rounded-2xl flex items-center justify-between transition-all",
+                    "w-full bg-slate-50 border-none px-4 py-3 h-14 rounded-2xl flex items-center justify-between transition-all cursor-pointer",
                     "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white focus:shadow-sm",
                     className,
                     error ? "ring-2 ring-rose-500/20" : ""
@@ -325,7 +333,7 @@ function FinancialSelectContent({
                     <span className="text-slate-400 font-bold text-sm">{placeholder}</span>
                 )}
             </DropdownSelector.Trigger>
-            <DropdownSelector.Panel align="left" className="w-full max-h-[400px] overflow-hidden flex flex-col p-0">
+            <DropdownSelector.Panel align="left" placement={placement} className="w-full max-h-[400px] overflow-hidden flex flex-col p-0">
                 {/* Search Bar */}
                 <div className="p-3 border-b border-slate-50 bg-white sticky top-0 z-10">
                     <div className="relative group">
@@ -491,7 +499,7 @@ function FinancialSelectContent({
                             );
                         }
 
-                        return <div className="space-y-1">{itemsToRender}</div>;
+                        return <>{itemsToRender}</>;
                     })()}
                 </div>
             </DropdownSelector.Panel>
@@ -503,7 +511,6 @@ function DropDownItem({ item, value, isHighlighted }: { item: FinancialItem, val
     return (
         <DropdownSelector.Option 
             value={item.id}
-            as="div"
             data-highlighted={isHighlighted}
             className={({ selected }) => cn(
                 "flex items-center gap-3 px-3 py-3 rounded-xl cursor-pointer transition-all",

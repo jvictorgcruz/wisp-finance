@@ -97,7 +97,7 @@ const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(({
                         <PopoverButton 
                             ref={ref}
                             className={cn(
-                                "w-full flex items-center justify-between gap-3 px-4 h-14 rounded-2xl bg-slate-50 border-none transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white focus:shadow-sm",
+                                "w-full flex items-center justify-between gap-3 px-4 h-14 rounded-2xl bg-slate-50 border-none transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white focus:shadow-sm cursor-pointer",
                                 className,
                                 error ? "ring-2 ring-rose-500/20" : "",
                                 open ? "ring-2 ring-primary/20 bg-white shadow-sm" : ""
@@ -126,7 +126,7 @@ const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(({
                                     <button 
                                         type="button"
                                         onClick={handlePrevMonth}
-                                        className="p-2 hover:bg-slate-50 rounded-xl transition-colors text-slate-400 hover:text-slate-900"
+                                        className="p-2 hover:bg-slate-50 rounded-xl transition-colors text-slate-400 hover:text-slate-900 cursor-pointer"
                                     >
                                         <ChevronLeft className="w-5 h-5" />
                                     </button>
@@ -136,7 +136,7 @@ const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(({
                                     <button 
                                         type="button"
                                         onClick={handleNextMonth}
-                                        className="p-2 hover:bg-slate-50 rounded-xl transition-colors text-slate-400 hover:text-slate-900"
+                                        className="p-2 hover:bg-slate-50 rounded-xl transition-colors text-slate-400 hover:text-slate-900 cursor-pointer"
                                     >
                                         <ChevronRight className="w-5 h-5" />
                                     </button>
@@ -169,10 +169,9 @@ const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(({
                                                 type="button"
                                                 onClick={() => {
                                                     handleSelect(date);
-                                                    close();
                                                 }}
                                                 className={cn(
-                                                    "h-9 w-9 rounded-xl flex items-center justify-center text-xs font-bold transition-all relative",
+                                                    "h-9 w-9 rounded-xl flex items-center justify-center text-xs font-bold transition-all relative cursor-pointer",
                                                     isSelected 
                                                         ? "bg-primary text-white shadow-lg shadow-primary/20 scale-110 z-10" 
                                                         : "text-slate-600 hover:bg-slate-50 hover:text-primary",

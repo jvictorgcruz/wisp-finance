@@ -11,7 +11,7 @@ let mockFormData = {
     parent_id: 1,
     ui_metadata: { icon: '', color: '#3b82f6' },
     is_credit_card: false,
-    credit_card_details: { limit: 0, closing_day: 10, due_day: 17 }
+    credit_card_details: { limit: 0, closing_day: 10, due_day: 17, invoice_control_enabled: true }
 };
 
 // Mock useTranslation
@@ -68,7 +68,7 @@ describe('AccountModal', () => {
             parent_id: 1,
             ui_metadata: { icon: '', color: '#3b82f6' },
             is_credit_card: false,
-            credit_card_details: { limit: 0, closing_day: 10, due_day: 17 }
+            credit_card_details: { limit: 0, closing_day: 10, due_day: 17, invoice_control_enabled: true }
         };
     });
 
@@ -88,7 +88,8 @@ describe('AccountModal', () => {
             ...mockFormData,
             parent_Key: 'credit_card',
             type: 'liability',
-            is_credit_card: true
+            is_credit_card: true,
+            credit_card_details: { ...mockFormData.credit_card_details, invoice_control_enabled: true }
         };
 
         render(<AccountModal {...defaultProps} />);

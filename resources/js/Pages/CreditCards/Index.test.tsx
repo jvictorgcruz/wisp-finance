@@ -39,7 +39,7 @@ describe('CreditCards Index Page', () => {
                 balance: -150000,
                 parent_id: null,
                 ui_metadata: { color: '#820ad1', icon: 'CreditCard' },
-                credit_card_details: { limit: 500000, closing_day: 10, due_day: 17 }
+                credit_card_details: { limit: 500000, closing_day: 10, due_day: 17, invoice_control_enabled: true }
             }
         ],
         root_categories: [],
@@ -60,7 +60,7 @@ describe('CreditCards Index Page', () => {
     it('shows empty state when no cards are provided', () => {
         render(<CreditCards {...mockProps} cards={[]} />);
         
-        expect(screen.getByText('accounts.page.empty_title')).toBeDefined();
+        expect(screen.getByText('accounts.page.add_card_title')).toBeDefined();
     });
 
     it('opens the modal when clicking on a card', () => {

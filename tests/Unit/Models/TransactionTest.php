@@ -23,6 +23,8 @@ test('transaction stores amounts as bigint but returns float', function () {
         'ledger_id' => $ledger->id,
         'date' => now(),
         'description' => 'Test Transaction',
+        'type' => \App\Enums\TransactionType::EXPENSE,
+        'status' => \App\Enums\TransactionStatus::ACTIVE,
     ]);
 
     $entry = JournalEntry::create([

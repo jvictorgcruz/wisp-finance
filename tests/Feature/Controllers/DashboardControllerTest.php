@@ -44,6 +44,6 @@ test('dashboard displays summary and transactions', function () {
             )
             ->has('transactions.data', 1)
             ->where('transactions.data.0.description', 'Test Expense')
-            ->where('transactions.data.0.amount', 1000)
+            ->where('transactions.data.0.amount', 100000)
         );
 });

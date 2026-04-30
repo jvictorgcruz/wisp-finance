@@ -37,7 +37,8 @@ test('it can create an account with credit card details', function () {
         'credit_card_details' => [
             'limit' => 5000.00,
             'closing_day' => 10,
-            'due_day' => 17
+            'due_day' => 17,
+            'invoice_control_enabled' => true,
         ]
     ];
 
@@ -68,7 +69,10 @@ test('it fails if credit card details are missing when is_credit_card is true', 
 
     $response = $this->post(route('accounts.store'), $payload);
 
-    $response->assertSessionHasErrors(['credit_card_details']);
+    $response->assertSessionHasErrors([
+        'credit_card_details.invoice_control_enabled',
+        'credit_card_details.limit'
+    ]);
 });
 
 test('it fails if wrong account type is sent for credit card', function () {
@@ -81,14 +85,15 @@ test('it fails if wrong account type is sent for credit card', function () {
         'credit_card_details' => [
             'limit' => 5000.00,
             'closing_day' => 10,
-            'due_day' => 17
+            'due_day' => 17,
+            'invoice_control_enabled' => true,
         ]
     ];
 
     $response = $this->post(route('accounts.store'), $payload);
 
     // Should fail because of the closure in AccountRequest
-    $response->assertSessionHasErrors(['credit_card_details']);
+    $response->assertSessionHasErrors(['is_credit_card']);
 });
 
 test('it forces liability type in the action regardless of input', function () {
@@ -103,7 +108,8 @@ test('it forces liability type in the action regardless of input', function () {
         'credit_card_details' => [
             'limit' => 5000.00,
             'closing_day' => 10,
-            'due_day' => 17
+            'due_day' => 17,
+            'invoice_control_enabled' => true,
         ]
     ];
 

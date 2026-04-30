@@ -49,6 +49,8 @@ class AccountBalanceSeeder extends Seeder
                 'ledger_id' => $ledger->id,
                 'date' => now()->subDays(10),
                 'description' => 'Opening Balance',
+                'type' => \App\Enums\TransactionType::INCOME,
+                'status' => \App\Enums\TransactionStatus::ACTIVE,
             ]);
 
             // 4. Create Journal Entries (Balanced: Equity Root Credit <-> Asset Child Debit)

@@ -18,10 +18,14 @@ interface AppLayoutProps {
 
 export default function AppLayout({ title, children }: AppLayoutProps) {
     const { t } = useTranslation();
-    const [transactionModal, setTransactionModal] = React.useState<{ show: boolean; type?: string }>({ show: false });
+    const [transactionModal, setTransactionModal] = React.useState<{ show: boolean; type?: string; transaction?: any }>({ show: false });
 
     React.useEffect(() => {
-        const handleOpenModal = (e: any) => setTransactionModal({ show: true, type: e.detail?.type });
+        const handleOpenModal = (e: any) => setTransactionModal({ 
+            show: true, 
+            type: e.detail?.type,
+            transaction: e.detail?.transaction 
+        });
         window.addEventListener('open-transaction-modal', handleOpenModal);
         return () => window.removeEventListener('open-transaction-modal', handleOpenModal);
     }, []);
@@ -37,6 +41,7 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
             <TransactionModal 
                 show={transactionModal.show} 
                 initialType={transactionModal.type as any}
+                transaction={transactionModal.transaction}
                 onClose={() => setTransactionModal({ show: false })} 
             />
 

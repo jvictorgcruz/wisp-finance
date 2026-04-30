@@ -30,8 +30,11 @@ class RecordIncomeAction extends BaseFinancialAction
         return DB::transaction(function () use ($categoryAccount, $destinationAccount, $amount, $date, $description, $metadata) {
             $transaction = Transaction::create([
                 'ledger_id' => $destinationAccount->ledger_id,
+                'created_by_user_id' => auth()->id(),
                 'date' => $date,
                 'description' => $description,
+                'type' => \App\Enums\TransactionType::INCOME,
+                'status' => \App\Enums\TransactionStatus::ACTIVE,
                 'metadata' => $metadata,
             ]);
 

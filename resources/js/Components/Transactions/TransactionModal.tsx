@@ -19,19 +19,22 @@ interface Props {
     show: boolean;
     onClose: () => void;
     initialType?: TransactionType;
+    transaction?: any;
 }
 
-export default function TransactionModal({ show, onClose, initialType }: Props) {
+export default function TransactionModal({ show, onClose, initialType, transaction }: Props) {
     const { t } = useTranslation();
     const { financial_context } = usePage<any>().props;
     const [activeTab, setActiveTab] = useState<TransactionType>(initialType || 'EXPENSE');
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    
     const dateInputRef = useRef<HTMLButtonElement>(null);
     const descriptionInputRef = useRef<HTMLInputElement>(null);
     const amountInputRef = useRef<HTMLInputElement>(null);
     const sourceSelectRef = useRef<HTMLButtonElement>(null);
     const destinationSelectRef = useRef<HTMLButtonElement>(null);
 
-    const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
+    const { data, setData, post, put, delete: destroy, processing, errors, reset, clearErrors } = useForm({
         amount: 0,
         date: new Date().toISOString().split('T')[0],
         description: '',
@@ -42,7 +45,17 @@ export default function TransactionModal({ show, onClose, initialType }: Props) 
 
     useEffect(() => {
         if (show) {
-            if (initialType) {
+            if (transaction) {
+                setActiveTab(transaction.type);
+                setData({
+                    amount: transaction.amount / 100,
+                    date: transaction.date,
+                    description: transaction.description || '',
+                    source_account_id: transaction.source_account_id,
+                    destination_account_id: transaction.destination_account_id,
+                    metadata: transaction.metadata || {},
+                });
+            } else if (initialType) {
                 setActiveTab(initialType);
             }
             // Small timeout to ensure modal is rendered and animation started
@@ -52,8 +65,9 @@ export default function TransactionModal({ show, onClose, initialType }: Props) 
         } else {
             reset();
             clearErrors();
+            setShowDeleteConfirm(false);
         }
-    }, [show, initialType]);
+    }, [show, initialType, transaction]);
 
     const isSameAccount = data.source_account_id !== null && 
                         data.destination_account_id !== null && 
@@ -64,6 +78,17 @@ export default function TransactionModal({ show, onClose, initialType }: Props) 
         
         if (isSameAccount || processing) return;
 
+        if (transaction?.id) {
+            put(`/transactions/${transaction.id}`, {
+                onSuccess: () => {
+                    reset();
+                    clearErrors();
+                    onClose();
+                },
+            });
+            return;
+        }
+
         const endpoint = {
             EXPENSE: '/transactions/expense',
             INCOME: '/transactions/income',
@@ -71,6 +96,18 @@ export default function TransactionModal({ show, onClose, initialType }: Props) 
         }[activeTab];
 
         post(endpoint, {
+            onSuccess: () => {
+                reset();
+                clearErrors();
+                onClose();
+            },
+        });
+    };
+
+    const handleDelete = () => {
+        if (!transaction?.id || processing) return;
+        
+        destroy(`/transactions/${transaction.id}`, {
             onSuccess: () => {
                 reset();
                 clearErrors();
@@ -99,13 +136,19 @@ export default function TransactionModal({ show, onClose, initialType }: Props) 
     const filteredDestinationItems = destinationItems.filter((i: any) => i.id !== data.source_account_id);
 
     return (
-        <Modal show={show} onClose={onClose} title={t('transactions.modal.title')} maxWidth="md">
+        <Modal 
+            show={show} 
+            onClose={onClose} 
+            title={transaction ? t('transactions.modal.edit_title') : t('transactions.modal.title')} 
+            maxWidth="md"
+        >
             <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} className="flex flex-col">
                 <div className="flex p-1 bg-slate-100 rounded-2xl mb-8">
                     {(['EXPENSE', 'INCOME', 'TRANSFER'] as TransactionType[]).map((type) => (
                         <button
                             key={type}
                             type="button"
+                            disabled={!!transaction}
                             onClick={() => {
                                 setActiveTab(type);
                                 reset('source_account_id', 'destination_account_id');
@@ -119,7 +162,8 @@ export default function TransactionModal({ show, onClose, initialType }: Props) 
                                         type === 'INCOME' ? "text-emerald-500" : 
                                         "text-primary"
                                       )
-                                    : "text-slate-400 hover:text-slate-600"
+                                    : "text-slate-400 hover:text-slate-600",
+                                !!transaction && "cursor-not-allowed opacity-50"
                             )}
                         >
                             {t(`transactions.modal.tabs.${type.toLowerCase()}`)}
@@ -190,28 +234,67 @@ export default function TransactionModal({ show, onClose, initialType }: Props) 
                     />
                 </div>
 
-                <div className="flex items-center justify-end gap-3 mt-10">
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="px-6 py-2.5 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors"
-                    >
-                        {t('transactions.modal.cancel')}
-                    </button>
-                    <button
-                        type="submit"
-                        disabled={processing || isSameAccount}
-                        className={cn(
-                            "text-white px-8 py-3 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] transition-all shadow-xl active:scale-[0.98] disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed",
-                            isSameAccount ? "bg-slate-300 shadow-none" : 
-                            activeTab === 'EXPENSE' ? "bg-rose-500 shadow-rose-500/20 hover:bg-rose-600" : 
-                            activeTab === 'INCOME' ? "bg-emerald-500 shadow-emerald-500/20 hover:bg-emerald-600" : 
-                            "bg-primary shadow-primary/20 hover:bg-primary/80"
+                <div className="flex items-center justify-between gap-3 mt-10">
+                    <div>
+                        {transaction && !showDeleteConfirm && (
+                            <button
+                                type="button"
+                                onClick={() => setShowDeleteConfirm(true)}
+                                className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-rose-500 hover:bg-rose-50 rounded-xl transition-colors"
+                            >
+                                {t('transactions.modal.delete_button')}
+                            </button>
                         )}
-                    >
-                        {processing ? '...' : t('transactions.modal.submit')}
-                    </button>
+                    </div>
+                    
+                    <div className="flex items-center gap-3">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="px-6 py-2.5 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors"
+                        >
+                            {t('transactions.modal.cancel')}
+                        </button>
+                        <button
+                            type="submit"
+                            disabled={processing || isSameAccount}
+                            className={cn(
+                                "text-white px-8 py-3 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] transition-all shadow-xl active:scale-[0.98] disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed",
+                                isSameAccount ? "bg-slate-300 shadow-none" : 
+                                activeTab === 'EXPENSE' ? "bg-rose-500 shadow-rose-500/20 hover:bg-rose-600" : 
+                                activeTab === 'INCOME' ? "bg-emerald-500 shadow-emerald-500/20 hover:bg-emerald-600" : 
+                                "bg-primary shadow-primary/20 hover:bg-primary/80"
+                            )}
+                        >
+                            {processing ? '...' : t('transactions.modal.submit')}
+                        </button>
+                    </div>
                 </div>
+
+                {showDeleteConfirm && (
+                    <div className="mt-6 p-6 bg-rose-50 rounded-2xl border border-rose-100 animate-in fade-in slide-in-from-top-4">
+                        <p className="text-xs font-bold text-rose-900 leading-relaxed mb-4">
+                            {t('transactions.modal.delete_confirm')}
+                        </p>
+                        <div className="flex justify-end gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setShowDeleteConfirm(false)}
+                                className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600"
+                            >
+                                {t('transactions.modal.cancel')}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleDelete}
+                                disabled={processing}
+                                className="px-6 py-2 bg-rose-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-rose-500/20 hover:bg-rose-600 transition-all"
+                            >
+                                {t('transactions.modal.delete_button')}
+                            </button>
+                        </div>
+                    </div>
+                )}
                 {isSameAccount && (
                     <p className="mt-4 text-center text-xs font-bold text-rose-500 bg-rose-50 py-2 rounded-xl border border-rose-100">
                         {t('transactions.errors.same_account')}

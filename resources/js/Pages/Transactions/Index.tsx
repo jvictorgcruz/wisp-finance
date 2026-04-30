@@ -18,6 +18,9 @@ interface Transaction {
     description: string;
     amount: number;
     type: 'INCOME' | 'EXPENSE' | 'TRANSFER';
+    status: 'ACTIVE' | 'REVERSED';
+    source_account_id: number;
+    destination_account_id: number;
     main_account: string;
     other_account: string;
     main_account_type: string;
@@ -133,7 +136,11 @@ export default function Index({ transactions, filters }: Props) {
                                     {groupedTransactions[date].map(transaction => (
                                         <div 
                                             key={transaction.id}
-                                            className="group flex items-center gap-6 p-4 rounded-2xl hover:bg-white hover:shadow-editorial transition-all duration-200 cursor-pointer"
+                                            onClick={() => transaction.status === 'ACTIVE' && window.dispatchEvent(new CustomEvent('open-transaction-modal', { detail: { transaction } }))}
+                                            className={cn(
+                                                "group flex items-center gap-6 p-4 rounded-2xl transition-all duration-200",
+                                                transaction.status === 'ACTIVE' ? "hover:bg-white hover:shadow-editorial cursor-pointer" : "opacity-40 grayscale pointer-events-none"
+                                            )}
                                         >
                                             <div className={cn(
                                                 "w-12 h-12 rounded-xl flex items-center justify-center transition-colors",
@@ -157,7 +164,11 @@ export default function Index({ transactions, filters }: Props) {
                                                         )}
                                                     </span>
                                                     <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                                                        {transaction.type === 'TRANSFER' ? (
+                                                        {transaction.status === 'REVERSED' ? (
+                                                            <span className="text-rose-500 bg-rose-50 px-1.5 py-0.5 rounded-md border border-rose-100">
+                                                                ESTORNADO
+                                                            </span>
+                                                        ) : transaction.type === 'TRANSFER' ? (
                                                             <>
                                                                 {t(transaction.other_account)}
                                                                 <ChevronRight className="w-3 h-3" />

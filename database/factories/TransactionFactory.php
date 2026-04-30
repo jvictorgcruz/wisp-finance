@@ -3,6 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\Ledger;
+use App\Enums\TransactionType;
+use App\Enums\TransactionStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,6 +23,8 @@ class TransactionFactory extends Factory
             'ledger_id' => Ledger::factory(),
             'date' => now(),
             'description' => $this->faker->sentence(),
+            'type' => TransactionType::EXPENSE,
+            'status' => TransactionStatus::ACTIVE,
             'metadata' => null,
         ];
     }

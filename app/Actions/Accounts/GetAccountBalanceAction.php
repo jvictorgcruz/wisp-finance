@@ -30,12 +30,11 @@ class GetAccountBalanceAction
             ->join('transactions', 'transactions.id', '=', 'journal_entries.transaction_id')
             ->select(
                 'account_id',
-                DB::raw('COALESCE(SUM(CASE WHEN type = "DEBIT" THEN amount ELSE 0 END), 0) as total_debit'),
-                DB::raw('COALESCE(SUM(CASE WHEN type = "CREDIT" THEN amount ELSE 0 END), 0) as total_credit')
+                DB::raw('COALESCE(SUM(CASE WHEN journal_entries.type = "DEBIT" THEN amount ELSE 0 END), 0) as total_debit'),
+                DB::raw('COALESCE(SUM(CASE WHEN journal_entries.type = "CREDIT" THEN amount ELSE 0 END), 0) as total_credit')
             )
             ->whereIn('account_id', $ids)
             ->where('transactions.ledger_id', \App\Support\LedgerContext::currentId())
-            ->whereNull('transactions.deleted_at') // Consider only active transactions
             ->groupBy('account_id')
             ->get()
             ->keyBy('account_id');

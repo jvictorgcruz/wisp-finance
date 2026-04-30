@@ -22,13 +22,16 @@ class GetPaginatedTransactionsAction
             ->paginate($perPage)
             ->withQueryString()
             ->through(function (Transaction $transaction) {
-                // Determine the "Main" account/category for display
-                // For an expense: Debit is Category (Expense), Credit is Account (Asset)
-                // For an income: Debit is Account (Asset), Credit is Category (Revenue)
+                $type = $transaction->type->value;
                 $debitEntry = $transaction->journalEntries->firstWhere('type', 'DEBIT');
                 $creditEntry = $transaction->journalEntries->firstWhere('type', 'CREDIT');
 
-                $type = $this->deriveTransactionType($transaction);
+                // Mapping for edit modal
+                // Expense: Source (Asset/Credit), Destination (Expense/Debit)
+                // Income: Source (Revenue/Credit), Destination (Asset/Debit)
+                // Transfer: Source (Asset/Credit), Destination (Asset/Debit)
+                $sourceAccountId = $creditEntry?->account_id;
+                $destinationAccountId = $debitEntry?->account_id;
 
                 return [
                     'id' => $transaction->id,
@@ -36,6 +39,9 @@ class GetPaginatedTransactionsAction
                     'description' => $transaction->description,
                     'amount' => $debitEntry ? (int) $debitEntry->getRawOriginal('amount') : 0,
                     'type' => $type,
+                    'status' => $transaction->status->value,
+                    'source_account_id' => $sourceAccountId,
+                    'destination_account_id' => $destinationAccountId,
                     'main_account' => $type === 'INCOME' ? $creditEntry?->account?->name : $debitEntry?->account?->name,
                     'other_account' => $type === 'INCOME' ? $debitEntry?->account?->name : $creditEntry?->account?->name,
                     'main_account_type' => $type === 'INCOME' ? $creditEntry?->account?->type : $debitEntry?->account?->type,
@@ -52,19 +58,5 @@ class GetPaginatedTransactionsAction
         // Try to get icon from category/account
         $debitAccount = $transaction->journalEntries->firstWhere('type', 'DEBIT')?->account;
         return $debitAccount?->ui_metadata['icon'] ?? 'ShoppingBag';
-    }
-
-    /**
-     * Derive the high-level type for UI indicator.
-     */
-    protected function deriveTransactionType(Transaction $transaction): string
-    {
-        $debitType = $transaction->journalEntries->firstWhere('type', 'DEBIT')?->account?->type;
-        $creditType = $transaction->journalEntries->firstWhere('type', 'CREDIT')?->account?->type;
-
-        if ($debitType === AccountType::EXPENSE) return 'EXPENSE';
-        if ($creditType === AccountType::REVENUE) return 'INCOME';
-        
-        return 'TRANSFER';
     }
 }
