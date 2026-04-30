@@ -37,7 +37,7 @@ class GetCreditCardsAction
                     'is_credit_card' => true,
                     'ui_metadata' => $card->ui_metadata,
                     'has_history' => $card->has_history,
-                    'balance' => $this->getAccountBalanceAction->execute($card),
+                    'balance' => $this->getAccountBalanceAction->executeSingle($card),
                     'credit_card_details' => $card->creditCardDetail ? [
                         'limit' => $card->creditCardDetail->limit,
                         'closing_day' => $card->creditCardDetail->closing_day,

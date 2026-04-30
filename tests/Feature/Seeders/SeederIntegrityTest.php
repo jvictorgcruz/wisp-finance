@@ -14,7 +14,7 @@ uses(RefreshDatabase::class);
  */
 function calculateNestedBalance(Account $account, GetAccountBalanceAction $action): int
 {
-    $directBalance = $action->execute($account);
+    $directBalance = $action->executeSingle($account);
     $childrenBalance = $account->children->sum(
         fn ($child) => calculateNestedBalance($child, $action)
     );
@@ -37,6 +37,9 @@ test('seeder generates valid financial data', function () {
 
     $ledger = $user->ledgers()->first();
     expect($ledger)->not->toBeNull();
+    session(['current_ledger_id' => $ledger->id]);
+    $user->update(['current_ledger_id' => $ledger->id]);
+    Auth::login($user);
 
     // Verify Hierarchy Rule: Assets and Liabilities roots must not have direct entries
     $rootAccountsWithEntries = Account::where('ledger_id', $ledger->id)

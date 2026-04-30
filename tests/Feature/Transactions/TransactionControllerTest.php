@@ -41,7 +41,7 @@ beforeEach(function () {
 
 test('it can store an expense', function () {
     $response = $this->post('/transactions/expense', [
-        'amount' => 15050, // R$ 150,50
+        'amount' => 150.50, // R$ 150,50
         'date' => now()->format('Y-m-d'),
         'description' => 'Test Expense',
         'source_account_id' => $this->bank->id,
@@ -58,7 +58,7 @@ test('it can store an expense', function () {
 
 test('it can store an income', function () {
     $response = $this->post('/transactions/income', [
-        'amount' => 200000, // R$ 2000,00
+        'amount' => 2000.00, // R$ 2000,00
         'date' => now()->format('Y-m-d'),
         'description' => 'Test Income',
         'source_account_id' => $this->revenueCat->id,
@@ -86,4 +86,28 @@ test('it validates ledger isolation', function () {
     ]);
 
     $response->assertSessionHasErrors(['source_account_id']);
+});
+
+test('user can view transactions page', function () {
+    $this->get(route('transactions.index'))
+        ->assertStatus(200)
+        ->assertInertia(fn ($page) => $page
+            ->component('Transactions/Index')
+            ->has('transactions.data')
+            ->has('filters')
+        );
+});
+
+test('user can search transactions', function () {
+    \App\Models\Transaction::factory()->create(['ledger_id' => $this->ledger->id, 'description' => 'TargetSearch']);
+    \App\Models\Transaction::factory()->create(['ledger_id' => $this->ledger->id, 'description' => 'Other']);
+
+    $response = $this->get(route('transactions.index', ['search' => 'TargetSearch']));
+
+    $response->assertStatus(200);
+    $response->assertInertia(fn ($page) => $page
+        ->component('Transactions/Index')
+        ->has('transactions.data', 1)
+        ->where('transactions.data.0.description', 'TargetSearch')
+    );
 });

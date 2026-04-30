@@ -15,9 +15,11 @@ class GetAccountBalanceAction
      * 
      * @param int|array|Collection $accountIds
      */
-    public function execute(int|array|Collection $accountIds): Collection
+    public function execute(mixed $accountIds): Collection
     {
-        $ids = collect($accountIds)->toArray();
+        $ids = collect(is_iterable($accountIds) ? $accountIds : [$accountIds])
+            ->map(fn ($id) => is_object($id) ? $id->id : $id)
+            ->toArray();
 
         if (empty($ids)) {
             return collect();

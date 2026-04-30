@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
 interface Props {
-    value: number; // In cents
-    onChange: (cents: number) => void;
+    value: number;
+    onChange: (value: number) => void;
     label?: string;
     error?: string;
     className?: string;
@@ -17,7 +17,7 @@ export default function CurrencyInput({ value, onChange, label, error, className
         const formatted = new Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL',
-        }).format(value / 100);
+        }).format(value);
         
         setDisplayValue(formatted);
     }, [value]);
@@ -25,7 +25,7 @@ export default function CurrencyInput({ value, onChange, label, error, className
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const rawValue = e.target.value.replace(/\D/g, '');
         const cents = parseInt(rawValue || '0', 10);
-        onChange(cents);
+        onChange(cents / 100);
     };
 
     return (

@@ -68,8 +68,8 @@ export default function TransactionModal({ show, onClose }: Props) {
     const assetAccounts = financial_context?.accounts || [];
     const categories = financial_context?.categories || [];
     
-    const expenseCategories = categories.filter((c: any) => c.type === 'EXPENSE');
-    const revenueCategories = categories.filter((c: any) => c.type === 'REVENUE');
+    const expenseCategories = categories.filter((c: any) => c.type === 'expense');
+    const revenueCategories = categories.filter((c: any) => c.type === 'revenue');
 
     const sourceItems = activeTab === 'INCOME' ? revenueCategories : assetAccounts;
     const filteredSourceItems = sourceItems.filter((i: any) => i.id !== data.destination_account_id);

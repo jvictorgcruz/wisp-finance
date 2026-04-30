@@ -13,7 +13,7 @@ export function useTranslation() {
      * Translates the given key.
      * Supports nested keys using dot notation (e.g., 'home.title').
      */
-    const t = (key: string, replacements: Record<string, string> = {}): string => {
+    const t = (key: string, replacements: Record<string, string | number> = {}): string => {
         const keys = key.split('.');
         let translation: any = translations;
 
@@ -27,7 +27,7 @@ export function useTranslation() {
 
         // Handle replacements (e.g., :name -> John)
         Object.keys(replacements).forEach((r) => {
-            translation = translation.replace(`:${r}`, replacements[r]);
+            translation = translation.replace(`:${r}`, String(replacements[r]));
         });
 
         return translation;

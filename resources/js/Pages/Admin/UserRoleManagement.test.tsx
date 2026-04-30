@@ -4,6 +4,10 @@ import UserRoleManagement from '@/Pages/Admin/UserRoleManagement';
 import React from 'react';
 import { router } from '@inertiajs/react';
 
+vi.mock('@/Layouts/AppLayout', () => ({
+    default: ({ children }: { children: React.ReactNode }) => <div data-testid="app-layout">{children}</div>,
+}));
+
 vi.mock('@/Hooks/useTranslation', () => ({
     useTranslation: () => ({
         t: (key: string) => key,

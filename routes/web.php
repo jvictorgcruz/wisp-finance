@@ -68,13 +68,14 @@ Route::middleware('guest')->group(function () {
 Route::middleware('check_maintenance')->group(function () {
 
     Route::middleware('auth')->group(function () {
-        Route::get('dashboard', fn() => redirect()->route('accounts.index'))->name('dashboard');
+        Route::get('dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
         Route::resource('accounts', \App\Http\Controllers\AccountController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::get('cards', [\App\Http\Controllers\CreditCardController::class, 'index'])->name('cards.index');
         Route::resource('categories', \App\Http\Controllers\CategoryController::class)->only(['index', 'store', 'update', 'destroy']);
 
         Route::prefix('transactions')->name('transactions.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\TransactionController::class, 'index'])->name('index');
             Route::post('expense', [\App\Http\Controllers\TransactionController::class, 'storeExpense'])->name('store-expense');
             Route::post('income', [\App\Http\Controllers\TransactionController::class, 'storeIncome'])->name('store-income');
             Route::post('transfer', [\App\Http\Controllers\TransactionController::class, 'storeTransfer'])->name('store-transfer');

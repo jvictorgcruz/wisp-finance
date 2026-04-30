@@ -34,7 +34,10 @@ describe('CreditCards Index Page', () => {
             {
                 id: 1,
                 name: 'Nubank',
+                type: 'liability',
+                status: 'active' as const,
                 balance: -150000,
+                parent_id: null,
                 ui_metadata: { color: '#820ad1', icon: 'CreditCard' },
                 credit_card_details: { limit: 500000, closing_day: 10, due_day: 17 }
             }
@@ -51,7 +54,7 @@ describe('CreditCards Index Page', () => {
         expect(screen.getByText('Nubank')).toBeDefined();
         expect(screen.getByText('Dia 10')).toBeDefined();
         // 1500 / 5000 = 30%
-        expect(screen.getByText('30%')).toBeDefined();
+        expect(screen.getByText(/30%/)).toBeDefined();
     });
 
     it('shows empty state when no cards are provided', () => {

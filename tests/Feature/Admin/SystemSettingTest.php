@@ -7,97 +7,86 @@ use App\Models\User;
 use App\Enums\UserRole;
 use App\Support\Settings\SettingManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class SystemSettingTest extends TestCase
-{
-    use RefreshDatabase;
+uses(RefreshDatabase::class);
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        
-        SystemSetting::updateOrCreate(
-            ['key' => 'maintenance_mode'],
-            [
-                'title' => 'maintenance_mode',
-                'description' => 'maintenance_mode_desc',
-                'is_active' => false,
-                'value' => 'Initial message'
-            ]
-        );
+beforeEach(function () {
+    SystemSetting::updateOrCreate(
+        ['key' => 'maintenance_mode'],
+        [
+            'title' => 'maintenance_mode',
+            'description' => 'maintenance_mode_desc',
+            'is_active' => false,
+            'value' => 'Initial message'
+        ]
+    );
 
-        SystemSetting::create([
-            'key' => 'another_setting',
-            'title' => 'another_setting_title',
-            'description' => 'another_setting_desc',
-            'is_active' => true,
-            'value' => 'Another value'
-        ]);
-    }
+    SystemSetting::create([
+        'key' => 'another_setting',
+        'title' => 'another_setting_title',
+        'description' => 'another_setting_desc',
+        'is_active' => true,
+        'value' => 'Another value'
+    ]);
+});
 
-    public function test_admin_can_view_all_settings()
-    {
-        $user = User::factory()->create(['role' => UserRole::ADMIN]);
+test('admin can view all settings', function () {
+    $user = User::factory()->create(['role' => UserRole::ADMIN]);
 
-        $response = $this->actingAs($user)->get(route('admin.settings.index'));
+    $response = $this->actingAs($user)->get(route('admin.settings.index'));
 
-        $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
-            ->component('Admin/Settings/Index')
-            ->has('settings', 2)
-        );
-    }
+    $response->assertStatus(200);
+    $response->assertInertia(fn ($page) => $page
+        ->component('Admin/Settings/Index')
+        ->has('settings', 2)
+    );
+});
 
-    public function test_admin_can_update_a_specific_setting()
-    {
-        $user = User::factory()->create(['role' => UserRole::ADMIN]);
+test('admin can update a specific setting', function () {
+    $user = User::factory()->create(['role' => UserRole::ADMIN]);
 
-        $response = $this->actingAs($user)->put(route('admin.settings.update'), [
-            'key' => 'maintenance_mode',
-            'is_active' => true,
-            'value' => 'Updated maintenance message'
-        ]);
+    $response = $this->actingAs($user)->put(route('admin.settings.update'), [
+        'key' => 'maintenance_mode',
+        'is_active' => true,
+        'value' => 'Updated maintenance message'
+    ]);
 
-        $response->assertRedirect();
-        $this->assertDatabaseHas('system_settings', [
-            'key' => 'maintenance_mode',
-            'is_active' => true,
-            'value' => 'Updated maintenance message'
-        ]);
+    $response->assertRedirect();
+    $this->assertDatabaseHas('system_settings', [
+        'key' => 'maintenance_mode',
+        'is_active' => true,
+        'value' => 'Updated maintenance message'
+    ]);
 
-        // Verify cache is cleared/updated
-        $this->assertTrue(SettingManager::isActive('maintenance_mode'));
-        $this->assertEquals('Updated maintenance message', SettingManager::getValue('maintenance_mode'));
-    }
+    // Verify cache is cleared/updated
+    expect(SettingManager::isActive('maintenance_mode'))->toBeTrue();
+    expect(SettingManager::getValue('maintenance_mode'))->toBe('Updated maintenance message');
+});
 
-    public function test_updating_one_setting_does_not_affect_others()
-    {
-        $user = User::factory()->create(['role' => UserRole::ADMIN]);
+test('updating one setting does not affect others', function () {
+    $user = User::factory()->create(['role' => UserRole::ADMIN]);
 
-        $this->actingAs($user)->put(route('admin.settings.update'), [
-            'key' => 'maintenance_mode',
-            'is_active' => true,
-            'value' => 'New message'
-        ]);
+    $this->actingAs($user)->put(route('admin.settings.update'), [
+        'key' => 'maintenance_mode',
+        'is_active' => true,
+        'value' => 'New message'
+    ]);
 
-        $this->assertDatabaseHas('system_settings', [
-            'key' => 'another_setting',
-            'is_active' => true,
-            'value' => 'Another value'
-        ]);
-    }
+    $this->assertDatabaseHas('system_settings', [
+        'key' => 'another_setting',
+        'is_active' => true,
+        'value' => 'Another value'
+    ]);
+});
 
-    public function test_cannot_update_non_existent_setting()
-    {
-        $user = User::factory()->create(['role' => UserRole::ADMIN]);
+test('cannot update non existent setting', function () {
+    $user = User::factory()->create(['role' => UserRole::ADMIN]);
 
-        $response = $this->actingAs($user)->put(route('admin.settings.update'), [
-            'key' => 'invalid_key',
-            'is_active' => true,
-            'value' => 'value'
-        ]);
+    $response = $this->actingAs($user)->put(route('admin.settings.update'), [
+        'key' => 'invalid_key',
+        'is_active' => true,
+        'value' => 'value'
+    ]);
 
-        $response->assertSessionHasErrors('key');
-    }
-}
+    $response->assertSessionHasErrors('key');
+});

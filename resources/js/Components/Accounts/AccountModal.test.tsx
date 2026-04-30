@@ -1,7 +1,18 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import AccountModal from './AccountModal';
 import React from 'react';
+
+// Shared mock data state
+let mockFormData = {
+    name: '',
+    type: 'asset',
+    parent_Key: 'bank',
+    parent_id: 1,
+    ui_metadata: { icon: '', color: '#3b82f6' },
+    is_credit_card: false,
+    credit_card_details: { limit: 0, closing_day: 10, due_day: 17 }
+};
 
 // Mock useTranslation
 vi.mock('@/Hooks/useTranslation', () => ({
@@ -10,22 +21,14 @@ vi.mock('@/Hooks/useTranslation', () => ({
     }),
 }));
 
-// Mock useForm from Inertia
-const mockSetData = vi.fn();
+// Mock Inertia
 vi.mock('@inertiajs/react', () => ({
     useForm: () => ({
-        data: {
-            name: '',
-            type: 'asset',
-            parent_Key: 'bank',
-            parent_id: 1,
-            ui_metadata: { icon: '', color: '#3b82f6' },
-            is_credit_card: false,
-            credit_card_details: { limit: 0, closing_day: 10, due_day: 17 }
-        },
-        setData: mockSetData,
+        data: mockFormData,
+        setData: vi.fn(),
         post: vi.fn(),
         put: vi.fn(),
+        transform: vi.fn(),
         processing: false,
         errors: {},
         reset: vi.fn(),
@@ -44,14 +47,29 @@ describe('AccountModal', () => {
         onClose: vi.fn(),
         mode: 'create' as const,
         rootCategories: [
-            { key: 'bank', name: 'Bank', type: 'asset', icon: 'Building2' }
+            { key: 'bank', name: 'Bank', type: 'asset', icon: 'Building2' },
+            { key: 'credit_card', name: 'Credit Card', type: 'liability', icon: 'CreditCard' }
         ],
         availableColors: ['#3b82f6'],
         availableIcons: ['CreditCard'],
+        rootAccounts: [
+            { id: 1, name: 'Bank' },
+            { id: 2, name: 'Credit Card' }
+        ] as any[]
     };
 
     beforeEach(() => {
         vi.clearAllMocks();
+        // Reset default mock data
+        mockFormData = {
+            name: '',
+            type: 'asset',
+            parent_Key: 'bank',
+            parent_id: 1,
+            ui_metadata: { icon: '', color: '#3b82f6' },
+            is_credit_card: false,
+            credit_card_details: { limit: 0, closing_day: 10, due_day: 17 }
+        };
     });
 
     it('renders the account type cards', () => {
@@ -65,27 +83,13 @@ describe('AccountModal', () => {
     });
 
     it('shows credit card inputs when credit_card category is selected', () => {
-        // We need to override useForm mock for this specific test
-        vi.mock('@inertiajs/react', async () => {
-            const actual: any = await vi.importActual('@inertiajs/react');
-            return {
-                ...actual,
-                useForm: () => ({
-                    data: {
-                        name: '',
-                        type: 'liability',
-                        parent_Key: 'credit_card',
-                        parent_id: 1,
-                        ui_metadata: { icon: '', color: '#3b82f6' },
-                        is_credit_card: false,
-                        credit_card_details: { limit: 5000, closing_day: 10, due_day: 17 }
-                    },
-                    setData: mockSetData,
-                    transform: vi.fn(),
-                    errors: {},
-                }),
-            };
-        });
+        // Manually set mock data to simulate credit card selection
+        mockFormData = {
+            ...mockFormData,
+            parent_Key: 'credit_card',
+            type: 'liability',
+            is_credit_card: true
+        };
 
         render(<AccountModal {...defaultProps} />);
         expect(screen.getByText('accounts.modal.limit_label')).toBeDefined();

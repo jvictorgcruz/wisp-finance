@@ -35,4 +35,37 @@ return [
         ],
         'cta' => 'New Transaction',
     ],
+    'dashboard' => [
+        'title' => 'Dashboard',
+        'assets' => 'Total Assets',
+        'liabilities' => 'Total Liabilities',
+        'recent_activity' => 'Recent Activity',
+    ],
+    'table' => [
+        'date' => 'Date',
+        'description' => 'Description',
+        'category' => 'Category/Account',
+        'amount' => 'Amount',
+        'empty' => 'No transactions found.',
+    ],
+    'date' => [
+        'today' => 'Today',
+        'yesterday' => 'Yesterday',
+    ],
+    'filters' => [
+        'period' => 'Filter by Period',
+    ],
+    'actions' => [
+        'export' => 'Export',
+    ],
+    'empty' => [
+        'title' => 'No transactions',
+        'desc' => 'You haven\'t recorded any transactions for this period yet.',
+    ],
+    'pagination' => [
+        'showing' => 'Showing :from to :to of :total transactions',
+    ],
+    'errors' => [
+        'same_account' => 'Source and destination accounts cannot be the same.',
+    ],
 ];

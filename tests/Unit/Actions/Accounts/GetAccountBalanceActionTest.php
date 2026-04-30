@@ -42,7 +42,7 @@ test('asset balance = debits minus credits', function () {
     JournalEntry::create(['transaction_id' => $transaction->id, 'account_id' => $account->id, 'type' => 'DEBIT',  'amount' => 500.00, 'entry_date' => today()]);
     JournalEntry::create(['transaction_id' => $transaction->id, 'account_id' => $account->id, 'type' => 'CREDIT', 'amount' => 200.00, 'entry_date' => today()]);
 
-    expect($this->action->execute($account))->toBe(30000);
+    expect($this->action->executeSingle($account))->toBe(30000);
 });
 
 test('asset account with only debits returns positive balance', function () {
@@ -56,7 +56,7 @@ test('asset account with only debits returns positive balance', function () {
 
     JournalEntry::create(['transaction_id' => $transaction->id, 'account_id' => $account->id, 'type' => 'DEBIT', 'amount' => 100.00, 'entry_date' => today()]);
 
-    expect($this->action->execute($account))->toBe(10000);
+    expect($this->action->executeSingle($account))->toBe(10000);
 });
 
 // -------------------------------------------------------------------------
@@ -75,7 +75,7 @@ test('liability balance = credits minus debits', function () {
     JournalEntry::create(['transaction_id' => $transaction->id, 'account_id' => $account->id, 'type' => 'CREDIT', 'amount' => 300.00, 'entry_date' => today()]);
     JournalEntry::create(['transaction_id' => $transaction->id, 'account_id' => $account->id, 'type' => 'DEBIT',  'amount' => 100.00, 'entry_date' => today()]);
 
-    expect($this->action->execute($account))->toBe(20000);
+    expect($this->action->executeSingle($account))->toBe(20000);
 });
 
 // -------------------------------------------------------------------------
@@ -94,7 +94,7 @@ test('expense balance = debits minus credits', function () {
     JournalEntry::create(['transaction_id' => $transaction->id, 'account_id' => $account->id, 'type' => 'DEBIT',  'amount' => 75.00, 'entry_date' => today()]);
     JournalEntry::create(['transaction_id' => $transaction->id, 'account_id' => $account->id, 'type' => 'CREDIT', 'amount' => 25.00, 'entry_date' => today()]);
 
-    expect($this->action->execute($account))->toBe(5000);
+    expect($this->action->executeSingle($account))->toBe(5000);
 });
 
 // -------------------------------------------------------------------------
@@ -112,7 +112,7 @@ test('revenue balance = credits minus debits', function () {
 
     JournalEntry::create(['transaction_id' => $transaction->id, 'account_id' => $account->id, 'type' => 'CREDIT', 'amount' => 5000.00, 'entry_date' => today()]);
 
-    expect($this->action->execute($account))->toBe(500000);
+    expect($this->action->executeSingle($account))->toBe(500000);
 });
 
 // -------------------------------------------------------------------------
@@ -126,7 +126,7 @@ test('account with no journal entries returns zero', function () {
         'status' => AccountStatus::ACTIVE,
     ]);
 
-    expect($this->action->execute($account))->toBe(0);
+    expect($this->action->executeSingle($account))->toBe(0);
 });
 
 test('account with equal debits and credits returns zero', function () {
@@ -141,7 +141,7 @@ test('account with equal debits and credits returns zero', function () {
     JournalEntry::create(['transaction_id' => $transaction->id, 'account_id' => $account->id, 'type' => 'DEBIT',  'amount' => 150.00, 'entry_date' => today()]);
     JournalEntry::create(['transaction_id' => $transaction->id, 'account_id' => $account->id, 'type' => 'CREDIT', 'amount' => 150.00, 'entry_date' => today()]);
 
-    expect($this->action->execute($account))->toBe(0);
+    expect($this->action->executeSingle($account))->toBe(0);
 });
 
 // -------------------------------------------------------------------------
@@ -177,13 +177,5 @@ test('entries from another ledger do not contaminate balance', function () {
     ]);
 
     // Balance should only reflect this ledger's entries
-    // Since GetAccountBalanceAction uses $account->journalEntries() which is an Eloquent relation,
-    // and JournalEntry doesn't have its own LedgerScope anymore, it relies on the Account's scope if we use the relation.
-    // Wait! If JournalEntry doesn't have LedgerScope, $account->journalEntries() will return ALL entries for that account id across all ledgers!
-    // THIS IS A SECURITY HOLE.
-    
-    // I need to update the relation or the Action to explicitly scope by the Account's ledger.
-    // Or, keep the LedgerScope on JournalEntry but derive the ledger_id from the transaction relationship.
-    
-    expect($this->action->execute($account))->toBe(5000);
+    expect($this->action->executeSingle($account))->toBe(5000);
 });

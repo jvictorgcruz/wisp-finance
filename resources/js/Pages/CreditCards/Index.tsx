@@ -205,7 +205,7 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                                             {formatCurrency(Math.abs(card.balance))} {t('accounts.page.limit_used').toLowerCase()}
                                         </p>
                                         <p className="text-[10px] font-black text-slate-900">
-                                            de {formatCurrency(card.credit_card_details.limit)}
+                                            {Math.min(100, Math.round((Math.abs(card.balance) / card.credit_card_details.limit) * 100))}% de {formatCurrency(card.credit_card_details.limit)}
                                         </p>
                                     </div>
                                     <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">

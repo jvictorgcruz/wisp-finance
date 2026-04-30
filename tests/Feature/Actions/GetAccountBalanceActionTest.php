@@ -10,6 +10,7 @@ use App\Models\JournalEntry;
 use App\Enums\AccountType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 uses(RefreshDatabase::class);
 
@@ -20,8 +21,6 @@ beforeEach(function () {
 
 test('it calculates asset balance correctly', function () {
     $ledger = Ledger::factory()->create();
-    
-    // Simulate LedgerContext
     $user = \App\Models\User::factory()->create(['current_ledger_id' => $ledger->id]);
     $ledger->users()->attach($user, ['role' => 'owner']);
     Auth::login($user);
@@ -33,8 +32,7 @@ test('it calculates asset balance correctly', function () {
 
     $transaction = Transaction::factory()->create(['ledger_id' => $ledger->id]);
 
-    // Deposit 1000 cents (raw DB insert to be sure)
-    \DB::table('journal_entries')->insert([
+    DB::table('journal_entries')->insert([
         'transaction_id' => $transaction->id,
         'account_id' => $account->id,
         'type' => 'DEBIT',
@@ -42,8 +40,7 @@ test('it calculates asset balance correctly', function () {
         'entry_date' => now()
     ]);
 
-    // Withdrawal 400 cents
-    \DB::table('journal_entries')->insert([
+    DB::table('journal_entries')->insert([
         'transaction_id' => $transaction->id,
         'account_id' => $account->id,
         'type' => 'CREDIT',
@@ -51,7 +48,6 @@ test('it calculates asset balance correctly', function () {
         'entry_date' => now()
     ]);
 
-    // Asset Balance: Debit - Credit = 1000 - 400 = 600
     $balances = $this->action->execute([$account->id]);
     expect($balances->get($account->id))->toBe(600);
 });
@@ -69,8 +65,7 @@ test('it calculates liability balance correctly', function () {
 
     $transaction = Transaction::factory()->create(['ledger_id' => $ledger->id]);
 
-    // Loan 1000 cents (Credit)
-    \DB::table('journal_entries')->insert([
+    DB::table('journal_entries')->insert([
         'transaction_id' => $transaction->id,
         'account_id' => $account->id,
         'type' => 'CREDIT',
@@ -78,8 +73,7 @@ test('it calculates liability balance correctly', function () {
         'entry_date' => now()
     ]);
 
-    // Payment 200 cents (Debit)
-    \DB::table('journal_entries')->insert([
+    DB::table('journal_entries')->insert([
         'transaction_id' => $transaction->id,
         'account_id' => $account->id,
         'type' => 'DEBIT',
@@ -87,7 +81,6 @@ test('it calculates liability balance correctly', function () {
         'entry_date' => now()
     ]);
 
-    // Liability Balance: Credit - Debit = 1000 - 200 = 800
     $balances = $this->action->execute([$account->id]);
     expect($balances->get($account->id))->toBe(800);
 });
@@ -96,18 +89,17 @@ test('it isolates balances by ledger', function () {
     $ledgerA = Ledger::factory()->create();
     $userA = \App\Models\User::factory()->create(['current_ledger_id' => $ledgerA->id]);
     $ledgerA->users()->attach($userA, ['role' => 'owner']);
-    $userA->refresh();
 
     $ledgerB = Ledger::factory()->create();
     $userB = \App\Models\User::factory()->create(['current_ledger_id' => $ledgerB->id]);
     $ledgerB->users()->attach($userB, ['role' => 'owner']);
-    $userB->refresh();
 
     $accountA = Account::factory()->create(['ledger_id' => $ledgerA->id, 'type' => AccountType::ASSET]);
+    $accountB = Account::factory()->create(['ledger_id' => $ledgerB->id, 'type' => AccountType::ASSET]);
     
     // Transaction in Ledger A
     $transA = Transaction::factory()->create(['ledger_id' => $ledgerA->id]);
-    \DB::table('journal_entries')->insert([
+    DB::table('journal_entries')->insert([
         'transaction_id' => $transA->id,
         'account_id' => $accountA->id,
         'type' => 'DEBIT',
@@ -117,21 +109,23 @@ test('it isolates balances by ledger', function () {
 
     // Transaction in Ledger B
     $transB = Transaction::factory()->create(['ledger_id' => $ledgerB->id]);
-    \DB::table('journal_entries')->insert([
+    DB::table('journal_entries')->insert([
         'transaction_id' => $transB->id,
-        'account_id' => $accountA->id,
+        'account_id' => $accountB->id,
         'type' => 'DEBIT',
         'amount' => 500,
         'entry_date' => now()
     ]);
 
-    // Test Ledger A
+    // Test Ledger A: should only see its account and its balance
     Auth::login($userA);
-    $balances = $this->action->execute([$accountA->id]);
-    expect($balances->get($accountA->id))->toBe(100);
+    $balancesA = $this->action->execute([$accountA->id, $accountB->id]);
+    expect($balancesA->get($accountA->id))->toBe(100);
+    expect($balancesA->get($accountB->id))->toBe(0); // Cannot see accountB
 
-    // Test Ledger B
+    // Test Ledger B: should only see its account and its balance
     Auth::login($userB);
-    $balances = $this->action->execute([$accountA->id]);
-    expect($balances->get($accountA->id))->toBe(500);
+    $balancesB = $this->action->execute([$accountA->id, $accountB->id]);
+    expect($balancesB->get($accountB->id))->toBe(500);
+    expect($balancesB->get($accountA->id))->toBe(0); // Cannot see accountA
 });

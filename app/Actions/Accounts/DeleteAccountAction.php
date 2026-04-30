@@ -46,7 +46,7 @@ class DeleteAccountAction
      */
     protected function handleInactivation(Account $account): bool
     {
-        $balance = $this->getBalanceAction->execute($account);
+        $balance = $this->getBalanceAction->executeSingle($account);
 
         if ($balance !== 0) {
             throw ValidationException::withMessages([

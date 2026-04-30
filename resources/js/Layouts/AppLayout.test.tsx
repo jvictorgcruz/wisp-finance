@@ -9,7 +9,25 @@ vi.mock('@inertiajs/react', () => ({
         if (typeof document !== 'undefined') document.title = title;
         return null;
     },
-    Link: ({ children, href }: any) => <a href={href}>{children}</a>,
+    Link: ({ children, href, className }: any) => <a href={href} className={className}>{children}</a>,
+    router: {
+        post: vi.fn(),
+        delete: vi.fn(),
+    },
+    useForm: () => ({
+        data: {
+            description: '',
+            source_account_id: null,
+            destination_account_id: null,
+            metadata: {},
+        },
+        setData: vi.fn(),
+        post: vi.fn(),
+        reset: vi.fn(),
+        clearErrors: vi.fn(),
+        processing: false,
+        errors: {},
+    }),
     usePage: () => ({
         url: '/accounts',
         props: {
@@ -20,6 +38,10 @@ vi.mock('@inertiajs/react', () => ({
             },
             locale: 'en',
             locales: { en: 'English', pt: 'Português' },
+            financial_context: {
+                accounts: [],
+                categories: [],
+            }
         }
     })
 }));
