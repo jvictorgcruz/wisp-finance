@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef } from 'react';
 
 interface Props {
     value: number;
     onChange: (value: number) => void;
+    onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
     label?: string;
     error?: string;
     className?: string;
     autoFocus?: boolean;
 }
 
-export default function CurrencyInput({ value, onChange, label, error, className = "", autoFocus }: Props) {
+const CurrencyInput = forwardRef<HTMLInputElement, Props>(({ value, onChange, onKeyDown, label, error, className = "", autoFocus }, ref) => {
     const [displayValue, setDisplayValue] = useState('');
 
     useEffect(() => {
@@ -38,10 +39,12 @@ export default function CurrencyInput({ value, onChange, label, error, className
             )}
             <div className="relative">
                 <input
+                    ref={ref}
                     type="text"
                     autoFocus={autoFocus}
                     value={displayValue}
                     onChange={handleChange}
+                    onKeyDown={onKeyDown}
                     className={`w-full bg-slate-50 border-none focus:ring-2 focus:ring-primary/20 rounded-2xl px-4 py-4 text-2xl font-black text-slate-900 placeholder:text-slate-300 transition-all ${error ? 'ring-2 ring-rose-500/20' : ''}`}
                     placeholder="R$ 0,00"
                 />
@@ -49,4 +52,8 @@ export default function CurrencyInput({ value, onChange, label, error, className
             {error && <p className="mt-1 text-xs font-bold text-rose-500 ml-1">{error}</p>}
         </div>
     );
-}
+});
+
+CurrencyInput.displayName = 'CurrencyInput';
+
+export default CurrencyInput;

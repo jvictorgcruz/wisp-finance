@@ -26,12 +26,16 @@ return [
         'submit' => 'Save Transaction',
         'cancel' => 'Cancel',
         'back' => 'Back',
+        'search_placeholder' => 'Search...',
+        'no_results' => 'No results found.',
+        'others' => 'Others',
         'success' => [
             'expense' => 'Expense recorded successfully!',
             'income' => 'Income recorded successfully!',
             'transfer' => 'Transfer completed successfully!',
         ],
         'cta' => 'New Transaction',
+        'select_type' => 'What do you want to record?',
     ],
     'dashboard' => [
         'title' => 'Dashboard',

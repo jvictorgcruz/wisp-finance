@@ -1,4 +1,4 @@
-import React, { ElementType, Fragment, createContext, useContext } from 'react';
+import React, { ElementType, Fragment, createContext, useContext, forwardRef } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -23,7 +23,7 @@ type DropdownMode = 'listbox' | 'menu';
 const DropdownContext = createContext<{ mode: DropdownMode }>({ mode: 'menu' });
 
 interface DropdownSelectorProps {
-    children: React.ReactNode;
+    children: React.ReactNode | ((props: { open: boolean }) => React.ReactElement);
     className?: string;
     value?: any;
     onChange?: (value: any) => void;
@@ -32,7 +32,7 @@ interface DropdownSelectorProps {
 
 interface TriggerProps {
     as?: ElementType;
-    children: React.ReactNode;
+    children: React.ReactNode | ((props: { open: boolean; active: boolean }) => React.ReactElement);
     className?: string;
     showChevron?: boolean;
     chevronClassName?: string;
@@ -41,7 +41,7 @@ interface TriggerProps {
 
 interface PanelProps {
     as?: ElementType;
-    children: React.ReactNode;
+    children: React.ReactNode | ((props: { open: boolean }) => React.ReactElement);
     className?: string;
     placement?: 'top' | 'bottom';
     align?: 'left' | 'right';
@@ -66,61 +66,69 @@ export default function DropdownSelector({ children, className, value, onChange,
     const isListbox = value !== undefined;
     const mode: DropdownMode = isListbox ? 'listbox' : 'menu';
 
-    const content = (
-        <div className={cn("relative", className)}>
-            {children}
-        </div>
-    );
-
     return (
         <DropdownContext.Provider value={{ mode }}>
             {isListbox ? (
                 <Listbox value={value} onChange={onChange}>
-                    {content}
+                    {(state) => (
+                        <div className={cn("relative", className)}>
+                            {typeof children === 'function' ? children(state) : children}
+                        </div>
+                    )}
                 </Listbox>
             ) : (
                 <Menu as={Component} className={cn("relative", className)}>
-                    {children}
+                    {(state) => (
+                        <>
+                            {typeof children === 'function' ? children(state) : children}
+                        </>
+                    )}
                 </Menu>
             )}
         </DropdownContext.Provider>
     );
 }
 
-DropdownSelector.Trigger = function Trigger({
+DropdownSelector.Trigger = forwardRef<HTMLButtonElement, TriggerProps>(function Trigger({
     as: Component,
     children,
     className,
     showChevron = true,
     chevronClassName,
     ...props
-}: TriggerProps) {
+}: TriggerProps, ref) {
     const { mode } = useContext(DropdownContext);
     const DefaultComponent = mode === 'listbox' ? ListboxButton : MenuButton;
     const ResolvedComponent = Component || DefaultComponent;
 
     return (
         <ResolvedComponent
+            ref={ref}
             className={cn(
                 "flex items-center justify-between gap-3 p-1.5 rounded-xl transition-all group border border-transparent hover:border-surface-low hover:bg-surface-low shadow-sm hover:shadow-md h-10 focus:outline-none focus:ring-2 focus:ring-primary/5 focus:border-primary/20",
                 className
             )}
             {...props}
         >
-            <div className='flex items-center gap-2'>
-                {children}
-            </div>
-            {showChevron && (
-                <ChevronDown 
-                    className={cn(
-                        "w-4 h-4 text-slate-400 group-hover:text-primary transition-colors ml-1",
-                        chevronClassName
-                    )} 
-                />
+            {(state: any) => (
+                <>
+                    <div className='flex items-center gap-2'>
+                        {typeof children === 'function' ? children(state) : children}
+                    </div>
+                    {showChevron && (
+                        <ChevronDown 
+                            className={cn(
+                                "w-4 h-4 text-slate-400 group-hover:text-primary transition-colors ml-1",
+                                chevronClassName,
+                                state.open ? "rotate-180" : ""
+                            )} 
+                        />
+                    )}
+                </>
             )}
         </ResolvedComponent>
     );
-};
+});
 
 DropdownSelector.Panel = function Panel({
     as: Component,
@@ -159,7 +167,11 @@ DropdownSelector.Panel = function Panel({
                 )}
                 {...props}
             >
-                {children}
+                {(state: any) => (
+                    <>
+                        {typeof children === 'function' ? children(state) : children}
+                    </>
+                )}
             </ResolvedComponent>
         </Transition>
     );

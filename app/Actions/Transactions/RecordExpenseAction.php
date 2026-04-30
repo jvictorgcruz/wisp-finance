@@ -20,7 +20,7 @@ class RecordExpenseAction extends BaseFinancialAction
         Account $categoryAccount,
         float|int $amount,
         Carbon $date,
-        string $description,
+        ?string $description,
         array $metadata = []
     ): Transaction {
         if ($sourceAccount->id === $categoryAccount->id) {

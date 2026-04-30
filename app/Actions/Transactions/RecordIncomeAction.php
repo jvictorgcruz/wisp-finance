@@ -20,7 +20,7 @@ class RecordIncomeAction extends BaseFinancialAction
         Account $destinationAccount,
         float|int $amount,
         Carbon $date,
-        string $description,
+        ?string $description,
         array $metadata = []
     ): Transaction {
         if ($categoryAccount->id === $destinationAccount->id) {

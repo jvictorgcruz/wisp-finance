@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes } from 'react';
+import React, { InputHTMLAttributes, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface Props extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
@@ -9,7 +9,7 @@ interface Props extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> 
     containerClassName?: string;
 }
 
-export default function TextField({ 
+const TextField = forwardRef<HTMLInputElement, Props>(({ 
     label, 
     error, 
     icon, 
@@ -17,7 +17,7 @@ export default function TextField({
     containerClassName = '',
     onChange,
     ...props 
-}: Props) {
+}, ref) => {
     return (
         <div className={containerClassName}>
             {label && (
@@ -40,6 +40,7 @@ export default function TextField({
                 
                 <input
                     {...props}
+                    ref={ref}
                     data-testid={`input-${props.id}`}
                     onChange={(e) => onChange?.(e.target.value)}
                     className={twMerge(`
@@ -60,4 +61,8 @@ export default function TextField({
             )}
         </div>
     );
-}
+});
+
+TextField.displayName = 'TextField';
+
+export default TextField;

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, forwardRef } from 'react';
 import { Popover, PopoverButton, PopoverPanel, Transition } from '@headlessui/react';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
@@ -18,7 +18,7 @@ interface DatePickerProps {
     placeholder?: string;
 }
 
-export default function DatePicker({
+const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(({
     value,
     onChange,
     label,
@@ -26,7 +26,7 @@ export default function DatePicker({
     className,
     containerClassName,
     placeholder = 'Selecione uma data'
-}: DatePickerProps) {
+}, ref) => {
     // Current viewed month in the picker
     const initialDate = value ? new Date(value + 'T00:00:00') : new Date();
     const [viewDate, setViewDate] = useState(new Date(initialDate.getFullYear(), initialDate.getMonth(), 1));
@@ -94,12 +94,15 @@ export default function DatePicker({
             <Popover className="relative">
                 {({ open, close }) => (
                     <>
-                        <PopoverButton className={cn(
-                            "w-full flex items-center justify-between gap-3 px-4 h-14 rounded-2xl bg-slate-50 border-none transition-all focus:outline-none focus:ring-2 focus:ring-primary/20",
-                            className,
-                            error ? "ring-2 ring-rose-500/20" : "",
-                            open ? "ring-2 ring-primary/20" : ""
-                        )}>
+                        <PopoverButton 
+                            ref={ref}
+                            className={cn(
+                                "w-full flex items-center justify-between gap-3 px-4 h-14 rounded-2xl bg-slate-50 border-none transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white focus:shadow-sm",
+                                className,
+                                error ? "ring-2 ring-rose-500/20" : "",
+                                open ? "ring-2 ring-primary/20 bg-white shadow-sm" : ""
+                            )}
+                        >
                             <div className="flex items-center gap-3 text-left">
                                 <CalendarIcon className={cn("w-5 h-5 shrink-0", formattedSelected ? "text-primary" : "text-slate-400")} />
                                 <span className={cn("font-bold text-sm truncate", formattedSelected ? "text-slate-900" : "text-slate-400")}>
@@ -193,4 +196,8 @@ export default function DatePicker({
             {error && <p className="mt-1 text-xs font-bold text-rose-500 ml-1">{error}</p>}
         </div>
     );
-}
+});
+
+DatePicker.displayName = 'DatePicker';
+
+export default DatePicker;

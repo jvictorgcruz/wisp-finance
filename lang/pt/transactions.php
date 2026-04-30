@@ -26,12 +26,16 @@ return [
         'submit' => 'Salvar Transação',
         'cancel' => 'Cancelar',
         'back' => 'Voltar',
+        'search_placeholder' => 'Buscar...',
+        'no_results' => 'Nenhum resultado encontrado.',
+        'others' => 'Outros',
         'success' => [
             'expense' => 'Despesa registrada com sucesso!',
             'income' => 'Receita registrada com sucesso!',
             'transfer' => 'Transferência concluída com sucesso!',
         ],
         'cta' => 'Nova Transação',
+        'select_type' => 'O que deseja registrar?',
     ],
     'dashboard' => [
         'title' => 'Dashboard',

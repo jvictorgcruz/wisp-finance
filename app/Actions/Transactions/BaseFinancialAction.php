@@ -46,7 +46,7 @@ abstract class BaseFinancialAction
     /**
      * Create a paid cash flow for the transaction.
      */
-    protected function createPaidCashFlow(Transaction $transaction, int $accountId, float|int $amount, string $date, string $description): ExpectedCashFlow
+    protected function createPaidCashFlow(Transaction $transaction, int $accountId, float|int $amount, string $date, ?string $description): ExpectedCashFlow
     {
         return ExpectedCashFlow::create([
             'transaction_id' => $transaction->id,

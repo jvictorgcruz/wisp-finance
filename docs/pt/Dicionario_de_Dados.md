@@ -150,7 +150,7 @@ O **Fato Gerador** — cabeçalho do evento financeiro. Agrupa as linhas de lan�
 | `id` | BigInt (Unsigned) | PK, Auto-increment |
 | `ledger_id` | BigInt (Unsigned) | FK -> `ledgers(id)` |
 | `created_by_user_id` | BigInt (Unsigned) | FK -> `users(id)`. Auditoria: quem registrou |
-| `description` | Varchar(255) | Descrição dada pelo usuário (ex: "Compra Mercado") |
+| `description` | Varchar(255) | Nullable. Descrição dada pelo usuário (ex: "Compra Mercado") |
 | `date` | Date | Data de Competência (quando o fato ocorreu) |
 | `type` | Enum | `EXPENSE`, `INCOME`, `TRANSFER`, `CREDIT_CARD_PAYMENT`. Facilita queries e UI |
 | `status` | Enum | `ACTIVE`, `REVERSED` |

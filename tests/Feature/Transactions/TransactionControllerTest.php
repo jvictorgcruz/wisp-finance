@@ -111,3 +111,22 @@ test('user can search transactions', function () {
         ->where('transactions.data.0.description', 'TargetSearch')
     );
 });
+
+test('it can store a transaction without description', function () {
+    $response = $this->post('/transactions/expense', [
+        'amount' => 50.00,
+        'date' => now()->format('Y-m-d'),
+        'description' => null,
+        'source_account_id' => $this->bank->id,
+        'destination_account_id' => $this->expenseCat->id,
+    ]);
+
+    $response->assertRedirect();
+    $this->assertDatabaseHas('transactions', [
+        'description' => null,
+    ]);
+    $this->assertDatabaseHas('journal_entries', [
+        'amount' => 5000,
+        'type' => 'DEBIT',
+    ]);
+});
