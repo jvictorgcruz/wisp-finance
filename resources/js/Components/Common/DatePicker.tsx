@@ -16,6 +16,8 @@ interface DatePickerProps {
     className?: string;
     containerClassName?: string;
     placeholder?: string;
+    minDate?: string;
+    maxDate?: string;
 }
 
 const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(({
@@ -25,7 +27,9 @@ const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(({
     error,
     className,
     containerClassName,
-    placeholder = 'Selecione uma data'
+    placeholder = 'Selecione uma data',
+    minDate,
+    maxDate
 }, ref) => {
     // Current viewed month in the picker
     const initialDate = value ? new Date(value + 'T00:00:00') : new Date();
@@ -163,10 +167,25 @@ const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(({
                                         
                                         const isToday = new Date().toDateString() === date.toDateString();
 
+                                        const isOutOfRange = (d: Date) => {
+                                            if (minDate) {
+                                                const min = new Date(minDate + 'T00:00:00');
+                                                if (d < min) return true;
+                                            }
+                                            if (maxDate) {
+                                                const max = new Date(maxDate + 'T00:00:00');
+                                                if (d > max) return true;
+                                            }
+                                            return false;
+                                        };
+
+                                        const disabled = isOutOfRange(date);
+
                                         return (
                                             <button
                                                 key={i}
                                                 type="button"
+                                                disabled={disabled}
                                                 onClick={() => {
                                                     handleSelect(date);
                                                 }}
@@ -175,7 +194,8 @@ const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(({
                                                     isSelected 
                                                         ? "bg-primary text-white shadow-lg shadow-primary/20 scale-110 z-10" 
                                                         : "text-slate-600 hover:bg-slate-50 hover:text-primary",
-                                                    isToday && !isSelected && "text-primary bg-primary/5"
+                                                    isToday && !isSelected && "text-primary bg-primary/5",
+                                                    disabled && "opacity-20 cursor-not-allowed grayscale"
                                                 )}
                                             >
                                                 {date.getDate()}

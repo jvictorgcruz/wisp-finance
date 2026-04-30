@@ -53,6 +53,7 @@ return [
         'description' => 'Description',
         'category' => 'Category/Account',
         'amount' => 'Amount',
+        'running_balance' => 'Balance',
         'empty' => 'No transactions found.',
     ],
     'date' => [
@@ -85,5 +86,10 @@ return [
     ],
     'errors' => [
         'same_account' => 'Source and destination accounts cannot be the same.',
+        'invalid_date_range' => 'The end date cannot be before the start date.',
+    ],
+    'page' => [
+        'title' => 'Transactions',
+        'subtitle' => 'Monitor your financial flow and entry history.',
     ],
 ];

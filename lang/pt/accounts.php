@@ -110,6 +110,7 @@ return [
         'edit' => 'Editar',
         'delete' => 'Excluir',
         'inactivate' => 'Inativar',
+        'statement' => 'Extrato',
     ],
     'messages' => [
         'confirm_delete' => 'Tem certeza que deseja excluir esta conta? Esta ação é permanente.',

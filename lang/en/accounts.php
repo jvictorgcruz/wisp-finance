@@ -110,6 +110,7 @@ return [
         'edit' => 'Edit',
         'delete' => 'Delete',
         'inactivate' => 'Inactivate',
+        'statement' => 'Statement',
     ],
     'messages' => [
         'confirm_delete' => 'Are you sure you want to delete this account? This action is permanent.',

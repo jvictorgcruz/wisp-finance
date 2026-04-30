@@ -55,8 +55,9 @@ export default function TransactionModal({ show, onClose, initialType, transacti
                     destination_account_id: transaction.destination_account_id,
                     metadata: transaction.metadata || {},
                 });
-            } else if (initialType) {
-                setActiveTab(initialType);
+            } else {
+                reset();
+                setActiveTab(initialType || 'EXPENSE');
             }
             // Small timeout to ensure modal is rendered and animation started
             setTimeout(() => {
@@ -78,6 +79,7 @@ export default function TransactionModal({ show, onClose, initialType, transacti
             put(`/transactions/${transaction.id}`, {
                 onSuccess: () => {
                     onClose();
+                    reset();
                 },
             });
             return;
@@ -92,6 +94,7 @@ export default function TransactionModal({ show, onClose, initialType, transacti
         post(endpoint, {
             onSuccess: () => {
                 onClose();
+                reset();
             },
         });
     };

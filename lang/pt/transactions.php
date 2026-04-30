@@ -53,6 +53,7 @@ return [
         'description' => 'Descrição',
         'category' => 'Categoria/Conta',
         'amount' => 'Valor',
+        'running_balance' => 'Saldo',
         'empty' => 'Nenhuma transação encontrada.',
     ],
     'date' => [
@@ -85,5 +86,10 @@ return [
     ],
     'errors' => [
         'same_account' => 'A conta de origem e destino não podem ser as mesmas.',
+        'invalid_date_range' => 'A data final não pode ser anterior à data inicial.',
+    ],
+    'page' => [
+        'title' => 'Transações',
+        'subtitle' => 'Monitore seu fluxo financeiro e histórico de lançamentos.',
     ],
 ];

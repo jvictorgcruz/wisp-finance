@@ -1,6 +1,6 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Transition } from '@headlessui/react';
 import { Link } from '@inertiajs/react';
-import { ChevronRight, Edit2, MoreVertical, PowerOff, Trash2 } from 'lucide-react';
+import { ChevronRight, Edit2, FileText, MoreVertical, PowerOff, Trash2, TrendingUp } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import LucideIcon from '@/Components/Common/LucideIcon';
@@ -172,6 +172,15 @@ export default function AccountRow({
                                     <MoreVertical className="w-4 h-4 text-slate-400 group-hover:text-slate-900 transition-colors" />
                                 </DropdownSelector.Trigger>
                                 <DropdownSelector.Panel align="right" placement='top' className="w-48 p-1">
+                                    <DropdownSelector.Item 
+                                        as={Link}
+                                        href={`/transactions?account_id=${account.id}`}
+                                        className="flex items-center gap-2 p-2 text-xs font-bold text-slate-600 hover:bg-primary/5 hover:text-primary rounded-lg cursor-pointer transition-colors"
+                                    >
+                                        <FileText className="w-3.5 h-3.5" />
+                                        {t('accounts.actions.statement')}
+                                    </DropdownSelector.Item>
+                                    
                                     <DropdownSelector.Item 
                                         onClick={(e: any) => {
                                             e.stopPropagation();

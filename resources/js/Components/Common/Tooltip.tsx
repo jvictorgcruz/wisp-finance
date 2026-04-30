@@ -23,9 +23,7 @@ export default function Tooltip({
     disabled = false
 }: TooltipProps) {
     const [show, setShow] = useState(false);
-
-    if (disabled || !content) return <>{children}</>;
-
+    
     const positionClasses = {
         top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
         bottom: 'top-full left-1/2 -translate-x-1/2 mt-2',
@@ -43,30 +41,32 @@ export default function Tooltip({
     return (
         <div 
             className={cn("relative inline-block", className)}
-            onMouseEnter={() => setShow(true)}
+            onMouseEnter={() => !disabled && content && setShow(true)}
             onMouseLeave={() => setShow(false)}
         >
             {children}
-            <Transition
-                show={show}
-                enter="transition ease-out duration-200"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="transition ease-in duration-150"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-            >
-                <div className={cn(
-                    "absolute z-100 w-max max-w-xs px-3 py-1.5 bg-slate-800 text-white text-[10px] font-bold rounded-lg shadow-xl pointer-events-none",
-                    positionClasses[position]
-                )}>
-                    {content}
+            {content && !disabled && (
+                <Transition
+                    show={show}
+                    enter="transition ease-out duration-200"
+                    enterFrom="opacity-0 scale-95"
+                    enterTo="opacity-100 scale-100"
+                    leave="transition ease-in duration-150"
+                    leaveFrom="opacity-100 scale-100"
+                    leaveTo="opacity-0 scale-95"
+                >
                     <div className={cn(
-                        "absolute border-4 border-transparent",
-                        arrowClasses[position]
-                    )} />
-                </div>
-            </Transition>
+                        "absolute z-100 w-max max-w-xs px-3 py-1.5 bg-slate-800 text-white text-[10px] font-bold rounded-lg shadow-xl pointer-events-none",
+                        positionClasses[position]
+                    )}>
+                        {content}
+                        <div className={cn(
+                            "absolute border-4 border-transparent",
+                            arrowClasses[position]
+                        )} />
+                    </div>
+                </Transition>
+            )}
         </div>
     );
 }

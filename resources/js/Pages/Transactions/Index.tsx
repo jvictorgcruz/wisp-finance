@@ -73,6 +73,7 @@ interface Transaction {
     other_account: string;
     main_account_type: string;
     icon: string;
+    running_balance: number | null;
 }
 
 export default function Index({ transactions, filters }: Props) {
@@ -105,15 +106,15 @@ export default function Index({ transactions, filters }: Props) {
         });
     };
 
-    const activeFiltersCount = Object.keys(filters).filter(key => {
-        if (key === 'search') return false;
-        return !!filters[key as keyof Props['filters']];
+    const activeFiltersCount = Object.keys(localFilters).filter(key => {
+        return !!localFilters[key as keyof Props['filters']];
     }).length;
 
     const isFilterChanged = React.useMemo(() => {
         const compare = (a: any, b: any) => (a || null) === (b || null);
         
-        return !compare(localFilters.date_from, filters.date_from) ||
+        return !compare(localFilters.search, filters.search) ||
+               !compare(localFilters.date_from, filters.date_from) ||
                !compare(localFilters.date_to, filters.date_to) ||
                !compare(localFilters.account_id, filters.account_id) ||
                !compare(localFilters.category_id, filters.category_id);
@@ -135,15 +136,36 @@ export default function Index({ transactions, filters }: Props) {
         });
     };
 
+    const isDateRangeInvalid = React.useMemo(() => {
+        if (localFilters.date_from && localFilters.date_to) {
+            return localFilters.date_to < localFilters.date_from;
+        }
+        return false;
+    }, [localFilters.date_from, localFilters.date_to]);
+
     const handleApplyFilters = () => {
+        if (isDateRangeInvalid) return;
         applyFilters(localFilters);
     };
 
     const clearFilters = () => {
-        router.get('/transactions', {}, {
-            preserveState: true,
-            preserveScroll: true,
-            replace: true,
+        const now = new Date();
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        
+        const formatDateStr = (date: Date) => {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        };
+
+        setLocalFilters({
+            search: '',
+            date_from: formatDateStr(firstDay),
+            date_to: formatDateStr(lastDay),
+            account_id: null,
+            category_id: null,
         });
     };
 
@@ -214,15 +236,15 @@ export default function Index({ transactions, filters }: Props) {
         <AppLayout title={t('home.nav.transactions')}>
             <Head title={t('home.nav.transactions')} />
 
-            <div className="max-w-5xl mx-auto py-8">
+            <div className="sticky top-24 z-20 bg-surface/95 backdrop-blur-sm -mx-4 px-4 pt-4 -mt-4 mb-8">
                 {/* Header */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
-                    <div>
-                        <h2 className="text-3xl font-black tracking-tight text-slate-900 mb-2">
-                            {t('home.nav.transactions')}
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+                    <div className="space-y-1">
+                        <h2 className="text-2xl font-black tracking-tight text-slate-900">
+                            {t('transactions.page.title')}
                         </h2>
-                        <p className="text-slate-400 font-bold text-sm uppercase tracking-[0.2em]">
-                            {getFilterLabel()}
+                        <p className="text-sm text-slate-500 font-medium leading-none">
+                            {getFilterLabel() || t('transactions.page.subtitle')}
                         </p>
                     </div>
                     <div className="flex gap-3 w-full md:w-auto">
@@ -255,7 +277,6 @@ export default function Index({ transactions, filters }: Props) {
                     </div>
                 </div>
 
-                {/* Filter Bar */}
                 <Transition
                     show={showFilters}
                     enter="transition ease-out duration-200"
@@ -265,8 +286,25 @@ export default function Index({ transactions, filters }: Props) {
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 -translate-y-4"
                 >
-                    <div className="bg-white p-8 rounded-4xl border-editorial mb-12 flex flex-col gap-8">
-                        {/* Row 1: Dates and Actions */}
+                    <div className="bg-white p-6 rounded-3xl border-editorial mb-4 flex flex-col gap-6 shadow-sm">
+                        {/* Search Row */}
+                        <div className="relative">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" />
+                            <input 
+                                type="text"
+                                value={localFilters.search}
+                                onChange={(e) => setLocalFilters(prev => ({ ...prev, search: e.target.value }))}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        handleApplyFilters();
+                                    }
+                                }}
+                                placeholder={t('transactions.modal.search_placeholder')}
+                                className="w-full bg-slate-50 border-none rounded-2xl pl-12 pr-4 h-14 text-sm font-medium focus:ring-2 focus:ring-primary/20 transition-all"
+                            />
+                        </div>
+
+                        {/* Row 2: Dates and Actions */}
                         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
                             <div className="md:col-span-3">
                                 <DatePicker 
@@ -275,6 +313,7 @@ export default function Index({ transactions, filters }: Props) {
                                     onChange={(val) => setLocalFilters(prev => ({ ...prev, date_from: val }))}
                                     placeholder={t('transactions.filters.date_from')}
                                     className="h-12"
+                                    maxDate={localFilters.date_to || undefined}
                                 />
                             </div>
                             <div className="md:col-span-3">
@@ -284,27 +323,31 @@ export default function Index({ transactions, filters }: Props) {
                                     onChange={(val) => setLocalFilters(prev => ({ ...prev, date_to: val }))}
                                     placeholder={t('transactions.filters.date_to')}
                                     className="h-12"
+                                    minDate={localFilters.date_from || undefined}
                                 />
                             </div>
                             <div className="md:col-span-6 flex gap-3">
                                 <Button 
                                     variant="outline" 
-                                    className="h-12 flex-1 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 border-slate-200"
+                                    className="h-12 flex-1 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 border border-slate-200"
                                     onClick={clearFilters}
                                 >
                                     <X className="w-4 h-4 mr-2" />
                                     {t('transactions.filters.clear')}
                                 </Button>
                                 <Tooltip 
-                                    content={t('transactions.filters.no_changes')} 
-                                    disabled={isFilterChanged}
+                                    content={isDateRangeInvalid ? t('transactions.errors.invalid_date_range') : t('transactions.filters.no_changes')} 
+                                    disabled={isFilterChanged || isDateRangeInvalid}
                                     className="flex-1"
                                 >
                                     <Button 
                                         variant="primary"
-                                        className="h-12 w-full text-[10px] font-black uppercase tracking-widest"
+                                        className={cn(
+                                            "h-12 w-full text-[10px] font-black uppercase tracking-widest",
+                                            isDateRangeInvalid ? "bg-rose-500 hover:bg-rose-600 shadow-rose-500/20" : ""
+                                        )}
                                         onClick={handleApplyFilters}
-                                        disabled={!isFilterChanged}
+                                        disabled={!isFilterChanged || isDateRangeInvalid}
                                     >
                                         <Filter className="w-4 h-4 mr-2" />
                                         {t('transactions.filters.apply')}
@@ -313,7 +356,7 @@ export default function Index({ transactions, filters }: Props) {
                             </div>
                         </div>
 
-                        {/* Row 2: Selectors */}
+                        {/* Row 3: Selectors */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <AccountSelect 
                                 label={t('transactions.filters.account')}
@@ -340,22 +383,7 @@ export default function Index({ transactions, filters }: Props) {
                         </div>
                     </div>
                 </Transition>
-
-                {/* Search Bar (Quick Filter) */}
-                <div className="relative mb-12">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" />
-                    <input 
-                        type="text"
-                        defaultValue={filters.search}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                                applyFilters({ search: e.currentTarget.value });
-                            }
-                        }}
-                        placeholder={t('transactions.modal.search_placeholder')}
-                        className="w-full bg-surface-lowest rounded-2xl py-4 pl-12 pr-4 text-sm font-bold focus:ring-2 focus:ring-primary/10 placeholder:text-slate-400 transition-all border-editorial"
-                    />
-                </div>
+            </div>
 
                 {/* Groups */}
                 <div className="space-y-12">
@@ -366,18 +394,18 @@ export default function Index({ transactions, filters }: Props) {
                                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                                         {getRelativeDateLabel(date)}
                                     </h3>
-                                    <div className="h-px grow bg-slate-100" />
+                                    <div className="h-px grow bg-slate-200" />
                                 </div>
                                 
-                                    <div className="space-y-1">
-                                        {groupedTransactions[date].map(transaction => (
-                                            <div 
-                                                key={transaction.id}
-                                                className={cn(
-                                                    "group flex items-center gap-6 p-4 rounded-2xl transition-all duration-200 border border-transparent",
-                                                    transaction.status === 'ACTIVE' ? "hover:bg-white hover:border-editorial" : "opacity-40 grayscale pointer-events-none"
-                                                )}
-                                            >
+                                <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden divide-y divide-slate-100">
+                                    {groupedTransactions[date].map(transaction => (
+                                        <div 
+                                            key={transaction.id}
+                                            className={cn(
+                                                "group flex items-center gap-6 p-5 transition-all duration-200",
+                                                transaction.status === 'ACTIVE' ? "hover:bg-slate-50/50" : "opacity-40 grayscale pointer-events-none"
+                                            )}
+                                        >
                                                 <div className={cn(
                                                     "w-12 h-12 rounded-xl flex items-center justify-center transition-colors",
                                                     transaction.type === 'INCOME' ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-500"
@@ -427,6 +455,11 @@ export default function Index({ transactions, filters }: Props) {
                                                                 {transaction.type === 'INCOME' ? '+ ' : transaction.type === 'EXPENSE' ? '- ' : ''} 
                                                                 {formatCurrency(Math.abs(transaction.amount))}
                                                             </span>
+                                                            {transaction.running_balance !== null && (
+                                                                <span className="text-[10px] font-bold text-slate-400">
+                                                                    {t('transactions.table.running_balance')}: {formatCurrency(transaction.running_balance)}
+                                                                </span>
+                                                            )}
                                                             {transaction.type !== 'TRANSFER' && (
                                                                 <span className="py-0.5 bg-slate-50 text-[9px] font-black rounded-full text-slate-400 uppercase tracking-widest">
                                                                     {t(transaction.other_account)}
@@ -520,7 +553,6 @@ export default function Index({ transactions, filters }: Props) {
                         </div>
                     </div>
                 )}
-            </div>
 
             {/* Confirmation Modal */}
             <Modal 

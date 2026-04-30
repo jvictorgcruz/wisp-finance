@@ -13,7 +13,7 @@ class GetPaginatedTransactionsAction
      */
     public function execute(int $perPage = 15, array $filters = []): LengthAwarePaginator
     {
-        return Transaction::with(['journalEntries.account'])
+        $paginator = Transaction::with(['journalEntries.account'])
             ->when($filters['search'] ?? null, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('description', 'like', "%{$search}%")
@@ -49,32 +49,102 @@ class GetPaginatedTransactionsAction
             ->orderBy('date', 'desc')
             ->orderBy('id', 'desc')
             ->paginate($perPage)
-            ->withQueryString()
-            ->through(function (Transaction $transaction) {
+            ->withQueryString();
+
+        $accountId = $filters['account_id'] ?? null;
+        if ($accountId) {
+            $account = \App\Models\Account::find($accountId);
+            $oldestItem = $paginator->getCollection()->last();
+
+            if ($account && $oldestItem) {
+                $balanceBefore = \Illuminate\Support\Facades\DB::table('journal_entries')
+                    ->join('transactions', 'transactions.id', '=', 'journal_entries.transaction_id')
+                    ->where('account_id', $accountId)
+                    ->where('transactions.ledger_id', \App\Support\LedgerContext::currentId())
+                    ->where(function($q) use ($oldestItem) {
+                        $q->where('transactions.date', '<', $oldestItem->date)
+                          ->orWhere(function($q) use ($oldestItem) {
+                              $q->where('transactions.date', $oldestItem->date)
+                                ->where('transactions.id', '<', $oldestItem->id);
+                          });
+                    })
+                    ->select(
+                        \Illuminate\Support\Facades\DB::raw('COALESCE(SUM(CASE WHEN journal_entries.type = "DEBIT" THEN amount ELSE 0 END), 0) as total_debit'),
+                        \Illuminate\Support\Facades\DB::raw('COALESCE(SUM(CASE WHEN journal_entries.type = "CREDIT" THEN amount ELSE 0 END), 0) as total_credit')
+                    )
+                    ->first();
+
+                $currentBalance = match ($account->type) {
+                    AccountType::ASSET, AccountType::EXPENSE => (int)$balanceBefore->total_debit - (int)$balanceBefore->total_credit,
+                    AccountType::LIABILITY, AccountType::EQUITY, AccountType::REVENUE => (int)$balanceBefore->total_credit - (int)$balanceBefore->total_debit,
+                    default => 0,
+                };
+
+                // Apply changes bottom-up
+                foreach ($paginator->getCollection()->reverse() as $item) {
+                    $entry = $item->journalEntries->firstWhere('account_id', $accountId);
+                    if ($entry) {
+                        $amount = (int) $entry->getRawOriginal('amount');
+                        $effect = match ($account->type) {
+                            AccountType::ASSET, AccountType::EXPENSE => ($entry->type === 'DEBIT' ? $amount : -$amount),
+                            AccountType::LIABILITY, AccountType::EQUITY, AccountType::REVENUE => ($entry->type === 'CREDIT' ? $amount : -$amount),
+                            default => 0,
+                        };
+                        $currentBalance += $effect;
+                        $item->running_balance = $currentBalance;
+                    }
+                }
+            }
+        }
+
+        return $paginator->through(function (Transaction $transaction) {
                 $type = $transaction->type->value;
                 $debitEntry = $transaction->journalEntries->firstWhere('type', 'DEBIT');
                 $creditEntry = $transaction->journalEntries->firstWhere('type', 'CREDIT');
 
-                // Mapping for edit modal
-                // Expense: Source (Asset/Credit), Destination (Expense/Debit)
-                // Income: Source (Revenue/Credit), Destination (Asset/Debit)
-                // Transfer: Source (Asset/Credit), Destination (Asset/Debit)
-                $sourceAccountId = $creditEntry?->account_id;
-                $destinationAccountId = $debitEntry?->account_id;
+                $debitAccount = $debitEntry?->account;
+                $creditAccount = $creditEntry?->account;
+
+                // Mapping for UI
+                // Expense: Source (Asset/Credit) -> account, Destination (Expense/Debit) -> category
+                // Income: Source (Revenue/Credit) -> category, Destination (Asset/Debit) -> account
+                // Transfer: Source (Asset/Credit) -> account, Destination (Asset/Debit) -> category (simulated)
+                
+                if ($type === 'EXPENSE') {
+                    $account = $creditAccount;
+                    $category = $debitAccount;
+                } elseif ($type === 'INCOME') {
+                    $account = $debitAccount;
+                    $category = $creditAccount;
+                } else {
+                    $account = $creditAccount; // Source
+                    $category = $debitAccount; // Destination
+                }
 
                 return [
                     'id' => $transaction->id,
                     'date' => $transaction->date ? \Illuminate\Support\Carbon::parse($transaction->date)->format('Y-m-d') : null,
                     'description' => $transaction->description,
-                    'amount' => $debitEntry ? (int) $debitEntry->getRawOriginal('amount') : 0,
+                    'amount' => $debitEntry ? (int) round($debitEntry->amount * 100) : 0,
                     'type' => $type,
                     'status' => $transaction->status->value,
-                    'source_account_id' => $sourceAccountId,
-                    'destination_account_id' => $destinationAccountId,
-                    'main_account' => $type === 'INCOME' ? $creditEntry?->account?->name : $debitEntry?->account?->name,
-                    'other_account' => $type === 'INCOME' ? $debitEntry?->account?->name : $creditEntry?->account?->name,
-                    'main_account_type' => $type === 'INCOME' ? $creditEntry?->account?->type : $debitEntry?->account?->type,
+                    'source_account_id' => $type === 'INCOME' ? $category?->id : $account?->id,
+                    'destination_account_id' => $type === 'INCOME' ? $account?->id : $category?->id,
+                    'main_account' => $type === 'INCOME' ? $creditAccount?->name : $debitAccount?->name,
+                    'other_account' => $type === 'INCOME' ? $debitAccount?->name : $creditAccount?->name,
+                    'main_account_type' => ($type === 'INCOME' ? $creditAccount?->type : $debitAccount?->type)?->value,
                     'icon' => $this->deriveIcon($transaction, $type),
+                    'account' => $account ? [
+                        'id' => $account->id,
+                        'name' => $account->name,
+                        'ui_metadata' => $account->ui_metadata,
+                    ] : null,
+                    'category' => $category ? [
+                        'id' => $category->id,
+                        'name' => $category->name,
+                        'ui_metadata' => $category->ui_metadata,
+                    ] : null,
+                    'running_balance' => $transaction->running_balance ?? null,
                 ];
             });
     }
