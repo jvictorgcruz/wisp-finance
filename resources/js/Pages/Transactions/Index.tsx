@@ -6,11 +6,12 @@ import LucideIcon from '@/Components/Common/LucideIcon';
 import { Button } from '@/Components/Common/Button';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { Search, Download, Filter, ChevronLeft, ChevronRight, X, MoreVertical, Pencil, Trash2 } from 'lucide-react';
-import { Transition, Menu } from '@headlessui/react';
+import { Search, Download, Filter, ChevronLeft, ChevronRight, X, MoreVertical, Pencil, Trash2, Plus } from 'lucide-react';
+import { Transition } from '@headlessui/react';
 import DatePicker from '@/Components/Common/DatePicker';
 import AccountSelect from '@/Components/Transactions/AccountSelect';
 import CategorySelect from '@/Components/Transactions/CategorySelect';
+import DropdownSelector from '@/Components/Common/DropdownSelector';
 import Tooltip from '@/Components/Common/Tooltip';
 import Modal from '@/Components/Common/Modal';
 
@@ -228,24 +229,28 @@ export default function Index({ transactions, filters }: Props) {
                         <Button 
                             variant="outline" 
                             className={cn(
-                                "h-14 px-6 rounded-2xl flex items-center gap-3 transition-all",
-                                showFilters ? "bg-slate-100 border-slate-300" : "bg-white border-slate-100 shadow-editorial"
+                                "h-11 px-5 rounded-xl flex items-center gap-2.5 transition-all border-editorial",
+                                showFilters ? "bg-slate-50 border-slate-300 text-primary" : "bg-white text-slate-600"
                             )}
                             onClick={() => setShowFilters(!showFilters)}
                         >
-                            <Filter className={cn("w-5 h-5", showFilters ? "text-primary" : "text-slate-400")} />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">
+                            <Filter className={cn("w-4 h-4", showFilters ? "text-primary" : "text-slate-400")} />
+                            <span className="text-xs font-bold">
                                 {t('transactions.filters.title')}
                             </span>
                             {activeFiltersCount > 0 && (
-                                <div className="min-w-[20px] h-5 px-1.5 rounded-full bg-primary text-[10px] font-black text-white flex items-center justify-center">
+                                <div className="min-w-[18px] h-4.5 px-1 rounded-full bg-primary text-[9px] font-black text-white flex items-center justify-center">
                                     {activeFiltersCount}
                                 </div>
                             )}
                         </Button>
-                        <Button variant="primary" className="h-14 px-8 shadow-lg shadow-primary/20">
-                            <LucideIcon name="Plus" className="w-5 h-5 mr-2" />
-                            {t('transactions.modal.title')}
+                        <Button 
+                            variant="primary" 
+                            className="h-11 px-6 rounded-xl flex items-center gap-2"
+                            onClick={() => window.dispatchEvent(new CustomEvent('open-transaction-modal'))}
+                        >
+                            <Plus className="w-4 h-4" />
+                            <span className="text-xs font-bold">{t('transactions.modal.cta')}</span>
                         </Button>
                     </div>
                 </div>
@@ -260,7 +265,7 @@ export default function Index({ transactions, filters }: Props) {
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 -translate-y-4"
                 >
-                    <div className="bg-white p-8 rounded-4xl shadow-editorial border border-slate-100 mb-12 flex flex-col gap-8">
+                    <div className="bg-white p-8 rounded-4xl border-editorial mb-12 flex flex-col gap-8">
                         {/* Row 1: Dates and Actions */}
                         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
                             <div className="md:col-span-3">
@@ -297,7 +302,7 @@ export default function Index({ transactions, filters }: Props) {
                                 >
                                     <Button 
                                         variant="primary"
-                                        className="h-12 w-full text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20"
+                                        className="h-12 w-full text-[10px] font-black uppercase tracking-widest"
                                         onClick={handleApplyFilters}
                                         disabled={!isFilterChanged}
                                     >
@@ -348,7 +353,7 @@ export default function Index({ transactions, filters }: Props) {
                             }
                         }}
                         placeholder={t('transactions.modal.search_placeholder')}
-                        className="w-full bg-slate-50 border-none rounded-2xl py-4 pl-12 pr-4 text-sm font-bold focus:ring-2 focus:ring-primary/10 placeholder:text-slate-400 transition-all shadow-sm"
+                        className="w-full bg-surface-lowest rounded-2xl py-4 pl-12 pr-4 text-sm font-bold focus:ring-2 focus:ring-primary/10 placeholder:text-slate-400 transition-all border-editorial"
                     />
                 </div>
 
@@ -369,8 +374,8 @@ export default function Index({ transactions, filters }: Props) {
                                             <div 
                                                 key={transaction.id}
                                                 className={cn(
-                                                    "group flex items-center gap-6 p-4 rounded-2xl transition-all duration-200",
-                                                    transaction.status === 'ACTIVE' ? "hover:bg-white hover:shadow-editorial" : "opacity-40 grayscale pointer-events-none"
+                                                    "group flex items-center gap-6 p-4 rounded-2xl transition-all duration-200 border border-transparent",
+                                                    transaction.status === 'ACTIVE' ? "hover:bg-white hover:border-editorial" : "opacity-40 grayscale pointer-events-none"
                                                 )}
                                             >
                                                 <div className={cn(
@@ -431,51 +436,36 @@ export default function Index({ transactions, filters }: Props) {
 
                                                         {/* Action Menu */}
                                                         <div className="w-10">
-                                                            <Menu as="div" className="relative opacity-0 group-hover:opacity-100 transition-all">
-                                                                <Menu.Button className="p-2 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-600 transition-all active:scale-95 cursor-pointer">
-                                                                    <MoreVertical className="w-5 h-5" />
-                                                                </Menu.Button>
-                                                                <Transition
-                                                                    as={React.Fragment}
-                                                                    enter="transition ease-out duration-100"
-                                                                    enterFrom="transform opacity-0 scale-95"
-                                                                    enterTo="transform opacity-100 scale-100"
-                                                                    leave="transition ease-in duration-75"
-                                                                    leaveFrom="transform opacity-100 scale-100"
-                                                                    leaveTo="transform opacity-0 scale-95"
+                                                            <DropdownSelector className="opacity-0 group-hover:opacity-100 transition-all">
+                                                                <DropdownSelector.Trigger 
+                                                                    showChevron={false}
+                                                                    className="p-2 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-600 transition-all active:scale-95 cursor-pointer border-none shadow-none!"
                                                                 >
-                                                                    <Menu.Items className="absolute right-0 mt-2 w-44 origin-top-right bg-white rounded-2xl shadow-editorial border border-slate-100 focus:outline-none z-50 p-2">
-                                                                        <Menu.Item>
-                                                                            {({ active }) => (
-                                                                                <button
-                                                                                    onClick={() => window.dispatchEvent(new CustomEvent('open-transaction-modal', { detail: { transaction } }))}
-                                                                                    className={cn(
-                                                                                        "flex items-center w-full px-4 py-2.5 text-[11px] font-black uppercase tracking-widest rounded-xl transition-all gap-3 cursor-pointer",
-                                                                                        active ? "bg-slate-50 text-primary" : "text-slate-600"
-                                                                                    )}
-                                                                                >
-                                                                                    <Pencil className="w-4 h-4" />
-                                                                                    {t('transactions.actions.edit')}
-                                                                                </button>
-                                                                            )}
-                                                                        </Menu.Item>
-                                                                        <Menu.Item>
-                                                                            {({ active }) => (
-                                                                                <button
-                                                                                    onClick={() => handleDelete(transaction.id)}
-                                                                                    className={cn(
-                                                                                        "flex items-center w-full px-4 py-2.5 text-[11px] font-black uppercase tracking-widest rounded-xl transition-all gap-3 cursor-pointer",
-                                                                                        active ? "bg-rose-50 text-rose-600" : "text-rose-500"
-                                                                                    )}
-                                                                                >
-                                                                                    <Trash2 className="w-4 h-4" />
-                                                                                    {t('transactions.actions.delete')}
-                                                                                </button>
-                                                                            )}
-                                                                        </Menu.Item>
-                                                                    </Menu.Items>
-                                                                </Transition>
-                                                            </Menu>
+                                                                    <MoreVertical className="w-5 h-5" />
+                                                                </DropdownSelector.Trigger>
+                                                                <DropdownSelector.Panel align="right" placement="top" className="w-44 p-2">
+                                                                    <DropdownSelector.Item 
+                                                                        onClick={() => window.dispatchEvent(new CustomEvent('open-transaction-modal', { detail: { transaction } }))}
+                                                                        className={({ active }) => cn(
+                                                                            "flex items-center w-full px-4 py-2.5 text-[11px] font-black uppercase tracking-widest rounded-xl transition-all gap-3 cursor-pointer",
+                                                                            active ? "bg-slate-50 text-primary" : "text-slate-600"
+                                                                        )}
+                                                                    >
+                                                                        <Pencil className="w-4 h-4" />
+                                                                        {t('transactions.actions.edit')}
+                                                                    </DropdownSelector.Item>
+                                                                    <DropdownSelector.Item 
+                                                                        onClick={() => handleDelete(transaction.id)}
+                                                                        className={({ active }) => cn(
+                                                                            "flex items-center w-full px-4 py-2.5 text-[11px] font-black uppercase tracking-widest rounded-xl transition-all gap-3 cursor-pointer",
+                                                                            active ? "bg-rose-50 text-rose-600" : "text-rose-500"
+                                                                        )}
+                                                                    >
+                                                                        <Trash2 className="w-4 h-4" />
+                                                                        {t('transactions.actions.delete')}
+                                                                    </DropdownSelector.Item>
+                                                                </DropdownSelector.Panel>
+                                                            </DropdownSelector>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -516,7 +506,7 @@ export default function Index({ transactions, filters }: Props) {
                                     <ChevronLeft className="w-5 h-5" />
                                 </Link>
                             )}
-                            <span className="px-4 py-2 text-xs font-black text-primary bg-primary/5 rounded-xl">
+                            <span className="px-4 py-2 text-xs font-black text-primary bg-primary/5 rounded-xl border-editorial">
                                 {transactions.current_page}
                             </span>
                             {transactions.current_page < transactions.last_page && (
@@ -552,7 +542,7 @@ export default function Index({ transactions, filters }: Props) {
                         </button>
                         <button
                             onClick={processDelete}
-                            className="bg-rose-500 text-white px-8 py-3 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] transition-all shadow-xl shadow-rose-500/20 hover:bg-rose-600 active:scale-[0.98]"
+                            className="bg-rose-500 text-white px-8 py-3 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] transition-all hover:bg-rose-600 active:scale-[0.98]"
                         >
                             {t('transactions.actions.delete')}
                         </button>

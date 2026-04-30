@@ -316,8 +316,8 @@ function FinancialSelectContent({
             <DropdownSelector.Trigger 
                 ref={internalTriggerRef}
                 className={cn(
-                    "w-full bg-slate-50 border-none px-4 py-3 h-14 rounded-2xl flex items-center justify-between transition-all cursor-pointer",
-                    "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white focus:shadow-sm",
+                    "w-full bg-white border-none px-4 py-3 h-14 rounded-2xl flex items-center justify-between transition-all cursor-pointer",
+                    "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white bg-slate-50 ",
                     className,
                     error ? "ring-2 ring-rose-500/20" : ""
                 )}
@@ -435,7 +435,7 @@ function FinancialSelectContent({
                                             className={cn(
                                                 "w-full flex items-center gap-3 px-3 py-3 rounded-xl cursor-pointer transition-all hover:bg-slate-50 group",
                                                 isSelectedInGroup ? "bg-primary/5" : "",
-                                                currentIndex === highlightedIndex ? "bg-slate-200 shadow-sm" : ""
+                                                currentIndex === highlightedIndex ? "bg-slate-200" : ""
                                             )}
                                         >
                                             <div 
@@ -545,7 +545,7 @@ function DropDownItem({ item, value, isHighlighted }: { item: FinancialItem, val
             data-highlighted={isHighlighted}
             className={({ selected }) => cn(
                 "flex items-center gap-3 px-3 py-3 rounded-xl cursor-pointer transition-all",
-                isHighlighted ? "bg-slate-200 shadow-sm" : "hover:bg-slate-50",
+                isHighlighted ? "bg-slate-200" : "hover:bg-slate-50",
                 selected ? "bg-primary/5 text-primary" : "text-slate-700"
             )}
         >

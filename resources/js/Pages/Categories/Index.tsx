@@ -89,7 +89,7 @@ export default function Index({ category_tree, available_icons, available_colors
                 </div>
                 <button 
                     onClick={handleCreate}
-                    className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 cursor-pointer w-fit"
+                    className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-primary/90 transition-all cursor-pointer w-fit"
                 >
                     <Plus className="w-4 h-4" />
                     {t('categories.page.create_btn')}
@@ -104,7 +104,7 @@ export default function Index({ category_tree, available_icons, available_colors
                         className={cn(
                             "px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
                             activeTab === 'expense' 
-                                ? "bg-white text-slate-900 shadow-sm" 
+                                ? "bg-white text-slate-900 border border-slate-200" 
                                 : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
                         )}
                     >
@@ -115,7 +115,7 @@ export default function Index({ category_tree, available_icons, available_colors
                         className={cn(
                             "px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
                             activeTab === 'revenue' 
-                                ? "bg-white text-slate-900 shadow-sm" 
+                                ? "bg-white text-slate-900 border border-slate-200" 
                                 : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
                         )}
                     >

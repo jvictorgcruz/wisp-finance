@@ -4,6 +4,7 @@ import { useTranslation } from '@/Hooks/useTranslation';
 import { Menu, Transition } from '@headlessui/react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { Button } from '@/Components/Common/Button';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -74,10 +75,11 @@ export default function CreateActionBtn({ className, showText = true }: Props) {
                     {actions.map((action) => (
                         <Menu.Item key={action.id}>
                             {({ active }) => (
-                                <button
+                                <Button
+                                    variant="ghost"
                                     onClick={() => openModal(action.id)}
                                     className={cn(
-                                        "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-left group",
+                                        "w-full flex items-center justify-start gap-3 px-3 py-2.5 rounded-xl transition-all text-left group border-none shadow-none ring-0",
                                         active ? "bg-slate-50" : ""
                                     )}
                                 >
@@ -90,7 +92,7 @@ export default function CreateActionBtn({ className, showText = true }: Props) {
                                     </div>
                                     <span className="text-sm font-bold text-slate-700 flex-1">{action.label}</span>
                                     <ChevronRight className="w-4 h-4 text-slate-300 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
-                                </button>
+                                </Button>
                             )}
                         </Menu.Item>
                     ))}

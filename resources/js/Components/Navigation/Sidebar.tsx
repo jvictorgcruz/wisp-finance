@@ -78,14 +78,14 @@ export default function Sidebar() {
             {/* Mobile Toggle */}
             <button 
                 onClick={() => setIsOpen(!isOpen)}
-                className="lg:hidden fixed top-4 right-4 z-50 p-2 bg-white rounded-lg shadow-lg border border-slate-100"
+                className="lg:hidden fixed top-4 right-4 z-50 p-2 bg-white rounded-lg border border-slate-100"
             >
                 {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
 
             {/* Sidebar Container */}
             <aside className={cn(
-                "fixed inset-y-0 left-0 z-40 w-64 bg-surface-lowest border-r border-surface-low flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 shadow-sm",
+                "fixed inset-y-0 left-0 z-40 w-64 bg-surface-lowest border-r border-surface-low flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0",
                 isOpen ? "translate-x-0" : "-translate-x-full"
             )}>
                 <div className="h-20 flex items-center px-6">
@@ -97,7 +97,7 @@ export default function Sidebar() {
                 {/* Ledger Switcher */}
                 {auth.ledgers?.length > 1 && (
                 <div className="px-4 mb-6">
-                    <button className="w-full h-14 px-4 rounded-2xl bg-surface-lowest border border-surface-low flex items-center justify-between group hover:border-primary/20 transition-all text-left shadow-sm">
+                    <button className="w-full h-14 px-4 rounded-2xl bg-surface-lowest border border-surface-low flex items-center justify-between group hover:border-primary/20 transition-all text-left">
                         <div className="flex flex-col">
                             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-editorial-wide">{t('home.sidebar.current_ledger')}</span>
                             <span className="text-sm font-semibold text-primary truncate max-w-[120px]">

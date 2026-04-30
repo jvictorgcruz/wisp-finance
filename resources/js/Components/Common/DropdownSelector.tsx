@@ -32,7 +32,7 @@ interface DropdownSelectorProps {
 
 interface TriggerProps {
     as?: ElementType;
-    children: React.ReactNode | ((props: { open: boolean; active: boolean }) => React.ReactElement);
+    children?: React.ReactNode | ((props: { open: boolean; active: boolean }) => React.ReactElement);
     className?: string;
     showChevron?: boolean;
     chevronClassName?: string;
@@ -96,7 +96,7 @@ DropdownSelector.Trigger = forwardRef<HTMLButtonElement, TriggerProps>(function 
     showChevron = true,
     chevronClassName,
     ...props
-}: TriggerProps, ref) {
+}, ref) {
     const { mode } = useContext(DropdownContext);
     const DefaultComponent = mode === 'listbox' ? ListboxButton : MenuButton;
     const ResolvedComponent = Component || DefaultComponent;
@@ -105,7 +105,7 @@ DropdownSelector.Trigger = forwardRef<HTMLButtonElement, TriggerProps>(function 
         <ResolvedComponent
             ref={ref}
             className={cn(
-                "flex items-center justify-between gap-3 p-1.5 rounded-xl transition-all group border border-transparent hover:border-surface-low hover:bg-surface-low shadow-sm hover:shadow-md h-10 focus:outline-none focus:ring-2 focus:ring-primary/5 focus:border-primary/20",
+                "flex items-center justify-between gap-3 p-1.5 rounded-xl transition-all group border border-transparent hover:border-editorial hover:bg-surface-low h-10 focus:outline-none focus:ring-2 focus:ring-primary/5 focus:border-primary/20",
                 className
             )}
             {...props}
@@ -160,7 +160,7 @@ DropdownSelector.Panel = function Panel({
         >
             <ResolvedComponent
                 className={cn(
-                    "absolute z-50 overflow-hidden divide-y divide-surface-low rounded-xl bg-surface-lowest shadow-editorial border border-surface-low focus:outline-none",
+                    "absolute z-50 overflow-hidden divide-y divide-surface-low rounded-xl bg-surface-lowest border-editorial focus:outline-none",
                     alignmentClasses,
                     placementClasses,
                     className

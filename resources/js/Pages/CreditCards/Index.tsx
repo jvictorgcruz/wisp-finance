@@ -72,7 +72,7 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                 </div>
                 <button 
                     onClick={openCreate}
-                    className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 cursor-pointer"
+                    className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-primary/90 transition-all cursor-pointer"
                 >
                     <Plus className="w-4 h-4" />
                     {t('accounts.page.create_card_btn')}
@@ -83,7 +83,7 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                     {cards.map(card => (
                         <div 
                             key={card.id}
-                            className="bg-white p-6 rounded-3xl shadow-[0_24px_40px_rgba(0,0,0,0.02)] flex flex-col gap-6 transition-all hover:shadow-[0_32px_50px_rgba(0,0,0,0.04)] border border-slate-50"
+                            className="bg-white p-6 rounded-3xl flex flex-col gap-6 transition-all border-editorial hover:border-slate-200"
                         >
                             <div className="flex justify-between items-start">
                                 <div className="flex items-center gap-4">
@@ -110,7 +110,7 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                                     >
                                         <LucideIcon name="MoreVertical" className="w-5 h-5" />
                                     </DropdownSelector.Trigger>
-                                    <DropdownSelector.Panel align="right" className="w-48 p-1">
+                                    <DropdownSelector.Panel align="right" placement='top' className="w-48 p-1">
                                         <DropdownSelector.Item 
                                             onClick={() => openEdit(card)}
                                             className="flex items-center gap-2 p-2.5 text-xs font-bold text-slate-600 hover:bg-primary/5 hover:text-primary rounded-lg cursor-pointer transition-colors"
@@ -237,7 +237,7 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                         onClick={openCreate}
                         className="border-2 border-dashed border-slate-200 p-6 rounded-3xl flex flex-col items-center justify-center gap-4 text-slate-400 hover:text-primary hover:border-primary/30 transition-all cursor-pointer hover:bg-slate-50/50 group min-h-[340px]"
                     >
-                        <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center group-hover:scale-110 transition-transform shadow-inner border border-slate-100">
+                        <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center group-hover:scale-110 transition-transform border border-slate-100">
                             <Plus className="w-6 h-6" />
                         </div>
                         <div className="text-center">
@@ -284,10 +284,10 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                         <button
                             onClick={processDelete}
                             className={cn(
-                                "text-white px-8 py-3 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] transition-all shadow-xl active:scale-[0.98]",
+                                "text-white px-8 py-3 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] transition-all active:scale-[0.98]",
                                 confirmDelete.account?.has_history 
-                                    ? "bg-amber-500 shadow-amber-500/20 hover:bg-amber-600" 
-                                    : "bg-rose-500 shadow-rose-500/20 hover:bg-rose-600"
+                                    ? "bg-amber-500 hover:bg-amber-600" 
+                                    : "bg-rose-500 hover:bg-rose-600"
                             )}
                         >
                             {confirmDelete.account?.has_history 

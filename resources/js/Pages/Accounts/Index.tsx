@@ -78,7 +78,7 @@ export default function Accounts({ accounts, totals, root_categories, available_
                 </div>
                 <button 
                     onClick={openCreate}
-                    className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 cursor-pointer"
+                    className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-primary/90 transition-all cursor-pointer"
                 >
                     <Plus className="w-4 h-4" />
                     {t('accounts.page.create_btn')}
@@ -98,7 +98,7 @@ export default function Accounts({ accounts, totals, root_categories, available_
 
                 <div className="space-y-6">
                     {/* Summary Cards */}
-                    <div className="bg-slate-900 text-white rounded-4xl p-8 shadow-xl shadow-slate-200 relative group">
+                    <div className="bg-slate-900 text-white rounded-4xl p-8 border border-slate-800 relative group">
                         <div className="absolute inset-0 overflow-hidden rounded-4xl pointer-events-none">
                             <div className="absolute -right-4 -top-4 w-32 h-32 bg-white/5 rounded-full blur-2xl group-hover:bg-white/10 transition-all"></div>
                         </div>
@@ -121,7 +121,7 @@ export default function Accounts({ accounts, totals, root_categories, available_
                         </div>
                     </div>
 
-                    <div className="bg-white border border-slate-100 rounded-4xl p-8 shadow-sm group">
+                    <div className="bg-white border border-slate-100 rounded-4xl p-8 group">
                         <div className="flex items-center gap-2 mb-2">
                             <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{t('accounts.page.total_liabilities')}</h4>
                             <div className="relative group/tooltip">
@@ -177,8 +177,8 @@ export default function Accounts({ accounts, totals, root_categories, available_
                             className={cn(
                                 "text-white px-8 py-3 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] transition-all shadow-xl active:scale-[0.98]",
                                 confirmDelete.account?.has_history 
-                                    ? "bg-amber-500 shadow-amber-500/20 hover:bg-amber-600" 
-                                    : "bg-rose-500 shadow-rose-500/20 hover:bg-rose-600"
+                                    ? "bg-amber-500 hover:bg-amber-600" 
+                                    : "bg-rose-500 hover:bg-rose-600"
                             )}
                         >
                             {confirmDelete.account?.has_history 

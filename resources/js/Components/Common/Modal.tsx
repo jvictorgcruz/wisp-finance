@@ -53,8 +53,8 @@ export default function Modal({
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95"
                         >
-                            <DialogPanel className={`relative w-full bg-white rounded-3xl shadow-2xl text-left transform transition-all ${maxWidthClasses} flex flex-col my-auto`}>
-                                <div className="px-6 py-4 border-b border-slate-50 flex items-center justify-between bg-white sticky top-0 z-10 rounded-t-3xl">
+                            <DialogPanel className={`relative w-full bg-white rounded-3xl border-editorial text-left transform transition-all ${maxWidthClasses} flex flex-col my-auto`}>
+                                <div className="px-6 py-4 border-b border-editorial flex items-center justify-between bg-white sticky top-0 z-10 rounded-t-3xl">
                                     <DialogTitle as="h3" className="text-sm font-bold uppercase tracking-widest text-slate-500">
                                         {title}
                                     </DialogTitle>
