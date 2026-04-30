@@ -9,8 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CreditCardDetail extends Model
+class ExpectedCashFlow extends Model
 {
+    /** @use HasFactory */
     use HasFactory, SoftDeletes;
 
     /**
@@ -18,32 +19,37 @@ class CreditCardDetail extends Model
      */
     protected static function booted(): void
     {
-        static::addGlobalScope(new \App\Models\Scopes\CreditCardDetailLedgerScope());
+        static::addGlobalScope(new \App\Models\Scopes\ExpectedCashFlowLedgerScope());
     }
 
     protected $fillable = [
+        'transaction_id',
         'account_id',
-        'limit',
-        'closing_day',
-        'due_day',
+        'amount',
+        'due_date',
+        'description',
+        'status',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
-            'limit' => Money::class,
-            'closing_day' => 'integer',
-            'due_day' => 'integer',
+            'amount' => Money::class,
+            'due_date' => 'date',
+            'status' => 'string', // Could use an enum
         ];
     }
 
     /**
-     * Get the account that owns the credit card details.
+     * Get the transaction this cash flow is linked to.
+     */
+    public function transaction(): BelongsTo
+    {
+        return $this->belongsTo(Transaction::class);
+    }
+
+    /**
+     * Get the account this cash flow belongs to.
      */
     public function account(): BelongsTo
     {

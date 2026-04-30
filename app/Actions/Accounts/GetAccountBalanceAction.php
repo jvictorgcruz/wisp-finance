@@ -18,6 +18,7 @@ class GetAccountBalanceAction
             ->groupBy('type')
             ->pluck('total', 'type');
 
+
         $debits = (int) ($totals['DEBIT'] ?? 0);
         $credits = (int) ($totals['CREDIT'] ?? 0);
 

@@ -205,11 +205,17 @@ test('it inactivates the entire tree when a category has historical entries', fu
         'parent_id' => $category->id,
     ]);
 
-    \App\Models\JournalEntry::create([
+    $transaction = \App\Models\Transaction::create([
         'ledger_id' => $this->ledger->id,
+        'date' => now(),
+        'description' => 'History Transaction',
+    ]);
+
+    \App\Models\JournalEntry::create([
+        'transaction_id' => $transaction->id,
         'account_id' => $sub->id,
         'type' => 'DEBIT',
-        'amount' => 150000,
+        'amount' => 1500.00,
         'entry_date' => now(),
     ]);
 

@@ -20,10 +20,7 @@ class CreditCardDetailFactory extends Factory
     {
         return [
             'account_id' => Account::factory(),
-            'ledger_id' => function (array $attributes) {
-                return Account::find($attributes['account_id'])->ledger_id;
-            },
-            'limit' => $this->faker->numberBetween(100000, 5000000), // R$ 1.000,00 to R$ 50.000,00
+            'limit' => $this->faker->randomFloat(2, 1000, 50000),
             'closing_day' => $this->faker->numberBetween(1, 28),
             'due_day' => $this->faker->numberBetween(1, 28),
         ];

@@ -35,7 +35,7 @@ test('it can create an account with credit card details', function () {
         'ui_metadata' => ['icon' => 'CreditCard', 'color' => '#ef4444'],
         'is_credit_card' => true,
         'credit_card_details' => [
-            'limit' => 500000, // R$ 5.000,00
+            'limit' => 5000.00,
             'closing_day' => 10,
             'due_day' => 17
         ]
@@ -51,7 +51,7 @@ test('it can create an account with credit card details', function () {
     expect($account->type)->toBe(AccountType::LIABILITY);
     
     expect($account->creditCardDetail)->not->toBeNull();
-    expect($account->creditCardDetail->limit)->toBe(500000);
+    expect($account->creditCardDetail->limit)->toBe(5000.00);
     expect($account->creditCardDetail->closing_day)->toBe(10);
     expect($account->creditCardDetail->due_day)->toBe(17);
 });
@@ -79,7 +79,7 @@ test('it fails if wrong account type is sent for credit card', function () {
         'ui_metadata' => ['icon' => 'Coins', 'color' => '#f59e0b'],
         'is_credit_card' => true,
         'credit_card_details' => [
-            'limit' => 500000,
+            'limit' => 5000.00,
             'closing_day' => 10,
             'due_day' => 17
         ]
@@ -98,11 +98,10 @@ test('it forces liability type in the action regardless of input', function () {
     $data = [
         'name' => 'Direct Action Card',
         'type' => AccountType::REVENUE, // Wrong type
-        'ledger_id' => $this->ledger->id,
         'ui_metadata' => ['icon' => 'CreditCard', 'color' => '#ef4444'],
         'is_credit_card' => true,
         'credit_card_details' => [
-            'limit' => 500000,
+            'limit' => 5000.00,
             'closing_day' => 10,
             'due_day' => 17
         ]
@@ -111,5 +110,5 @@ test('it forces liability type in the action regardless of input', function () {
     $account = $action->execute($data);
 
     expect($account->type)->toBe(AccountType::LIABILITY);
-    expect($account->creditCardDetail->limit)->toBe(500000);
+    expect($account->creditCardDetail->limit)->toBe(5000.00);
 });

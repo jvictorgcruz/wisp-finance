@@ -20,7 +20,7 @@ class JournalEntryFactory extends Factory
     public function definition(): array
     {
         return [
-            'ledger_id' => Ledger::factory(),
+            'transaction_id' => \App\Models\Transaction::factory(),
             'account_id' => Account::factory(),
             'type' => $this->faker->randomElement(['DEBIT', 'CREDIT']),
             'amount' => $this->faker->numberBetween(100, 1000000), // values in cents

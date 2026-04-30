@@ -15,8 +15,6 @@ return new class extends Migration
             $table->id();
             // FK to accounts - unique for One-to-One relationship
             $table->foreignId('account_id')->unique()->constrained()->cascadeOnDelete();
-            // Multi-tenant isolation
-            $table->foreignId('ledger_id')->constrained()->cascadeOnDelete();
             
             // Financial limit in cents
             $table->bigInteger('limit')->default(0);
@@ -29,7 +27,6 @@ return new class extends Migration
             $table->softDeletes();
             
             // Indexes for faster lookups
-            $table->index('ledger_id');
             $table->index('account_id');
         });
     }

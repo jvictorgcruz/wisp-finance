@@ -44,22 +44,29 @@ class AccountBalanceSeeder extends Seeder
                 return;
             }
 
+            // Create an opening balance transaction
+            $transaction = \App\Models\Transaction::create([
+                'ledger_id' => $ledger->id,
+                'date' => now()->subDays(10),
+                'description' => 'Opening Balance',
+            ]);
+
             // 4. Create Journal Entries (Balanced: Equity Root Credit <-> Asset Child Debit)
             
             // Total Starting Assets (R$ 10.000,00)
             JournalEntry::create([
-                'ledger_id' => $ledger->id,
+                'transaction_id' => $transaction->id,
                 'account_id' => $openingBalanceRoot->id,
                 'type' => 'CREDIT',
-                'amount' => 1000000,
+                'amount' => 10000.00,
                 'entry_date' => now()->subDays(10),
             ]);
 
             JournalEntry::create([
-                'ledger_id' => $ledger->id,
+                'transaction_id' => $transaction->id,
                 'account_id' => $checkingAccount->id,
                 'type' => 'DEBIT',
-                'amount' => 1000000,
+                'amount' => 10000.00,
                 'entry_date' => now()->subDays(10),
             ]);
         });

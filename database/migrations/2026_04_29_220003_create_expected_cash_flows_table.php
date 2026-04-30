@@ -11,15 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('journal_entries', function (Blueprint $table) {
+        Schema::create('expected_cash_flows', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('transaction_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('account_id')->constrained()->cascadeOnDelete();
-            $table->enum('type', ['DEBIT', 'CREDIT']);
             $table->bigInteger('amount');
-            $table->date('entry_date');
+            $table->date('due_date')->index();
+            $table->string('description');
+            $table->enum('status', ['PENDING', 'PAID', 'CANCELLED'])->default('PENDING');
             $table->timestamps();
-
-            $table->index(['account_id', 'entry_date']);
+            $table->softDeletes();
         });
     }
 
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('journal_entries');
+        Schema::dropIfExists('expected_cash_flows');
     }
 };

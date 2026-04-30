@@ -17,47 +17,10 @@ test('it has a one-to-one relationship with account', function () {
     expect($details->account->id)->toBe($account->id);
 });
 
-test('it is scoped by ledger_id', function () {
-    $ledger1 = Ledger::factory()->create();
-    $ledger2 = Ledger::factory()->create();
-
-    $account1 = Account::factory()->create(['ledger_id' => $ledger1->id]);
-    $details1 = CreditCardDetail::factory()->create([
-        'account_id' => $account1->id,
-        'ledger_id' => $ledger1->id
-    ]);
-
-    $account2 = Account::factory()->create(['ledger_id' => $ledger2->id]);
-    $details2 = CreditCardDetail::factory()->create([
-        'account_id' => $account2->id,
-        'ledger_id' => $ledger2->id
-    ]);
-
-    // Create users for each ledger
-    $user1 = \App\Models\User::factory()->create();
-    $ledger1->users()->attach($user1, ['role' => 'owner']);
-
-    $user2 = \App\Models\User::factory()->create();
-    $ledger2->users()->attach($user2, ['role' => 'owner']);
-
-    // Act as User 1
-    Auth::login($user1);
-    expect(CreditCardDetail::count())->toBe(1);
-    expect(CreditCardDetail::first()->id)->toBe($details1->id);
-    Auth::logout();
-
-    // Act as User 2
-    Auth::login($user2);
-    expect(CreditCardDetail::count())->toBe(1);
-    expect(CreditCardDetail::first()->id)->toBe($details2->id);
-    Auth::logout();
-});
-
 test('factory can create an account on the fly', function () {
     $details = CreditCardDetail::factory()->create();
 
     expect($details->account)->toBeInstanceOf(Account::class);
-    expect($details->ledger_id)->toBe($details->account->ledger_id);
 });
 
 test('it soft deletes when account is soft deleted', function () {

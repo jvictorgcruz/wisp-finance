@@ -38,8 +38,7 @@ class CreditCardControllerTest extends TestCase
 
         CreditCardDetail::create([
             'account_id' => $card->id,
-            'ledger_id' => $this->ledger->id,
-            'limit' => 500000,
+            'limit' => 5000.00,
             'closing_day' => 10,
             'due_day' => 17,
         ]);

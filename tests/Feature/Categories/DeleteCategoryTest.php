@@ -45,12 +45,18 @@ test('it inactivates a category with history instead of deleting', function () {
         'parent_id' => $category->id,
     ]);
 
-    // Simulate history by creating a direct journal entry on the subcategory
-    \App\Models\JournalEntry::create([
+    // Simulate history by creating a transaction and journal entry on the subcategory
+    $transaction = \App\Models\Transaction::create([
         'ledger_id' => $this->ledger->id,
+        'date' => now(),
+        'description' => 'Test Transaction',
+    ]);
+
+    \App\Models\JournalEntry::create([
+        'transaction_id' => $transaction->id,
         'account_id' => $sub->id,
         'type' => 'DEBIT',
-        'amount' => 150000,
+        'amount' => 1500.00,
         'entry_date' => now(),
     ]);
 

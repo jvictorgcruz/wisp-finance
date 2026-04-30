@@ -190,19 +190,25 @@ test('it inactivates an account with zero balance', function () {
         'status' => AccountStatus::ACTIVE,
     ]);
 
+    $transaction = \App\Models\Transaction::create([
+        'ledger_id' => $this->ledger->id,
+        'date' => now(),
+        'description' => 'Zero Balance Trans',
+    ]);
+
     // Create offsetting journal entries (balance = 0)
     \App\Models\JournalEntry::create([
-        'ledger_id' => $this->ledger->id,
+        'transaction_id' => $transaction->id,
         'account_id' => $account->id,
         'type' => 'DEBIT',
-        'amount' => 1000,
+        'amount' => 10.00,
         'entry_date' => now(),
     ]);
     \App\Models\JournalEntry::create([
-        'ledger_id' => $this->ledger->id,
+        'transaction_id' => $transaction->id,
         'account_id' => $account->id,
         'type' => 'CREDIT',
-        'amount' => 1000,
+        'amount' => 10.00,
         'entry_date' => now(),
     ]);
 
@@ -222,12 +228,18 @@ test('it prevents inactivation of an account with a non-zero balance', function 
         'status' => AccountStatus::ACTIVE,
     ]);
 
+    $transaction = \App\Models\Transaction::create([
+        'ledger_id' => $this->ledger->id,
+        'date' => now(),
+        'description' => 'Balance Trans',
+    ]);
+
     // Create a journal entry (balance != 0)
     \App\Models\JournalEntry::create([
-        'ledger_id' => $this->ledger->id,
+        'transaction_id' => $transaction->id,
         'account_id' => $account->id,
         'type' => 'DEBIT',
-        'amount' => 5000,
+        'amount' => 50.00,
         'entry_date' => now(),
     ]);
 
