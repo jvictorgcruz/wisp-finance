@@ -73,6 +73,16 @@ class HandleInertiaRequests extends Middleware
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),
             ],
+            'financial_context' => $user ? [
+                'accounts' => \App\Models\Account::whereIn('type', [\App\Enums\AccountType::ASSET])
+                    ->whereNotNull('parent_id') // Leaf accounts
+                    ->where('status', \App\Enums\AccountStatus::ACTIVE)
+                    ->get(['id', 'name', 'type', 'ui_metadata']),
+                'categories' => \App\Models\Account::whereIn('type', [\App\Enums\AccountType::REVENUE, \App\Enums\AccountType::EXPENSE])
+                    ->whereNotNull('parent_id') // Leaf categories
+                    ->where('status', \App\Enums\AccountStatus::ACTIVE)
+                    ->get(['id', 'name', 'type', 'ui_metadata']),
+            ] : null,
         ]);
     }
 }

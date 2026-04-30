@@ -74,6 +74,12 @@ Route::middleware('check_maintenance')->group(function () {
         Route::get('cards', [\App\Http\Controllers\CreditCardController::class, 'index'])->name('cards.index');
         Route::resource('categories', \App\Http\Controllers\CategoryController::class)->only(['index', 'store', 'update', 'destroy']);
 
+        Route::prefix('transactions')->name('transactions.')->group(function () {
+            Route::post('expense', [\App\Http\Controllers\TransactionController::class, 'storeExpense'])->name('store-expense');
+            Route::post('income', [\App\Http\Controllers\TransactionController::class, 'storeIncome'])->name('store-income');
+            Route::post('transfer', [\App\Http\Controllers\TransactionController::class, 'storeTransfer'])->name('store-transfer');
+        });
+
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
         
         Route::post('language/{locale}', [\App\Http\Controllers\LanguageController::class, 'update'])->name('language.update');

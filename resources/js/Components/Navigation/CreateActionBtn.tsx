@@ -17,12 +17,15 @@ export default function CreateActionBtn({ className, showText = true }: Props) {
     const { t } = useTranslation();
 
     return (
-        <button className={cn(
-            "bg-primary text-surface-lowest py-2.5 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-editorial",
-            className
-        )}>
+        <button 
+            onClick={() => window.dispatchEvent(new CustomEvent('open-transaction-modal'))}
+            className={cn(
+                "bg-primary text-surface-lowest py-2.5 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-editorial",
+                className
+            )}
+        >
             <Plus className="w-4 h-4" />
-            {showText && <span>{t('accounts.page.create_btn')}</span>}
+            {showText && <span>{t('transactions.modal.cta')}</span>}
         </button>
     );
 }

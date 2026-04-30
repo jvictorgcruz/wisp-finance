@@ -23,6 +23,10 @@ class RecordExpenseAction extends BaseFinancialAction
         string $description,
         array $metadata = []
     ): Transaction {
+        if ($sourceAccount->id === $categoryAccount->id) {
+            throw new \InvalidArgumentException("Source and category accounts must be different.");
+        }
+
         return DB::transaction(function () use ($sourceAccount, $categoryAccount, $amount, $date, $description, $metadata) {
             $transaction = Transaction::create([
                 'ledger_id' => $sourceAccount->ledger_id,

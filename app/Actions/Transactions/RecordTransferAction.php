@@ -23,6 +23,10 @@ class RecordTransferAction extends BaseFinancialAction
         string $description,
         array $metadata = []
     ): Transaction {
+        if ($sourceAccount->id === $destinationAccount->id) {
+            throw new \InvalidArgumentException("Source and destination accounts must be different for a transfer.");
+        }
+
         return DB::transaction(function () use ($sourceAccount, $destinationAccount, $amount, $date, $description, $metadata) {
             $transaction = Transaction::create([
                 'ledger_id' => $sourceAccount->ledger_id,

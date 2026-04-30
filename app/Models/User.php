@@ -67,6 +67,10 @@ class User extends Authenticatable
      */
     public function currentLedger(): ?Ledger
     {
+        if ($this->current_ledger_id) {
+            return $this->ledgers->find($this->current_ledger_id);
+        }
+
         return $this->ledgers()->first();
     }
 

@@ -9,6 +9,7 @@ import { Link, router } from '@inertiajs/react';
 import FlashNotifications from '@/Components/Common/FlashNotifications';
 
 import Sidebar from '@/Components/Navigation/Sidebar';
+import TransactionModal from '@/Components/Transactions/TransactionModal';
 
 interface AppLayoutProps {
     title?: string;
@@ -17,6 +18,14 @@ interface AppLayoutProps {
 
 export default function AppLayout({ title, children }: AppLayoutProps) {
     const { t } = useTranslation();
+    const [showTransactionModal, setShowTransactionModal] = React.useState(false);
+
+    React.useEffect(() => {
+        const handleOpenModal = () => setShowTransactionModal(true);
+        window.addEventListener('open-transaction-modal', handleOpenModal);
+        return () => window.removeEventListener('open-transaction-modal', handleOpenModal);
+    }, []);
+
     return (
         <div className="min-h-screen bg-surface flex">
             <Head title={title} />
@@ -24,6 +33,11 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
             
             {/* Navigation */}
             <Sidebar />
+
+            <TransactionModal 
+                show={showTransactionModal} 
+                onClose={() => setShowTransactionModal(false)} 
+            />
 
             {/* Main Content Area */}
             <main className="flex-1 lg:ml-64 flex flex-col min-h-screen">

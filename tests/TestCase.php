@@ -16,5 +16,8 @@ abstract class TestCase extends BaseTestCase
     public $action;
     public $driver;
     public $data;
+    public $bank;
+    public $expenseCat;
+    public $revenueCat;
     public ?Account $parentAccount = null;
 }

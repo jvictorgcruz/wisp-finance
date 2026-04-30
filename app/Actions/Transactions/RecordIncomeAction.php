@@ -23,6 +23,10 @@ class RecordIncomeAction extends BaseFinancialAction
         string $description,
         array $metadata = []
     ): Transaction {
+        if ($categoryAccount->id === $destinationAccount->id) {
+            throw new \InvalidArgumentException("Category and destination accounts must be different.");
+        }
+
         return DB::transaction(function () use ($categoryAccount, $destinationAccount, $amount, $date, $description, $metadata) {
             $transaction = Transaction::create([
                 'ledger_id' => $destinationAccount->ledger_id,
