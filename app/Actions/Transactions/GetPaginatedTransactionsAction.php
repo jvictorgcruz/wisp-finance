@@ -15,7 +15,20 @@ class GetPaginatedTransactionsAction
     {
         return Transaction::with(['journalEntries.account'])
             ->when($filters['search'] ?? null, function ($query, $search) {
-                $query->where('description', 'like', "%{$search}%");
+                $query->where(function ($q) use ($search) {
+                    $q->where('description', 'like', "%{$search}%")
+                      ->orWhereHas('journalEntries.account', function ($q) use ($search) {
+                          $q->where('name', 'like', "%{$search}%");
+                      });
+
+                    // Numeric search (partial match on cents)
+                    $numericSearch = preg_replace('/[^0-9]/', '', $search);
+                    if ($numericSearch !== '') {
+                        $q->orWhereHas('journalEntries', function ($q) use ($numericSearch) {
+                            $q->where(\Illuminate\Support\Facades\DB::raw('CAST(amount AS CHAR)'), 'like', "%{$numericSearch}%");
+                        });
+                    }
+                });
             })
             ->when($filters['date_from'] ?? null, function ($query, $dateFrom) {
                 $query->where('date', '>=', $dateFrom);
