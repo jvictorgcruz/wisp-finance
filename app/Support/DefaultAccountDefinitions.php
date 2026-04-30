@@ -231,11 +231,13 @@ class DefaultAccountDefinitions
     {
         return collect(static::get())
             ->filter(fn ($item) => in_array($item['type'], [AccountType::ASSET, AccountType::LIABILITY]))
+            ->sortBy(fn ($item) => $item['type'] === AccountType::ASSET ? 0 : 1)
             ->map(fn ($item) => [
                 'key' => str_replace(['accounts.', 'categories.'], '', $item['name']),
                 'name' => $item['name'],
                 'type' => strtolower($item['type']->value),
                 'icon' => $item['metadata']['icon'] ?? 'Package',
+                'color' => $item['metadata']['color'] ?? '#64748b',
                 'disabled' => false
             ])
             ->values()

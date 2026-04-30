@@ -238,14 +238,20 @@ export default function AccountModal({
                                             "flex flex-col items-center justify-center p-4 rounded-3xl border-2 transition-all group relative overflow-hidden",
                                             isActive 
                                                 ? "border-primary bg-primary/5 shadow-lg shadow-primary/5" 
-                                                : "border-slate-100 hover:border-slate-300 hover:bg-slate-50",
+                                                : "border-slate-50 hover:border-slate-200 hover:bg-slate-50",
                                             cat.disabled && "opacity-40 cursor-not-allowed grayscale"
                                         )}
                                     >
-                                        <div className={cn(
-                                            "w-10 h-10 rounded-2xl flex items-center justify-center mb-3 transition-colors",
-                                            isActive ? "bg-primary text-white" : "bg-slate-100 text-slate-400 group-hover:bg-slate-200"
-                                        )}>
+                                        <div 
+                                            className={cn(
+                                                "w-10 h-10 rounded-2xl flex items-center justify-center mb-3 transition-all",
+                                                isActive ? "shadow-lg shadow-primary/20" : ""
+                                            )}
+                                            style={{ 
+                                                backgroundColor: isActive ? cat.color : `${cat.color}15`, 
+                                                color: isActive ? '#fff' : cat.color 
+                                            }}
+                                        >
                                             <LucideIcon name={cat.icon} className="w-5 h-5" />
                                         </div>
                                         <span className={cn(

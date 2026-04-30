@@ -25,6 +25,7 @@ return [
         ],
         'submit' => 'Save Transaction',
         'cancel' => 'Cancel',
+        'back' => 'Back',
         'success' => [
             'expense' => 'Expense recorded successfully!',
             'income' => 'Income recorded successfully!',
