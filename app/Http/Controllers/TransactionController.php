@@ -20,14 +20,20 @@ use Carbon\Carbon;
 
 class TransactionController extends Controller
 {
-    /**
-     * Display a listing of the transactions.
-     */
     public function index(Request $request, GetPaginatedTransactionsAction $action): Response
     {
-        $filters = $request->only(['search']);
-        $transactions = $action->execute(20, $filters);
+        $filters = $request->only(['search', 'date_from', 'date_to', 'account_id', 'category_id']);
+        
+        // Default to current month if dates are not provided
+        if (empty($filters['date_from'])) {
+            $filters['date_from'] = now()->startOfMonth()->toDateString();
+        }
+        if (empty($filters['date_to'])) {
+            $filters['date_to'] = now()->endOfMonth()->toDateString();
+        }
 
+        $transactions = $action->execute(20, $filters);
+        
         return Inertia::render('Transactions/Index', [
             'transactions' => $transactions,
             'filters' => $filters,

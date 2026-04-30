@@ -1,4 +1,5 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Transition } from '@headlessui/react';
+import { Link } from '@inertiajs/react';
 import { ChevronRight, Edit2, MoreVertical, PowerOff, Trash2 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -109,11 +110,18 @@ export default function AccountRow({
                 
                 <div className="flex flex-col">
                     <div className="flex items-center gap-2">
-                        <h5 className={cn("font-bold text-slate-900", isRoot ? "text-sm text-slate-700" : "text-xs")}>
+                        <Link 
+                            href={`/transactions?${(account.type === 'asset' || account.type === 'liability') ? 'account_id' : 'category_id'}=${account.id}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className={cn(
+                                "font-bold text-slate-900 hover:text-primary transition-colors cursor-pointer", 
+                                isRoot ? "text-sm text-slate-700" : "text-xs"
+                            )}
+                        >
                             {(!account.parent_id && (account.type === 'asset' || account.type === 'liability' || account.type === 'equity')) 
                                 ? t(account.name) 
                                 : account.name}
-                        </h5>
+                        </Link>
                     </div>
                     {(account.children?.length ?? 0) > 0 && (
                         <span className="text-[10px] uppercase tracking-widest font-black text-slate-400">

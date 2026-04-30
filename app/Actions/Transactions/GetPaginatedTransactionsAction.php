@@ -17,6 +17,22 @@ class GetPaginatedTransactionsAction
             ->when($filters['search'] ?? null, function ($query, $search) {
                 $query->where('description', 'like', "%{$search}%");
             })
+            ->when($filters['date_from'] ?? null, function ($query, $dateFrom) {
+                $query->where('date', '>=', $dateFrom);
+            })
+            ->when($filters['date_to'] ?? null, function ($query, $dateTo) {
+                $query->where('date', '<=', $dateTo);
+            })
+            ->when($filters['account_id'] ?? null, function ($query, $accountId) {
+                $query->whereHas('journalEntries', function ($q) use ($accountId) {
+                    $q->where('account_id', $accountId);
+                });
+            })
+            ->when($filters['category_id'] ?? null, function ($query, $categoryId) {
+                $query->whereHas('journalEntries', function ($q) use ($categoryId) {
+                    $q->where('account_id', $categoryId);
+                });
+            })
             ->orderBy('date', 'desc')
             ->orderBy('id', 'desc')
             ->paginate($perPage)

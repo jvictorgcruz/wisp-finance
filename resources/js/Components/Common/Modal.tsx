@@ -8,6 +8,7 @@ interface ModalProps {
     title?: string;
     children: ReactNode;
     maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+    afterLeave?: () => void;
 }
 
 export default function Modal({
@@ -15,7 +16,8 @@ export default function Modal({
     onClose,
     title,
     children,
-    maxWidth = 'md'
+    maxWidth = 'md',
+    afterLeave
 }: ModalProps) {
     const maxWidthClasses = {
         sm: 'sm:max-w-sm',
@@ -26,7 +28,7 @@ export default function Modal({
     }[maxWidth];
 
     return (
-        <Transition show={show} as={Fragment}>
+        <Transition show={show} as={Fragment} afterLeave={afterLeave}>
             <Dialog as="div" className="relative z-50" onClose={onClose}>
                 <TransitionChild
                     as={Fragment}

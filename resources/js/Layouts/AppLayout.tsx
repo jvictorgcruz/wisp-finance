@@ -42,7 +42,7 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
                 show={transactionModal.show} 
                 initialType={transactionModal.type as any}
                 transaction={transactionModal.transaction}
-                onClose={() => setTransactionModal({ show: false })} 
+                onClose={() => setTransactionModal(prev => ({ ...prev, show: false }))} 
             />
 
             {/* Main Content Area */}

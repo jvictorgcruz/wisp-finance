@@ -10,7 +10,7 @@ function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-interface FinancialItem {
+export interface FinancialItem {
     id: number;
     name: string;
     type: string;
@@ -29,6 +29,7 @@ interface Props {
     items: FinancialItem[];
     value: number | null;
     onChange: (id: number) => void;
+    onClear?: () => void;
     onSelect?: () => void;
     label: string;
     placeholder: string;
@@ -36,19 +37,22 @@ interface Props {
     className?: string;
     containerClassName?: string;
     placement?: 'top' | 'bottom';
+    flat?: boolean;
 }
 
 const FinancialSelect = forwardRef<HTMLButtonElement, Props>(({ 
     items, 
     value, 
     onChange, 
+    onClear,
     onSelect,
     label, 
     placeholder, 
     error,
     className,
     containerClassName,
-    placement = 'top'
+    placement = 'top',
+    flat = false
 }, ref) => {
     const { t } = useTranslation();
     const [selectedParentName, setSelectedParentName] = useState<string | null>(null);
@@ -108,7 +112,7 @@ const FinancialSelect = forwardRef<HTMLButtonElement, Props>(({
     const flatItems = useMemo(() => {
         const list: { id?: number; name: string; type: 'item' | 'parent' | 'back' }[] = [];
         
-        if (selectedParentName && searchQuery.trim() === '') {
+        if (!flat && selectedParentName && searchQuery.trim() === '') {
             list.push({ name: t('transactions.modal.back'), type: 'back' });
             if (groupedItems.groups[selectedParentName]) {
                 groupedItems.groups[selectedParentName].forEach(item => {
@@ -117,7 +121,7 @@ const FinancialSelect = forwardRef<HTMLButtonElement, Props>(({
             }
         } else {
             Object.entries(groupedItems.groups).forEach(([parentName, items]) => {
-                if (searchQuery.trim() !== '') {
+                if (flat || searchQuery.trim() !== '') {
                     items.forEach(item => {
                         list.push({ id: item.id, name: item.name, type: 'item' });
                     });
@@ -130,7 +134,7 @@ const FinancialSelect = forwardRef<HTMLButtonElement, Props>(({
             });
         }
         return list;
-    }, [groupedItems, selectedParentName, searchQuery, t]);
+    }, [groupedItems, selectedParentName, searchQuery, t, flat]);
 
     // Reset highlighted index when view changes or search changes
     useEffect(() => {
@@ -229,6 +233,8 @@ const FinancialSelect = forwardRef<HTMLButtonElement, Props>(({
                         setHighlightedIndex={setHighlightedIndex}
                         value={value}
                         placement={placement}
+                        flat={flat}
+                        onClear={onClear}
                     />
                 )}
             </DropdownSelector>
@@ -267,6 +273,8 @@ interface ContentProps {
     setHighlightedIndex: (val: number) => void;
     value: number | null;
     placement: 'top' | 'bottom';
+    flat: boolean;
+    onClear?: () => void;
 }
 
 function FinancialSelectContent({ 
@@ -289,7 +297,9 @@ function FinancialSelectContent({
     highlightedIndex,
     setHighlightedIndex,
     value,
-    placement
+    placement,
+    flat,
+    onClear
 }: ContentProps) {
     // Auto-focus search input when panel opens
     useEffect(() => {
@@ -359,21 +369,42 @@ function FinancialSelectContent({
                     </div>
                 </div>
 
+                {value && onClear && (
+                    <div className="p-1 border-b border-slate-50 bg-slate-50/50">
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                onClear();
+                            }}
+                            className="flex items-center justify-between p-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-rose-500 hover:bg-white cursor-pointer hover:underline "
+                        >
+                            <span className="flex items-center gap-2">
+                                <X className="w-3.5 h-3.5" />
+                                {t('transactions.filters.clear')}
+                            </span>
+                        </button>
+                    </div>
+                )}
+
                 <div ref={panelRef} className="p-2 overflow-y-auto flex-1 custom-scrollbar">
                     {(() => {
                         let globalIndex = 0;
                         const itemsToRender: React.ReactNode[] = [];
 
-                        if (!selectedParentName || searchQuery.trim() !== '') {
+                        if (flat || !selectedParentName || searchQuery.trim() !== '') {
                             Object.entries(groupedItems.groups).forEach(([parentName, groupItems]) => {
-                                if (searchQuery.trim() !== '') {
-                                    itemsToRender.push(
-                                        <div key={`label-${parentName}`} className="px-3 py-1 mt-2 mb-1">
-                                            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">
-                                                {parentName}
-                                            </span>
-                                        </div>
-                                    );
+                                if (flat || searchQuery.trim() !== '') {
+                                    if (!flat) {
+                                        itemsToRender.push(
+                                            <div key={`label-${parentName}`} className="px-3 py-1 mt-2 mb-1">
+                                                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">
+                                                    {parentName}
+                                                </span>
+                                            </div>
+                                        );
+                                    }
                                     groupItems.forEach(item => {
                                         const currentIndex = globalIndex++;
                                         itemsToRender.push(
