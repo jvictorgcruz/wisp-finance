@@ -9,7 +9,8 @@ import {
     X, Shield,
     Settings,
     Users,
-    Tags
+    Tags,
+    History
 } from 'lucide-react';
 import Logo from '@/Components/Common/Logo';
 import { useTranslation } from '@/Hooks/useTranslation';
@@ -65,6 +66,7 @@ export default function Sidebar() {
     const adminLinks = [
         { name: t('home.nav.admin_settings'), href: '/admin/settings', icon: Settings },
         { name: t('home.nav.admin_feature_flags'), href: '/admin/feature-flags', icon: Shield },
+        { name: t('home.nav.admin_audit_log'), href: '/admin/audit-log', icon: History },
     ];
 
     const superAdminLinks = [

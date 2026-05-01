@@ -74,7 +74,6 @@ class AccountRequest extends FormRequest
                 'required', 
                 'string', 
                 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/',
-                Rule::in(\App\Support\DefaultAccountDefinitions::getAvailableColors())
             ],
             'is_credit_card' => [
                 'sometimes', 

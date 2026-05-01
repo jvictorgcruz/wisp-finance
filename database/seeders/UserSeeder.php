@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use App\Models\Ledger;
 use Illuminate\Database\Seeder;
@@ -20,7 +21,8 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Wisp Test User',
                 'password' => Hash::make('password'),
-                'locale' => 'pt'
+                'locale' => 'pt',
+                'role' => UserRole::SUPER_ADMIN,
             ]
         );
 

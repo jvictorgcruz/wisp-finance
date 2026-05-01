@@ -19,6 +19,7 @@ return [
         'admin_settings' => 'System Parameters',
         'admin_users' => 'User Roles',
         'admin_feature_flags' => 'Feature Flags',
+        'admin_audit_log' => 'Audit Log',
     ],
     'sidebar' => [
         'current_ledger' => 'Current Ledger',

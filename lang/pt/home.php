@@ -19,6 +19,7 @@ return [
         'admin_settings' => 'Parâmetros do Sistema',
         'admin_users' => 'Grupos de Permissão',
         'admin_feature_flags' => 'Feature Flags',
+        'admin_audit_log' => 'Logs de Auditoria',
     ],
     'sidebar' => [
         'current_ledger' => 'Carteira Atual',

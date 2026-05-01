@@ -15,4 +15,17 @@ return [
     'confirm_role_change_message' => 'Tem certeza que deseja mudar o grupo de :name para :role?',
     'cancel' => 'Cancelar',
     'confirm' => 'Confirmar Mudança',
+    'audit_log' => [
+        'title' => 'Logs de Auditoria',
+        'subtitle' => 'Rastreie mudanças no sistema e atividades de usuários',
+        'date' => 'Data',
+        'causer' => 'Usuário',
+        'event' => 'Ação',
+        'subject' => 'Entidade',
+        'details' => 'Detalhes',
+        'before' => 'Antes',
+        'after' => 'Depois',
+        'date_from' => 'De',
+        'date_to' => 'Até',
+    ],
 ];

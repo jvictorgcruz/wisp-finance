@@ -29,11 +29,35 @@ class DeleteCategoryAction
 
             if ($hasHistory) {
                 // Inactivate the whole branch to preserve hierarchy in history
-                return $this->inactivateRecursively($category);
+                $result = $this->inactivateRecursively($category);
+
+                activity('domain')
+                    ->performedOn($category)
+                    ->withProperties([
+                        'strategy' => 'inactivated',
+                        'category_name' => $category->name,
+                    ])
+                    ->tap(fn($activity) => $activity->ledger_id = $category->ledger_id)
+                    ->log('category.inactivated');
+
+                return $result;
             }
 
             // No history found in the whole tree: safe to soft delete
-            return $this->deleteRecursively($category);
+            $categoryName = $category->name;
+            $ledgerId = $category->ledger_id;
+            $result = $this->deleteRecursively($category);
+
+            activity('domain')
+                ->performedOn($category)
+                ->withProperties([
+                    'strategy' => 'deleted',
+                    'category_name' => $categoryName,
+                ])
+                ->tap(fn($activity) => $activity->ledger_id = $ledgerId)
+                ->log('category.deleted');
+
+            return $result;
         });
     }
 

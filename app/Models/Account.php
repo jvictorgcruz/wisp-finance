@@ -14,7 +14,44 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Account extends Model
 {
     /** @use HasFactory */
-    use HasFactory, SoftDeletes, HasLedger;
+    use HasFactory, SoftDeletes, HasLedger, \Spatie\Activitylog\Traits\LogsActivity;
+
+    public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
+    {
+        return \Spatie\Activitylog\LogOptions::defaults()
+            ->logOnly(['name', 'status', 'type', 'parent_id', 'is_credit_card'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('domain');
+    }
+
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        if ($eventName === 'updated') {
+            if ($this->isDirty('status') && $this->status === AccountStatus::INACTIVE) {
+                return match (true) {
+                    $this->is_credit_card => 'credit_card.inactivated',
+                    $this->type === AccountType::ASSET => 'account.inactivated',
+                    $this->type === AccountType::LIABILITY => 'liability.inactivated',
+                    in_array($this->type, [AccountType::EXPENSE, AccountType::REVENUE]) => 'category.inactivated',
+                    default => 'account.inactivated'
+                };
+            }
+        }
+
+        return match (true) {
+            $this->is_credit_card => "credit_card.{$eventName}",
+            $this->type === AccountType::ASSET => "account.{$eventName}",
+            $this->type === AccountType::LIABILITY => "liability.{$eventName}",
+            in_array($this->type, [AccountType::EXPENSE, AccountType::REVENUE]) => "category.{$eventName}",
+            default => "account.{$eventName}"
+        };
+    }
+
+    public function tapActivity(\Spatie\Activitylog\Models\Activity $activity, string $eventName)
+    {
+        $activity->ledger_id = $this->ledger_id;
+    }
 
     protected $fillable = [
         'ledger_id',
