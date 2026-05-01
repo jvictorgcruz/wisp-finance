@@ -1,6 +1,7 @@
 import React from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
+import PageHeader from '@/Components/Common/PageHeader';
 import { History, ArrowLeft, Filter, X, ChevronLeft, ChevronRight, Activity as ActivityIcon } from 'lucide-react';
 import { useTranslation } from '@/Hooks/useTranslation';
 import { Button } from '@/Components/Common/Button';
@@ -88,115 +89,108 @@ export default function Index({ logs, filters }: Props) {
         <AppLayout title={t('admin.audit_log.title') || 'Audit Log'}>
             <Head title={t('admin.audit_log.title') || 'Audit Log'} />
             
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <div>
-                    <div className="flex items-center gap-4 mb-2">
-                        <Link
-                            href="/dashboard"
-                            className="p-2 -ml-2 rounded-xl text-slate-400 hover:text-slate-900 transition-colors"
-                        >
-                            <ArrowLeft className="w-5 h-5" />
-                        </Link>
-                        <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-                            <History className="w-6 h-6 text-[#4B3BC9]" />
+            <PageHeader>
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="space-y-1">
+                        <h2 className="text-2xl font-black text-slate-900 tracking-tight">
                             {t('admin.audit_log.title') || 'Audit Log'}
-                        </h1>
+                        </h2>
+                        <p className="text-sm font-medium text-slate-500">
+                            {t('admin.audit_log.subtitle') || 'Track system changes and user activities'}
+                        </p>
                     </div>
-                    <p className="text-sm font-medium text-slate-500">
-                        {t('admin.audit_log.subtitle') || 'Track system changes and user activities'}
-                    </p>
+                    
+                    <div className="flex gap-3">
+                        <Button 
+                            variant="outline" 
+                            className={cn(
+                                "h-11 px-5 rounded-xl flex items-center gap-2.5 transition-all border-editorial",
+                                showFilters ? "bg-slate-50 border-slate-300 text-primary" : "bg-white text-slate-600"
+                            )}
+                            onClick={() => setShowFilters(!showFilters)}
+                        >
+                            <Filter className={cn("w-4 h-4", showFilters ? "text-primary" : "text-slate-400")} />
+                            <span className="text-xs font-bold">
+                                {t('transactions.filters.title')}
+                            </span>
+                            {Object.values(filters).filter(Boolean).length > 0 && (
+                                <div className="min-w-[18px] h-4.5 px-1 rounded-full bg-primary text-[9px] font-black text-white flex items-center justify-center ml-1">
+                                    {Object.values(filters).filter(Boolean).length}
+                                </div>
+                            )}
+                        </Button>
+                    </div>
                 </div>
-                
-                <div className="flex gap-3">
-                    <Button 
-                        variant="outline" 
-                        className={cn(
-                            "h-11 px-5 rounded-xl flex items-center gap-2.5 transition-all border-editorial",
-                            showFilters ? "bg-slate-50 border-slate-300 text-primary" : "bg-white text-slate-600"
-                        )}
-                        onClick={() => setShowFilters(!showFilters)}
-                    >
-                        <Filter className={cn("w-4 h-4", showFilters ? "text-primary" : "text-slate-400")} />
-                        <span className="text-xs font-bold">
-                            {t('transactions.filters.title')}
-                        </span>
-                        {Object.values(filters).filter(Boolean).length > 0 && (
-                            <div className="min-w-[18px] h-4.5 px-1 rounded-full bg-primary text-[9px] font-black text-white flex items-center justify-center ml-1">
-                                {Object.values(filters).filter(Boolean).length}
-                            </div>
-                        )}
-                    </Button>
-                </div>
-            </div>
 
-            <Transition
-                show={showFilters}
-                enter="transition ease-out duration-200"
-                enterFrom="opacity-0 -translate-y-4"
-                enterTo="opacity-100 translate-y-0"
-                leave="transition ease-in duration-150"
-                leaveFrom="opacity-100 translate-y-0"
-                leaveTo="opacity-0 -translate-y-4"
-            >
-                <div className="bg-white p-6 rounded-3xl border border-slate-100 mb-8 shadow-xl shadow-slate-200/50">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
-                        <div className="md:col-span-1">
-                            <DatePicker 
-                                label={t('admin.audit_log.date_from') || 'From'}
-                                value={localFilters.date_from || ''}
-                                onChange={(val) => setLocalFilters(prev => ({ ...prev, date_from: val }))}
-                                placeholder="YYYY-MM-DD"
-                            />
-                        </div>
-                        <div className="md:col-span-1">
-                            <DatePicker 
-                                label={t('admin.audit_log.date_to') || 'To'}
-                                value={localFilters.date_to || ''}
-                                onChange={(val) => setLocalFilters(prev => ({ ...prev, date_to: val }))}
-                                placeholder="YYYY-MM-DD"
-                            />
-                        </div>
-                        <div className="md:col-span-2 flex gap-3">
-                            <Button 
-                                variant="outline" 
-                                className="h-12 flex-1 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 border border-slate-200"
-                                onClick={clearFilters}
-                            >
-                                <X className="w-4 h-4 mr-2" />
-                                {t('transactions.filters.clear')}
-                            </Button>
-                            <Button 
-                                variant="primary"
-                                className="h-12 flex-1 text-[10px] font-black uppercase tracking-widest"
-                                onClick={applyFilters}
-                            >
-                                <Filter className="w-4 h-4 mr-2" />
-                                {t('transactions.filters.apply')}
-                            </Button>
+                <Transition
+                    show={showFilters}
+                    enter="transition ease-out duration-200"
+                    enterFrom="opacity-0 -translate-y-4"
+                    enterTo="opacity-100 translate-y-0"
+                    leave="transition ease-in duration-150"
+                    leaveFrom="opacity-100 translate-y-0"
+                    leaveTo="opacity-0 -translate-y-4"
+                >
+                    <div className="bg-white p-6 rounded-3xl">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+                            <div className="md:col-span-1">
+                                <DatePicker 
+                                    label={t('admin.audit_log.date_from') || 'From'}
+                                    value={localFilters.date_from || ''}
+                                    onChange={(val) => setLocalFilters(prev => ({ ...prev, date_from: val }))}
+                                    placeholder="YYYY-MM-DD"
+                                />
+                            </div>
+                            <div className="md:col-span-1">
+                                <DatePicker 
+                                    label={t('admin.audit_log.date_to') || 'To'}
+                                    value={localFilters.date_to || ''}
+                                    onChange={(val) => setLocalFilters(prev => ({ ...prev, date_to: val }))}
+                                    placeholder="YYYY-MM-DD"
+                                />
+                            </div>
+                            <div className="md:col-span-2 flex gap-3">
+                                <Button 
+                                    variant="outline" 
+                                    className="h-12 flex-1 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 border border-slate-200"
+                                    onClick={clearFilters}
+                                >
+                                    <X className="w-4 h-4 mr-2" />
+                                    {t('transactions.filters.clear')}
+                                </Button>
+                                <Button 
+                                    variant="primary"
+                                    className="h-12 flex-1 text-[10px] font-black uppercase tracking-widest"
+                                    onClick={applyFilters}
+                                >
+                                    <Filter className="w-4 h-4 mr-2" />
+                                    {t('transactions.filters.apply')}
+                                </Button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </Transition>
+                </Transition>
+            </PageHeader>
 
             <div className="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="border-b border-slate-50 bg-slate-50/50 font-bold text-xs uppercase tracking-widest text-slate-400">
-                                <th className="px-8 py-5 font-black">{t('admin.audit_log.date') || 'Date'}</th>
-                                <th className="px-8 py-5 font-black">{t('admin.audit_log.causer') || 'User'}</th>
-                                <th className="px-8 py-5 font-black">{t('admin.audit_log.event') || 'Action'}</th>
-                                <th className="px-8 py-5 font-black">{t('admin.audit_log.subject') || 'Entity'}</th>
-                                <th className="px-8 py-5 font-black">{t('admin.audit_log.details') || 'Details'}</th>
+                                <th className="px-4 md:px-8 py-5 font-black">{t('admin.audit_log.date') || 'Date'}</th>
+                                <th className="px-4 md:px-8 py-5 font-black">{t('admin.audit_log.causer') || 'User'}</th>
+                                <th className="px-4 md:px-8 py-5 font-black">{t('admin.audit_log.event') || 'Action'}</th>
+                                <th className="px-4 md:px-8 py-5 font-black">{t('admin.audit_log.subject') || 'Entity'}</th>
+                                <th className="px-4 md:px-8 py-5 font-black">{t('admin.audit_log.details') || 'Details'}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
                             {logs.data.map((log) => (
                                 <tr key={log.id} className="group hover:bg-slate-50/30 transition-colors">
-                                    <td className="px-8 py-6 whitespace-nowrap">
+                                    <td className="px-4 md:px-8 py-6 whitespace-nowrap">
                                         <div className="text-xs font-bold text-slate-600">{formatDate(log.created_at)}</div>
                                     </td>
-                                    <td className="px-8 py-6">
+                                    <td className="px-4 md:px-8 py-6">
                                         <div className="flex items-center gap-3">
                                             <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-xs font-black text-slate-500 shadow-xs border border-white">
                                                 {log.causer?.name.charAt(0).toUpperCase() || 'S'}
@@ -207,12 +201,12 @@ export default function Index({ logs, filters }: Props) {
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-8 py-6">
+                                    <td className="px-4 md:px-8 py-6">
                                         <div className="inline-flex px-2 py-1 rounded-lg bg-indigo-50 text-[#4B3BC9] text-[10px] font-black uppercase tracking-wider border border-indigo-100">
                                             {log.description}
                                         </div>
                                     </td>
-                                    <td className="px-8 py-6 whitespace-nowrap">
+                                    <td className="px-4 md:px-8 py-6 whitespace-nowrap">
                                         <div className="flex items-center gap-2">
                                             <ActivityIcon className="w-3.5 h-3.5 text-slate-300" />
                                             <div className="text-xs font-bold text-slate-600">
@@ -220,7 +214,7 @@ export default function Index({ logs, filters }: Props) {
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-8 py-6">
+                                    <td className="px-4 md:px-8 py-6">
                                         <div className="max-w-md">
                                             {log.properties?.attributes ? (
                                                 <div className="flex flex-wrap gap-2">

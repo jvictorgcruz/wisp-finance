@@ -18,7 +18,7 @@ class UserRoleController extends Controller
      */
     public function index(ListUsersWithRolesAction $listUsersWithRolesAction)
     {
-        return Inertia::render('Admin/UserRoleManagement', $listUsersWithRolesAction->execute());
+        return Inertia::render('Admin/UserRoleManagement/Index', $listUsersWithRolesAction->execute());
     }
 
     /**

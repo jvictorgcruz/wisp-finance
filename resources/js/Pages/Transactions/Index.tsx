@@ -1,6 +1,7 @@
 import React from 'react';
 import AppLayout from '@/Layouts/AppLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
+import PageHeader from '@/Components/Common/PageHeader';
 import { useTranslation } from '@/Hooks/useTranslation';
 import LucideIcon from '@/Components/Common/LucideIcon';
 import { Button } from '@/Components/Common/Button';
@@ -236,28 +237,28 @@ export default function Index({ transactions, filters }: Props) {
         <AppLayout title={t('home.nav.transactions')}>
             <Head title={t('home.nav.transactions')} />
 
-            <div className="sticky top-24 z-20 bg-surface/95 backdrop-blur-sm -mx-4 px-4 pt-4 -mt-4 mb-8">
+            <PageHeader>
                 {/* Header */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
                     <div className="space-y-1">
                         <h2 className="text-2xl font-black tracking-tight text-slate-900">
                             {t('transactions.page.title')}
                         </h2>
-                        <p className="text-sm text-slate-500 font-medium leading-none">
+                        <p className="text-sm text-slate-500 font-medium">
                             {getFilterLabel() || t('transactions.page.subtitle')}
                         </p>
                     </div>
-                    <div className="flex gap-3 w-full md:w-auto">
+                    <div className="flex items-center gap-3">
                         <Button 
                             variant="outline" 
-                            className={cn(
-                                "h-11 px-5 rounded-xl flex items-center gap-2.5 transition-all border-editorial",
-                                showFilters ? "bg-slate-50 border-slate-300 text-primary" : "bg-white text-slate-600"
-                            )}
                             onClick={() => setShowFilters(!showFilters)}
+                            className={cn(
+                                "px-6 py-2.5 rounded-xl flex items-center gap-2 transition-all",
+                                showFilters ? "bg-primary/5 border-primary/20 text-primary shadow-sm" : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+                            )}
                         >
                             <Filter className={cn("w-4 h-4", showFilters ? "text-primary" : "text-slate-400")} />
-                            <span className="text-xs font-bold">
+                            <span className="text-sm font-bold">
                                 {t('transactions.filters.title')}
                             </span>
                             {activeFiltersCount > 0 && (
@@ -266,14 +267,13 @@ export default function Index({ transactions, filters }: Props) {
                                 </div>
                             )}
                         </Button>
-                        <Button 
-                            variant="primary" 
-                            className="h-11 px-6 rounded-xl flex items-center gap-2"
+                        <button 
                             onClick={() => window.dispatchEvent(new CustomEvent('open-transaction-modal'))}
+                            className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-primary/90 transition-all cursor-pointer whitespace-nowrap"
                         >
                             <Plus className="w-4 h-4" />
-                            <span className="text-xs font-bold">{t('transactions.modal.cta')}</span>
-                        </Button>
+                            {t('transactions.modal.cta')}
+                        </button>
                     </div>
                 </div>
 
@@ -383,7 +383,7 @@ export default function Index({ transactions, filters }: Props) {
                         </div>
                     </div>
                 </Transition>
-            </div>
+            </PageHeader>
 
                 {/* Groups */}
                 <div className="space-y-12">

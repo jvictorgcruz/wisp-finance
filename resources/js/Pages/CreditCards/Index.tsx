@@ -1,4 +1,5 @@
 import AppLayout from '@/Layouts/AppLayout';
+import PageHeader from '@/Components/Common/PageHeader';
 import { Plus, CreditCard as CardIcon, MoreVertical, Edit2, Trash2, PowerOff } from 'lucide-react';
 import { useTranslation } from '@/Hooks/useTranslation';
 import AccountModal, { Account } from '@/Components/Accounts/AccountModal';
@@ -61,23 +62,25 @@ export default function CreditCards({ cards, root_categories, available_colors, 
 
     return (
         <AppLayout title={t('home.nav.cards')}>
-            <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                    <h2 className="text-2xl font-black tracking-tight text-slate-900">
-                        {t('home.nav.cards')}
-                    </h2>
-                    <p className="text-sm text-slate-500 font-medium leading-none">
-                        {t('accounts.page.subtitle')}
-                    </p>
+            <PageHeader>
+                <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                        <h2 className="text-2xl font-black tracking-tight text-slate-900">
+                            {t('home.nav.cards')}
+                        </h2>
+                        <p className="text-sm text-slate-500 font-medium">
+                            {t('accounts.page.subtitle')}
+                        </p>
+                    </div>
+                    <button 
+                        onClick={openCreate}
+                        className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-primary/90 transition-all cursor-pointer"
+                    >
+                        <Plus className="w-4 h-4" />
+                        {t('accounts.page.create_card_btn')}
+                    </button>
                 </div>
-                <button 
-                    onClick={openCreate}
-                    className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-primary/90 transition-all cursor-pointer"
-                >
-                    <Plus className="w-4 h-4" />
-                    {t('accounts.page.create_card_btn')}
-                </button>
-            </div>
+            </PageHeader>
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 pt-8">
                     {cards.map(card => (

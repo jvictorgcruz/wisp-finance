@@ -1,4 +1,5 @@
 import AppLayout from '@/Layouts/AppLayout';
+import PageHeader from '@/Components/Common/PageHeader';
 import { Plus, TrendingUp, TrendingDown, Info } from 'lucide-react';
 import { useTranslation } from '@/Hooks/useTranslation';
 import AccountTree from '@/Components/Accounts/AccountTree';
@@ -67,23 +68,25 @@ export default function Accounts({ accounts, totals, root_categories, available_
 
     return (
         <AppLayout title={t('accounts.page.title')}>
-            <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                    <h2 className="text-2xl font-black tracking-tight text-slate-900">
-                        {t('accounts.page.title')}
-                    </h2>
-                    <p className="text-sm text-slate-500 font-medium leading-none">
-                        {t('accounts.page.subtitle')}
-                    </p>
+            <PageHeader>
+                <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                        <h2 className="text-2xl font-black tracking-tight text-slate-900">
+                            {t('accounts.page.title')}
+                        </h2>
+                        <p className="text-sm text-slate-500 font-medium">
+                            {t('accounts.page.subtitle')}
+                        </p>
+                    </div>
+                    <button 
+                        onClick={openCreate}
+                        className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-primary/90 transition-all cursor-pointer"
+                    >
+                        <Plus className="w-4 h-4" />
+                        {t('accounts.page.create_btn')}
+                    </button>
                 </div>
-                <button 
-                    onClick={openCreate}
-                    className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-primary/90 transition-all cursor-pointer"
-                >
-                    <Plus className="w-4 h-4" />
-                    {t('accounts.page.create_btn')}
-                </button>
-            </div>
+            </PageHeader>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8">
                 <div className="md:col-span-2 space-y-8">

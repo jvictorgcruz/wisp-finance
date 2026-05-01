@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Head, Link, useForm, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
+import PageHeader from '@/Components/Common/PageHeader';
 import { RefreshCw, CheckCircle2, XCircle, ArrowLeft, Clock } from 'lucide-react';
 import { useTranslation } from '@/Hooks/useTranslation';
 
@@ -72,42 +73,35 @@ export default function FeatureFlags({ flags, filters, expires_at, errors }: Pro
         <AppLayout title={t('feature_flags.title')}>
             <Head title={t('feature_flags.title')} />
             
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <div>
-                    <div className="flex items-center gap-4 mb-2">
-                        <Link 
-                            href="/dashboard" 
-                            className="p-2 -ml-2 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-white transition-colors"
-                            title={t('feature_flags.back')}
-                        >
-                            <ArrowLeft className="w-5 h-5" />
-                        </Link>
-                        <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+            <PageHeader>
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="space-y-1">
+                        <h2 className="text-2xl font-black text-slate-900 tracking-tight">
                             {t('feature_flags.title')}
-                        </h1>
+                        </h2>
+                        <p className="text-sm font-medium text-slate-500">
+                            {t('feature_flags.subtitle')}
+                        </p>
                     </div>
-                    <p className="text-sm font-medium text-slate-500">
-                        {t('feature_flags.subtitle')}
-                    </p>
-                </div>
 
-                <div className="flex items-center gap-3">
-                    {timeLeft && (
-                        <div className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-600 text-xs font-bold rounded-xl whitespace-nowrap">
-                            <Clock className="w-3.5 h-3.5" />
-                            {timeLeft}
-                        </div>
-                    )}
-                    <button
-                        onClick={handleClearCache}
-                        disabled={processing}
-                        className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-700 text-sm font-bold rounded-xl hover:bg-slate-50 hover:text-slate-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
-                    >
-                        <RefreshCw className={`w-4 h-4 ${processing ? 'animate-spin' : ''}`} />
-                        {t('feature_flags.clear_cache')}
-                    </button>
+                    <div className="flex items-center gap-3">
+                        {timeLeft && (
+                            <div className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-600 text-xs font-bold rounded-xl whitespace-nowrap">
+                                <Clock className="w-3.5 h-3.5" />
+                                {timeLeft}
+                            </div>
+                        )}
+                        <button
+                            onClick={handleClearCache}
+                            disabled={processing}
+                            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-700 text-sm font-bold rounded-xl hover:bg-slate-50 hover:text-slate-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                        >
+                            <RefreshCw className={`w-4 h-4 ${processing ? 'animate-spin' : ''}`} />
+                            {t('feature_flags.clear_cache')}
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </PageHeader>
 
             <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 mb-8">
                 <h2 className="text-sm font-bold text-slate-900 mb-4">{t('feature_flags.context_evaluation')}</h2>

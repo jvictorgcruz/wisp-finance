@@ -46,7 +46,7 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
             />
 
             {/* Main Content Area */}
-            <main className="flex-1 lg:ml-64 flex flex-col min-h-screen">
+            <main className="flex-1 lg:ml-64 flex flex-col min-h-screen min-w-0">
                 {/* Top Header / Breadcrumb Bar (Editorial Style) */}
                 <header className="h-16 flex items-center justify-between px-8 bg-surface-lowest backdrop-blur-md border-b border-surface-low sticky top-0 z-30">
                     <div className="flex items-center gap-4 flex-1">
@@ -72,7 +72,7 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
                 </header>
 
                 {/* Page Content Container */}
-                <div className="p-8 lg:p-10 flex-1 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                <div className="pb-8 px-8 lg:pb-10 lg:px-10 flex-1 min-w-0 animate-in fade-in slide-in-from-bottom-2 duration-500">
                     <div className="max-w-7xl mx-auto">
                         {children}
                     </div>
