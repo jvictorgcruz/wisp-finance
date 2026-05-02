@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'invoices' => [
+        'not_enabled' => 'Este cartão não possui controle de faturas ativado.',
+        'page_title' => 'Gestor de Faturas',
+        'page_subtitle' => 'Controle detalhado de gastos e limites',
+        'pay_btn' => 'Pagar Fatura',
+        'limit_usage' => 'Uso do Limite',
+        'limit' => 'Limite',
+        'status_paid' => 'Paga',
+        'status_open' => 'Aberta',
+        'status_closed' => 'Fechada',
+        'status_overdue' => 'Atrasada',
+        'total_invoice' => 'Total da Fatura',
+        'paid_amount' => 'Valor Pago',
+        'remaining' => 'Faltam',
+        'due_date' => 'Vencimento',
+        'closing_date' => 'Fechamento',
+        'table_title' => 'Lançamentos da Fatura',
+        'table_date' => 'Data',
+        'table_description' => 'Descrição',
+        'table_status' => 'Status',
+        'table_amount' => 'Valor',
+        'empty_items' => 'Nenhum lançamento encontrado nesta fatura.',
+        'card_status' => 'Status do Cartão',
+        'total_balance_due' => 'Saldo Total Devedor',
+        'available_limit' => 'Disponível',
+        'auto_close_hint' => 'As faturas são fechadas automaticamente no dia :day de cada mês.',
+    ],
+];

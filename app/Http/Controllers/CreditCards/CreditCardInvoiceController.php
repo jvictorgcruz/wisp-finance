@@ -1,0 +1,55 @@
+<?php
+
+namespace App\Http\Controllers\CreditCards;
+
+use App\Http\Controllers\Controller;
+use App\Models\Account;
+use App\Models\CreditCardInvoice;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Inertia\Inertia;
+
+class CreditCardInvoiceController extends Controller
+{
+    /**
+     * Show the invoice manager for a specific card and month.
+     */
+    public function show(Account $account, ?string $yearMonth = null)
+    {
+        // 1. UI Guard: Ensure it's a credit card with invoice control
+        if (! $account->is_credit_card || ! $account->creditCardDetail?->invoice_control_enabled) {
+            return redirect()->route('accounts.index')
+                ->with('warning', __('credit_cards.invoices.not_enabled'));
+        }
+
+        // 2. Resolve the target invoice
+        $yearMonth = $yearMonth ?: Carbon::now()->format('Y-m');
+        
+        $invoice = $account->creditCardDetail->invoices()
+            ->where('reference_year_month', $yearMonth)
+            ->first();
+
+        // If invoice doesn't exist yet for this month, we try to resolve it (create if needed)
+        if (! $invoice) {
+            $date = Carbon::parse($yearMonth . '-01');
+            $invoice = CreditCardInvoice::resolveForCardAndDate($account->creditCardDetail, $date);
+        }
+
+        // 3. Collect all available months for the timeline
+        $availableMonths = $account->creditCardDetail->invoices()
+            ->orderBy('reference_year_month', 'desc')
+            ->pluck('reference_year_month');
+
+        // 4. Load relations for the view
+        $invoice->load(['expectedCashFlows' => function ($query) {
+            $query->orderBy('due_date')->orderBy('id');
+        }]);
+
+        return Inertia::render('CreditCards/Invoices/Index', [
+            'account' => $account->load('creditCardDetail'),
+            'invoice' => $invoice,
+            'availableMonths' => $availableMonths,
+            'currentYearMonth' => $yearMonth,
+        ]);
+    }
+}

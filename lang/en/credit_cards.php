@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'invoices' => [
+        'not_enabled' => 'This card does not have invoice control enabled.',
+        'page_title' => 'Invoice Manager',
+        'page_subtitle' => 'Detailed spending and limit control',
+        'pay_btn' => 'Pay Invoice',
+        'limit_usage' => 'Limit Usage',
+        'limit' => 'Limit',
+        'status_paid' => 'Paid',
+        'status_open' => 'Open',
+        'status_closed' => 'Closed',
+        'status_overdue' => 'Overdue',
+        'total_invoice' => 'Total Invoice',
+        'paid_amount' => 'Paid Amount',
+        'remaining' => 'Remaining',
+        'due_date' => 'Due Date',
+        'closing_date' => 'Closing Date',
+        'table_title' => 'Invoice Items',
+        'table_date' => 'Date',
+        'table_description' => 'Description',
+        'table_status' => 'Status',
+        'table_amount' => 'Amount',
+        'empty_items' => 'No items found in this invoice.',
+        'card_status' => 'Card Status',
+        'total_balance_due' => 'Total Balance Due',
+        'available_limit' => 'Available',
+        'auto_close_hint' => 'Invoices are automatically closed on the :day of each month.',
+    ],
+];

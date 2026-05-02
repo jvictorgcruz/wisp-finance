@@ -71,6 +71,7 @@ Route::middleware('check_maintenance')->group(function () {
         Route::get('dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
         Route::resource('accounts', \App\Http\Controllers\AccountController::class)->only(['index', 'store', 'update', 'destroy']);
+        Route::get('accounts/{account}/invoices/{yearMonth?}', [\App\Http\Controllers\CreditCards\CreditCardInvoiceController::class, 'show'])->name('accounts.invoices.show');
         Route::get('cards', [\App\Http\Controllers\CreditCardController::class, 'index'])->name('cards.index');
         Route::resource('categories', \App\Http\Controllers\CategoryController::class)->only(['index', 'store', 'update', 'destroy']);
 
