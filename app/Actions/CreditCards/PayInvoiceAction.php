@@ -16,8 +16,10 @@ class PayInvoiceAction extends BaseFinancialAction
 {
     /**
      * Pay a credit card invoice (full, partial, or overpayment).
+     * 
+     * @param int $amount Amount in cents
      */
-    public function execute(CreditCardInvoice $invoice, Account $sourceAccount, float $amount, Carbon $date): Transaction
+    public function execute(CreditCardInvoice $invoice, Account $sourceAccount, int $amount, Carbon $date): Transaction
     {
         return DB::transaction(function () use ($invoice, $sourceAccount, $amount, $date) {
             $card = $invoice->creditCardDetail;
@@ -35,8 +37,8 @@ class PayInvoiceAction extends BaseFinancialAction
 
             // 2. Journal Entries (Accounting impact)
             // DEBIT Card Account (Liability decreases), CREDIT Source Account (Asset decreases)
-            $this->createEntry($transaction, $card->account_id, 'DEBIT', $amount, $date->toDateString());
-            $this->createEntry($transaction, $sourceAccount->id, 'CREDIT', $amount, $date->toDateString());
+            $this->createEntry($transaction, $card->account_id, 'DEBIT', $amount / 100, $date->toDateString());
+            $this->createEntry($transaction, $sourceAccount->id, 'CREDIT', $amount / 100, $date->toDateString());
 
             // 3. Resolve CashFlows (Sequential Liquidation)
             // We look at all pending cash flows for this card, starting with this invoice's items
@@ -61,14 +63,14 @@ class PayInvoiceAction extends BaseFinancialAction
                 } else {
                     // Partial payment of this specific item -> SPLIT it
                     $paidPart = $remainingToPay;
-                    $pendingPart = ($cf->amount - $paidPart);
+                    $pendingPart = ((int)round($cf->amount * 100) - $paidPart);
 
-                    $cf->setAttribute('amount', $paidPart);
+                    $cf->setAttribute('amount', $paidPart / 100);
                     $cf->status = 'PAID';
                     $cf->save();
 
                     $cf->replicate()->fill([
-                        'amount' => $pendingPart,
+                        'amount' => $pendingPart / 100,
                         'status' => 'PENDING',
                     ])->save();
 
@@ -83,7 +85,7 @@ class PayInvoiceAction extends BaseFinancialAction
                     'transaction_id' => $transaction->id,
                     'account_id' => $card->account_id,
                     'credit_card_invoice_id' => $invoice->id,
-                    'amount' => -$remainingToPay, // Negative amount = credit
+                    'amount' => -($remainingToPay / 100), // Negative amount = credit
                     'due_date' => $invoice->due_date,
                     'description' => __('Crédito de Pagamento a Maior'),
                     'status' => 'PAID',

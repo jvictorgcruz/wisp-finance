@@ -4,6 +4,8 @@ namespace App\Http\Controllers\CreditCards;
 
 use App\Http\Controllers\Controller;
 use App\Models\Account;
+use App\Http\Requests\CreditCards\PayInvoiceRequest;
+use App\Actions\CreditCards\PayInvoiceAction;
 use App\Models\CreditCardInvoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -45,11 +47,44 @@ class CreditCardInvoiceController extends Controller
             $query->orderBy('due_date')->orderBy('id');
         }]);
 
+        $balanceAction = app(\App\Actions\Accounts\GetAccountBalanceAction::class);
+        $balance = $balanceAction->executeSingle($account);
+
+        $sourceAccounts = Account::where('ledger_id', $account->ledger_id)
+            ->where('type', \App\Enums\AccountType::ASSET)
+            ->whereNotNull('parent_id')
+            ->with('parent')
+            ->orderBy('name')
+            ->get();
+
         return Inertia::render('CreditCards/Invoices/Index', [
-            'account' => $account->load('creditCardDetail'),
+            'account' => array_merge($account->load('creditCardDetail')->toArray(), [
+                'balance' => $balance
+            ]),
             'invoice' => $invoice,
             'availableMonths' => $availableMonths,
             'currentYearMonth' => $yearMonth,
+            'sourceAccounts' => $sourceAccounts,
         ]);
+    }
+
+    /**
+     * Process an invoice payment.
+     */
+    public function pay(PayInvoiceRequest $request, Account $account, CreditCardInvoice $invoice, PayInvoiceAction $action)
+    {
+        // Security check: ensure invoice belongs to this account
+        if ($invoice->credit_card_detail_id !== $account->creditCardDetail->id) {
+            abort(403);
+        }
+
+        $sourceAccount = Account::findOrFail($request->source_account_id);
+        $amountCents = (int) round($request->amount * 100);
+        $date = Carbon::parse($request->date);
+
+        $action->execute($invoice, $sourceAccount, $amountCents, $date);
+
+        return redirect()->back()
+            ->with('success', __('credit_cards.invoices.payment_success'));
     }
 }

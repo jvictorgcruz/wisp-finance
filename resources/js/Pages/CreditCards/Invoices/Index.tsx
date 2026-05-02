@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
 import { Head, Link } from '@inertiajs/react';
 import { useTranslation } from '@/Hooks/useTranslation';
@@ -6,6 +7,7 @@ import InvoiceTimeline from './components/InvoiceTimeline';
 import LimitProgressBar from './components/LimitProgressBar';
 import InvoiceSummary from './components/InvoiceSummary';
 import InvoiceItemsTable from './components/InvoiceItemsTable';
+import PaymentModal from './components/PaymentModal';
 import PageHeader from '@/Components/Common/PageHeader';
 import { CreditCard, Banknote } from 'lucide-react';
 
@@ -14,10 +16,12 @@ interface Props {
   invoice: any;
   availableMonths: string[];
   currentYearMonth: string;
+  sourceAccounts: any[];
 }
 
-export default function Index({ account, invoice, availableMonths, currentYearMonth }: Props) {
+export default function Index({ account, invoice, availableMonths, currentYearMonth, sourceAccounts }: Props) {
     const { t } = useTranslation();
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
 
     const currentBalance = Math.abs(account.balance || 0);
     const limit = account.credit_card_detail.limit;
@@ -39,13 +43,14 @@ export default function Index({ account, invoice, availableMonths, currentYearMo
                             </p>
                         </div>
                     </div>
-                    <Link
-                        href="/transactions"
+                    <button
+                        type="button"
+                        onClick={() => setShowPaymentModal(true)}
                         className="bg-primary text-white px-6 py-3 rounded-2xl font-bold text-sm flex items-center gap-2 hover:bg-primary/90 transition-all shadow-xl shadow-primary/20"
                     >
                         <Banknote className="w-5 h-5" />
                         {t('credit_cards.invoices.pay_btn')}
-                    </Link>
+                    </button>
                 </div>
             </PageHeader>
 
@@ -99,6 +104,14 @@ export default function Index({ account, invoice, availableMonths, currentYearMo
             </div>
           </div>
         </div>
+
+        <PaymentModal 
+            show={showPaymentModal}
+            onClose={() => setShowPaymentModal(false)}
+            account={account}
+            invoice={invoice}
+            sourceAccounts={sourceAccounts}
+        />
       </AppLayout>
     );
 }

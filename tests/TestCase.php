@@ -27,4 +27,6 @@ abstract class TestCase extends BaseTestCase
     public $upsertAction;
     public $bankAccount;
     public $invoice;
+    public $sourceAccount;
+    public $balanceAction;
 }

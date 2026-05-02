@@ -29,7 +29,7 @@ describe('LimitProgressBar', () => {
     expect(percentageText).toHaveClass('text-rose-500');
     
     // The progress bar itself should have rose-600 or rose-500 classes
-    const progressBar = container.querySelector('.bg-gradient-to-r');
+    const progressBar = container.querySelector('.bg-linear-to-r');
     expect(progressBar).toHaveClass('from-rose-600');
   });
 

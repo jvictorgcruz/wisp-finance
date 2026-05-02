@@ -63,9 +63,11 @@ describe('Accounts Index Page', () => {
         // Children should be hidden initially as per Disclosure
         expect(screen.queryByText('Bank Account')).not.toBeInTheDocument();
 
-        // Click parent to expand
-        const parentRow = screen.getByText('Assets Parent');
-        fireEvent.click(parentRow);
+        // Click parent to expand (click on balance to avoid Link's stopPropagation)
+        // We pick the one with text-lg which is in the account tree
+        const balances = screen.getAllByText('R$ 50,00');
+        const treeBalance = balances.find(el => el.classList.contains('text-lg'));
+        fireEvent.click(treeBalance!);
 
         expect(screen.getByText('Bank Account')).toBeInTheDocument();
     });

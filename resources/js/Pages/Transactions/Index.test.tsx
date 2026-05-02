@@ -16,10 +16,18 @@ vi.mock('@/Layouts/AppLayout', () => ({
     default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
-// Mock Head
+// Mock Inertia
 vi.mock('@inertiajs/react', () => ({
     Head: ({ title }: { title: string }) => <title>{title}</title>,
     Link: ({ children, href }: any) => <a href={href}>{children}</a>,
+    usePage: () => ({
+        props: {
+            financial_context: {
+                accounts: [],
+                categories: [],
+            },
+        },
+    }),
 }));
 
 describe('Transactions Index Page', () => {
