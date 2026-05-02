@@ -30,10 +30,41 @@ class CreditCardInvoice extends Model
         'closing_date',
     ];
 
-    protected $casts = [
-        'due_date' => 'date',
-        'closing_date' => 'date',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'due_date' => 'datetime',
+            'closing_date' => 'datetime',
+        ];
+    }
+
+    /**
+     * Resolve (find or create) an invoice for a specific card and transaction date.
+     */
+    public static function resolveForCardAndDate(CreditCardDetail $card, Carbon $date): self
+    {
+        // 1. Calculate the closing date for the month of the transaction
+        $closingDate = $date->copy()->day($card->closing_day);
+
+        // 2. If transaction is after closing, it goes to the next month
+        $referenceDate = $date->copy();
+        if ($date->greaterThan($closingDate)) {
+            $referenceDate->addMonth();
+        }
+
+        $reference = $referenceDate->format('Y-m');
+
+        return self::firstOrCreate(
+            [
+                'credit_card_detail_id' => $card->id,
+                'reference_year_month' => $reference,
+            ],
+            [
+                'closing_date' => $referenceDate->copy()->day($card->closing_day),
+                'due_date' => $referenceDate->copy()->day($card->due_day),
+            ]
+        );
+    }
 
     /**
      * Relationships

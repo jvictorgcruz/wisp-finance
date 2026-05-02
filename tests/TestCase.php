@@ -22,4 +22,6 @@ abstract class TestCase extends BaseTestCase
     public $expenseCat;
     public $revenueCat;
     public ?Account $parentAccount = null;
+    public $cardAccount;
+    public $category;
 }

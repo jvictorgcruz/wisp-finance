@@ -56,7 +56,11 @@ test('invoice resolves status correctly', function () {
 });
 
 test('invoice calculates total and paid amounts', function () {
-    $invoice = CreditCardInvoice::factory()->create(['credit_card_detail_id' => $this->cardDetail->id]);
+    $invoice = CreditCardInvoice::factory()->create([
+        'credit_card_detail_id' => $this->cardDetail->id,
+        'closing_date' => now()->addDays(10),
+        'due_date' => now()->addDays(20),
+    ]);
 
     ExpectedCashFlow::factory()->create([
         'credit_card_invoice_id' => $invoice->id,
