@@ -56,6 +56,9 @@ class UpsertAccountAction
                     ['account_id' => $account->id],
                     array_merge($details, ['ledger_id' => $account->ledger_id])
                 );
+
+                // Sync open invoices with new dates
+                app(\App\Actions\CreditCards\SyncInvoiceDatesAction::class)->execute($account->creditCardDetail);
             }
 
             return $account->fresh(['creditCardDetail']);

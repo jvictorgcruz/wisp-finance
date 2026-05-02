@@ -91,7 +91,7 @@ class CreditCardInvoice extends Model
 
     protected function paidAmount(): Attribute
     {
-        return Attribute::get(fn () => $this->expectedCashFlows->where('status', 'paid')->sum('amount'));
+        return Attribute::get(fn () => $this->expectedCashFlows->where('status', 'PAID')->sum('amount'));
     }
 
     protected function status(): Attribute
@@ -102,20 +102,34 @@ class CreditCardInvoice extends Model
             $isPaid = $total > 0 && $paid >= $total;
 
             if ($isPaid) {
-                return 'paid';
+                return 'PAID';
             }
 
             $today = Carbon::today();
 
             if ($today < $this->closing_date) {
-                return 'open';
+                return 'OPEN';
             }
 
             if ($today <= $this->due_date) {
-                return 'closed';
+                return 'CLOSED';
             }
 
-            return 'overdue';
+            return 'OVERDUE';
         });
+    }
+
+    /**
+     * Helpers
+     */
+
+    public function isPaid(): bool
+    {
+        return $this->status === 'PAID';
+    }
+
+    public function isClosed(): bool
+    {
+        return in_array($this->status, ['CLOSED', 'PAID', 'OVERDUE']);
     }
 }

@@ -24,4 +24,7 @@ abstract class TestCase extends BaseTestCase
     public ?Account $parentAccount = null;
     public $cardAccount;
     public $category;
+    public $upsertAction;
+    public $bankAccount;
+    public $invoice;
 }

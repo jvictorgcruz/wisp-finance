@@ -27,32 +27,32 @@ test('invoice resolves status correctly', function () {
         'closing_date' => Carbon::today()->addDays(5),
         'due_date' => Carbon::today()->addDays(15),
     ]);
-    expect($invoice->status)->toBe('open');
+    expect($invoice->status)->toBe('OPEN');
 
     // 2. CLOSED: today >= closing_date AND today <= due_date
     $invoice->update([
         'closing_date' => Carbon::today()->subDays(1),
         'due_date' => Carbon::today()->addDays(5),
     ]);
-    expect($invoice->fresh()->status)->toBe('closed');
+    expect($invoice->fresh()->status)->toBe('CLOSED');
 
     // 3. OVERDUE: today > due_date
     $invoice->update([
         'closing_date' => Carbon::today()->subDays(10),
         'due_date' => Carbon::today()->subDays(1),
     ]);
-    expect($invoice->fresh()->status)->toBe('overdue');
+    expect($invoice->fresh()->status)->toBe('OVERDUE');
 
     // 4. PAID: total paid >= total amount
     ExpectedCashFlow::factory()->create([
         'credit_card_invoice_id' => $invoice->id,
         'amount' => 100.00,
-        'status' => 'paid',
+        'status' => 'PAID',
         'account_id' => $this->account->id,
     ]);
     
     // We need to ensure total_amount reflects the cashflows
-    expect($invoice->fresh()->status)->toBe('paid');
+    expect($invoice->fresh()->status)->toBe('PAID');
 });
 
 test('invoice calculates total and paid amounts', function () {
@@ -65,20 +65,20 @@ test('invoice calculates total and paid amounts', function () {
     ExpectedCashFlow::factory()->create([
         'credit_card_invoice_id' => $invoice->id,
         'amount' => 100.00,
-        'status' => 'paid',
+        'status' => 'PAID',
         'account_id' => $this->account->id,
     ]);
 
     ExpectedCashFlow::factory()->create([
         'credit_card_invoice_id' => $invoice->id,
         'amount' => 50.00,
-        'status' => 'pending',
+        'status' => 'PENDING',
         'account_id' => $this->account->id,
     ]);
 
     expect($invoice->total_amount)->toBe(150.00);
     expect($invoice->paid_amount)->toBe(100.00);
-    expect($invoice->status)->toBe('open'); // Because today < closing_date (factory default)
+    expect($invoice->status)->toBe('OPEN'); // Because today < closing_date (factory default)
 });
 
 test('invoice is isolated by ledger scope', function () {
