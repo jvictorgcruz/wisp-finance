@@ -7,6 +7,7 @@ use App\Traits\HasLedger;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CreditCardDetail extends Model
@@ -51,5 +52,13 @@ class CreditCardDetail extends Model
     public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class);
+    }
+
+    /**
+     * Get the invoices for the credit card.
+     */
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(CreditCardInvoice::class);
     }
 }

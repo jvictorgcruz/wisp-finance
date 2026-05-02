@@ -25,6 +25,7 @@ class ExpectedCashFlow extends Model
     protected $fillable = [
         'transaction_id',
         'account_id',
+        'credit_card_invoice_id',
         'amount',
         'due_date',
         'description',
@@ -36,6 +37,7 @@ class ExpectedCashFlow extends Model
         return [
             'amount' => Money::class,
             'due_date' => 'date',
+            'credit_card_invoice_id' => 'integer',
             'status' => 'string', // Could use an enum
         ];
     }
@@ -54,5 +56,13 @@ class ExpectedCashFlow extends Model
     public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class);
+    }
+
+    /**
+     * Get the invoice this cash flow belongs to.
+     */
+    public function invoice(): BelongsTo
+    {
+        return $this->belongsTo(CreditCardInvoice::class, 'credit_card_invoice_id');
     }
 }

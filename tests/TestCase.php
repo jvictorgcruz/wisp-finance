@@ -14,6 +14,8 @@ abstract class TestCase extends BaseTestCase
     public ?User $superAdmin = null;
     public ?Ledger $ledger = null;
     public $action;
+    public $account;
+    public $cardDetail;
     public $driver;
     public $data;
     public $bank;
