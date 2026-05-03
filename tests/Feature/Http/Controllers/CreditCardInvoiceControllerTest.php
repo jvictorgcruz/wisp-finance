@@ -8,10 +8,12 @@ use App\Models\CreditCardInvoice;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
+use Tests\TestCase;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    /** @var TestCase $this */
     $result = createAuthenticatedLedger();
     $this->user = $result['user'];
     $this->ledger = $result['ledger'];
@@ -66,7 +68,7 @@ test('it cannot access invoices from other ledgers', function () {
     ]);
 
     // Trying to access other ledger's card invoice
-    $response = $this->get(route('accounts.invoices.show', $otherAccount));
+    $response = $this->get(route('cards.invoices.show', $otherAccount));
 
     $response->assertStatus(404);
 });

@@ -1,4 +1,5 @@
 import { useTranslation } from '@/Hooks/useTranslation';
+import { formatCurrency } from '@/Utils/format';
 
 interface Props {
   limit: number;
@@ -34,7 +35,7 @@ export default function LimitProgressBar({ limit, currentBalance }: Props) {
       
       <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-tight">
         <span>R$ 0,00</span>
-        <span>{t('credit_cards.invoices.limit')}: R$ {(limit/100).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+        <span>{t('credit_cards.invoices.limit')}: {formatCurrency(limit)}</span>
       </div>
     </div>
   );

@@ -27,7 +27,7 @@ export default function InvoiceTimeline({ months, currentMonth, accountId }: Pro
         return (
           <Link
             key={month}
-            href={`/accounts/${accountId}/invoices/${month}`}
+            href={`/cards/${accountId}/invoices/${month}`}
             className={cn(
               "shrink-0 px-6 py-2 rounded-full text-sm transition-all duration-200 whitespace-nowrap",
               isActive 

@@ -71,8 +71,8 @@ Route::middleware('check_maintenance')->group(function () {
         Route::get('dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
         Route::resource('accounts', \App\Http\Controllers\AccountController::class)->only(['index', 'store', 'update', 'destroy']);
-        Route::get('accounts/{account}/invoices/{yearMonth?}', [\App\Http\Controllers\CreditCards\CreditCardInvoiceController::class, 'show'])->name('accounts.invoices.show');
-        Route::post('accounts/{account}/invoices/{invoice}/pay', [\App\Http\Controllers\CreditCards\CreditCardInvoiceController::class, 'pay'])->name('accounts.invoices.pay');
+        Route::get('cards/{account}/invoices/{yearMonth?}', [\App\Http\Controllers\CreditCards\CreditCardInvoiceController::class, 'show'])->name('cards.invoices.show');
+        Route::post('cards/{account}/invoices/{invoice}/pay', [\App\Http\Controllers\CreditCards\CreditCardInvoiceController::class, 'pay'])->name('cards.invoices.pay');
         Route::get('cards', [\App\Http\Controllers\CreditCardController::class, 'index'])->name('cards.index');
         Route::resource('categories', \App\Http\Controllers\CategoryController::class)->only(['index', 'store', 'update', 'destroy']);
 

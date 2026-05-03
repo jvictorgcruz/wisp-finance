@@ -45,7 +45,7 @@ export default function PaymentModal({ show, onClose, account, invoice, sourceAc
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    post(`/accounts/${account.id}/invoices/${invoice.id}/pay`, {
+    post(`/cards/${account.id}/invoices/${invoice.id}/pay`, {
       onSuccess: () => {
         onClose();
         reset();

@@ -45,10 +45,11 @@ class ReverseTransactionAction extends BaseFinancialAction
                 ExpectedCashFlow::create([
                     'transaction_id' => $reversal->id,
                     'account_id' => $flow->account_id,
+                    'credit_card_invoice_id' => $flow->credit_card_invoice_id, // Keep the invoice!
                     'amount' => $flow->amount * -1,
-                    'due_date' => now(),
+                    'due_date' => $flow->due_date, // Keep same due date
                     'description' => "REVERSAL: " . ($flow->description ?? ""),
-                    'status' => 'PAID', // It's a reversing payment
+                    'status' => $flow->status, // Use same status so it negates in the same bucket
                 ]);
             }
 

@@ -211,7 +211,7 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                                             {t('accounts.page.pay_bill')}
                                         </Button>
                                         <Link 
-                                            href={`/accounts/${card.id}/invoices`}
+                                            href={`/cards/${card.id}/invoices`}
                                             className="flex-1"
                                         >
                                             <Button 
@@ -238,14 +238,14 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                                             {formatCurrency(Math.abs(card.balance))} {t('accounts.page.limit_used').toLowerCase()}
                                         </p>
                                         <p className="text-[10px] font-black text-slate-900">
-                                            {Math.min(100, Math.round((Math.abs(card.balance) / card.credit_card_details.limit) * 100))}% de {formatCurrency(card.credit_card_details.limit)}
+                                            {Math.min(100, Math.round((Math.abs(card.balance) / (card.credit_card_details.limit || 1)) * 100))}% de {formatCurrency(card.credit_card_details.limit)}
                                         </p>
                                     </div>
                                     <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
                                         <div 
                                             className="h-full rounded-full transition-all duration-1000 ease-out"
                                             style={{ 
-                                                width: `${Math.min(100, (Math.abs(card.balance) / card.credit_card_details.limit) * 100)}%`,
+                                                width: `${Math.min(100, (Math.abs(card.balance) / (card.credit_card_details.limit || 1)) * 100)}%`,
                                                 backgroundColor: card.ui_metadata?.color || '#3b82f6'
                                             }}
                                         ></div>
