@@ -7,6 +7,7 @@ import AccountSelect from '@/Components/Transactions/AccountSelect';
 import DatePicker from '@/Components/Common/DatePicker';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { toCents, fromCents } from '@/Utils/money';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -27,15 +28,22 @@ export default function PaymentModal({ show, onClose, account, invoice, sourceAc
   const amountInputRef = useRef<HTMLInputElement>(null);
   const sourceSelectRef = useRef<HTMLButtonElement>(null);
 
-  const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
-    amount: (invoice.total_amount - invoice.paid_amount) / 100,
+  const form = useForm({
+    amount: fromCents(invoice.total_amount - invoice.paid_amount),
     source_account_id: null as number | null,
     date: new Date().toISOString().split('T')[0],
   });
 
+  const { data, setData, post, processing, errors, reset, clearErrors } = form;
+
+  form.transform((data) => ({
+    ...data,
+    amount: toCents(data.amount),
+  }));
+
   useEffect(() => {
     if (show) {
-      setData('amount', (invoice.total_amount - invoice.paid_amount) / 100);
+      setData('amount', fromCents(invoice.total_amount - invoice.paid_amount));
       // Matching TransactionModal focus behavior
       setTimeout(() => {
         amountInputRef.current?.focus();

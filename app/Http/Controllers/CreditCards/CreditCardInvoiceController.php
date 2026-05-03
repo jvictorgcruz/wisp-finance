@@ -79,7 +79,7 @@ class CreditCardInvoiceController extends Controller
         }
 
         $sourceAccount = Account::findOrFail($request->source_account_id);
-        $amountCents = (int) round($request->amount * 100);
+        $amountCents = (int) $request->amount;
         $date = Carbon::parse($request->date);
 
         $action->execute($invoice, $sourceAccount, $amountCents, $date);

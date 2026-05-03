@@ -47,7 +47,7 @@ beforeEach(function () {
 });
 
 test('it records a regular income as a paid cash flow', function () {
-    $amount = 100.00;
+    $amount = 10000;
     $date = Carbon::today();
 
     $transaction = $this->action->execute(
@@ -63,11 +63,11 @@ test('it records a regular income as a paid cash flow', function () {
     
     $cashFlow = ExpectedCashFlow::first();
     expect($cashFlow->status)->toBe('PAID');
-    expect($cashFlow->amount)->toBe(100.00);
+    expect($cashFlow->amount)->toBe(10000);
 });
 
 test('it records a credit card refund as a negative pending cash flow linked to an invoice', function () {
-    $amount = 50.00;
+    $amount = 5000;
     $date = Carbon::parse('2024-10-02'); // Before closing 05
 
     $transaction = $this->action->execute(
@@ -83,7 +83,7 @@ test('it records a credit card refund as a negative pending cash flow linked to 
     
     $cashFlow = ExpectedCashFlow::first();
     expect($cashFlow->status)->toBe('PENDING');
-    expect($cashFlow->amount)->toBe(-50.00); // Should be negative
+    expect($cashFlow->amount)->toBe(-5000); // Should be negative
     
     $invoice = CreditCardInvoice::where('reference_year_month', '2024-10')->first();
     expect($invoice)->not->toBeNull();

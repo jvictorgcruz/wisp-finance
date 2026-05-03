@@ -15,6 +15,7 @@ import CategorySelect from '@/Components/Transactions/CategorySelect';
 import DropdownSelector from '@/Components/Common/DropdownSelector';
 import Tooltip from '@/Components/Common/Tooltip';
 import Modal from '@/Components/Common/Modal';
+import { formatCurrency } from '@/Utils/format';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -54,12 +55,6 @@ interface Props {
     };
 }
 
-const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-    }).format(amount / 100);
-};
 
 interface Transaction {
     id: number;

@@ -51,13 +51,13 @@ test('it pays an invoice fully', function () {
     // 1. Create 2 pending cash flows
     ExpectedCashFlow::factory()->create([
         'credit_card_invoice_id' => $this->invoice->id,
-        'amount' => 100.00,
+        'amount' => 10000,
         'status' => 'PENDING',
         'account_id' => $this->cardAccount->id,
     ]);
     ExpectedCashFlow::factory()->create([
         'credit_card_invoice_id' => $this->invoice->id,
-        'amount' => 50.00,
+        'amount' => 5000,
         'status' => 'PENDING',
         'account_id' => $this->cardAccount->id,
     ]);
@@ -79,10 +79,10 @@ test('it pays an invoice fully', function () {
 });
 
 test('it handles partial payment by splitting items', function () {
-    // 1. One item of 100
+    // 1. One item of 10000 cents
     ExpectedCashFlow::factory()->create([
         'credit_card_invoice_id' => $this->invoice->id,
-        'amount' => 100.00,
+        'amount' => 10000,
         'status' => 'PENDING',
         'account_id' => $this->cardAccount->id,
     ]);
@@ -92,16 +92,16 @@ test('it handles partial payment by splitting items', function () {
 
     // 3. Verify: should have 2 cashflows now (40 paid, 60 pending)
     expect(ExpectedCashFlow::count())->toBe(2);
-    expect(ExpectedCashFlow::where('status', 'PAID')->first()->amount)->toBe(40.00);
-    expect(ExpectedCashFlow::where('status', 'PENDING')->first()->amount)->toBe(60.00);
+    expect(ExpectedCashFlow::where('status', 'PAID')->first()->amount)->toBe(4000);
+    expect(ExpectedCashFlow::where('status', 'PENDING')->first()->amount)->toBe(6000);
     expect($this->invoice->fresh()->paid_amount)->toBe(4000);
 });
 
 test('it handles overpayment by creating credit in the invoice', function () {
-    // 1. One item of 100
+    // 1. One item of 10000 cents
     ExpectedCashFlow::factory()->create([
         'credit_card_invoice_id' => $this->invoice->id,
-        'amount' => 100.00,
+        'amount' => 10000,
         'status' => 'PENDING',
         'account_id' => $this->cardAccount->id,
     ]);
@@ -119,8 +119,8 @@ test('it handles overpayment by creating credit in the invoice', function () {
 
     expect($paidItem)->not->toBeNull();
     expect($creditItem)->not->toBeNull();
-    expect($paidItem->amount)->toBe(100.00);
-    expect($creditItem->amount)->toBe(-50.00);
+    expect($paidItem->amount)->toBe(10000);
+    expect($creditItem->amount)->toBe(-5000);
     
     // Invoice total is now 5000 cents (10000 - 5000)
     expect($this->invoice->fresh()->total_amount)->toBe(5000);

@@ -1,33 +1,23 @@
 /**
- * Utility functions for formatting dates and currencies using native Intl API.
+ * Format a number as currency (BRL).
+ * Assumes the input amount is in cents.
  */
-
-/**
- * Formats a currency value to BRL.
- * @param amount Amount in cents (integer)
- */
-export const formatCurrency = (amount: number) => {
+export const formatCurrency = (amount: number, showSymbol: boolean = true): string => {
     return new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
+        style: showSymbol ? 'currency' : 'decimal',
         currency: 'BRL',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
     }).format(amount / 100);
 };
 
 /**
- * Formats a date string (YYYY-MM-DD) to a localized format.
- * @param dateStr Date string from backend
- * @param locale Current locale ('pt' or 'en')
- * @param options Intl.DateTimeFormatOptions
+ * Format a date string to a readable format.
  */
-export const formatDate = (dateStr: string, locale: string = 'pt', options: Intl.DateTimeFormatOptions = {}) => {
-    // If it's just Year-Month (YYYY-MM)
-    if (dateStr.length === 7) {
-        const [year, month] = dateStr.split('-');
-        const date = new Date(parseInt(year), parseInt(month) - 1, 15);
-        return new Intl.DateTimeFormat(locale === 'pt' ? 'pt-BR' : 'en-US', options).format(date);
+export const formatDate = (date: string | Date, locale: string = 'pt-BR') => {
+    try {
+        return new Intl.DateTimeFormat(locale).format(new Date(date));
+    } catch (e) {
+        return date.toString();
     }
-
-    // Standard date (YYYY-MM-DD or ISO)
-    const date = dateStr.includes('T') ? new Date(dateStr) : new Date(dateStr + 'T12:00:00');
-    return new Intl.DateTimeFormat(locale === 'pt' ? 'pt-BR' : 'en-US', options).format(date);
 };

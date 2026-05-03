@@ -42,7 +42,7 @@ beforeEach(function () {
 
 test('record expense creates correct entries and cashflow', function () {
     $action = new RecordExpenseAction();
-    $amount = 150.50;
+    $amount = 15050;
     $date = Carbon::now();
     $description = 'Lunch at restaurant';
 
@@ -65,21 +65,21 @@ test('record expense creates correct entries and cashflow', function () {
     $credit = $entries->where('type', 'CREDIT')->first();
 
     expect($debit->account_id)->toBe($this->expenseAccount->id);
-    expect($debit->amount)->toBe(150.50);
+    expect($debit->amount)->toBe(15050);
     
     expect($credit->account_id)->toBe($this->assetAccount->id);
-    expect($credit->amount)->toBe(150.50);
+    expect($credit->amount)->toBe(15050);
 
     // Check ExpectedCashFlow
     $cashFlow = ExpectedCashFlow::where('transaction_id', $transaction->id)->first();
     expect($cashFlow)->not->toBeNull();
     expect($cashFlow->status)->toBe('PAID');
-    expect($cashFlow->amount)->toBe(150.50);
+    expect($cashFlow->amount)->toBe(15050);
 });
 
 test('record income creates correct entries and cashflow', function () {
     $action = new RecordIncomeAction();
-    $amount = 5000.00;
+    $amount = 500000;
     $date = Carbon::now();
     $description = 'Monthly Salary';
 
@@ -111,7 +111,7 @@ test('record transfer creates correct entries', function () {
     ]);
 
     $action = new RecordTransferAction();
-    $amount = 100.00;
+    $amount = 10000;
 
     $transaction = $action->execute(
         $this->assetAccount,

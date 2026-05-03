@@ -41,7 +41,7 @@ beforeEach(function () {
 
 test('it can store an expense', function () {
     $response = $this->post('/transactions/expense', [
-        'amount' => 150.50, // R$ 150,50
+        'amount' => 15050, // R$ 150,50
         'date' => now()->format('Y-m-d'),
         'description' => 'Test Expense',
         'source_account_id' => $this->bank->id,
@@ -58,7 +58,7 @@ test('it can store an expense', function () {
 
 test('it can store an income', function () {
     $response = $this->post('/transactions/income', [
-        'amount' => 2000.00, // R$ 2000,00
+        'amount' => 200000, // R$ 2000,00
         'date' => now()->format('Y-m-d'),
         'description' => 'Test Income',
         'source_account_id' => $this->revenueCat->id,
@@ -114,7 +114,7 @@ test('user can search transactions', function () {
 
 test('it can store a transaction without description', function () {
     $response = $this->post('/transactions/expense', [
-        'amount' => 50.00,
+        'amount' => 5000,
         'date' => now()->format('Y-m-d'),
         'description' => null,
         'source_account_id' => $this->bank->id,

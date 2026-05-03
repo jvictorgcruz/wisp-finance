@@ -36,7 +36,7 @@ test('it renders the invoice index page', function () {
         'reference_year_month' => now()->format('Y-m'),
     ]);
 
-    $response = $this->get(route('accounts.invoices.show', $this->cardAccount));
+    $response = $this->get(route('cards.invoices.show', $this->cardAccount));
 
     $response->assertStatus(200);
     $response->assertInertia(fn (Assert $page) => $page
@@ -50,7 +50,7 @@ test('it renders the invoice index page', function () {
 test('it redirects if invoice control is disabled', function () {
     $this->cardDetail->update(['invoice_control_enabled' => false]);
 
-    $response = $this->get(route('accounts.invoices.show', $this->cardAccount));
+    $response = $this->get(route('cards.invoices.show', $this->cardAccount));
 
     $response->assertRedirect(route('accounts.index'));
 });

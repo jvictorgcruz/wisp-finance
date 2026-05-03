@@ -201,14 +201,14 @@ test('it inactivates an account with zero balance', function () {
         'transaction_id' => $transaction->id,
         'account_id' => $account->id,
         'type' => 'DEBIT',
-        'amount' => 10.00,
+        'amount' => 1000,
         'entry_date' => now(),
     ]);
     \App\Models\JournalEntry::create([
         'transaction_id' => $transaction->id,
         'account_id' => $account->id,
         'type' => 'CREDIT',
-        'amount' => 10.00,
+        'amount' => 1000,
         'entry_date' => now(),
     ]);
 
@@ -239,7 +239,7 @@ test('it prevents inactivation of an account with a non-zero balance', function 
         'transaction_id' => $transaction->id,
         'account_id' => $account->id,
         'type' => 'DEBIT',
-        'amount' => 50.00,
+        'amount' => 5000,
         'entry_date' => now(),
     ]);
 

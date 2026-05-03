@@ -14,11 +14,12 @@ class RecordTransferAction extends BaseFinancialAction
      * 
      * @param Account $sourceAccount Account to take money from
      * @param Account $destinationAccount Account to move money to
+     * @param int $amount Amount in cents
      */
     public function execute(
         Account $sourceAccount,
         Account $destinationAccount,
-        float|int $amount,
+        int $amount,
         Carbon $date,
         ?string $description,
         array $metadata = []
@@ -44,19 +45,11 @@ class RecordTransferAction extends BaseFinancialAction
             // Source (Asset) -> CREDIT (decreases asset)
             $sourceEntry = $this->createEntry($transaction, $sourceAccount->id, 'CREDIT', $amount, $date->toDateString());
 
-            // For transfers, we might want to record two cashflows or just one?
-            // Usually, a transfer is one event. Let's record it on the destination side or source side.
-            // Requirement 2 says: "ExpectedCashflow gerado como finalizado PAGO".
-            // I'll record it for the source account as a "payment" of the transfer.
+            // For transfers, we record it on the source side.
             $this->createPaidCashFlow($transaction, $sourceAccount->id, $amount, $date->toDateString(), $description);
 
             // Validate balance
-            $debitSum = (int) round($destEntry->getAttributes()['amount']);
-            $creditSum = (int) round($sourceEntry->getAttributes()['amount']);
-
-            if ($debitSum !== $creditSum) {
-                throw new \App\Exceptions\InconsistentJournalEntryException($debitSum, $creditSum);
-            }
+            $this->validateBalance(collect([$destEntry, $sourceEntry]));
 
             return $transaction;
         });

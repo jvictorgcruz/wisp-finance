@@ -8,9 +8,19 @@ interface Props {
     error?: string;
     className?: string;
     autoFocus?: boolean;
+    variant?: 'normal' | 'large';
 }
 
-const CurrencyInput = forwardRef<HTMLInputElement, Props>(({ value, onChange, onKeyDown, label, error, className = "", autoFocus }, ref) => {
+const CurrencyInput = forwardRef<HTMLInputElement, Props>(({ 
+    value, 
+    onChange, 
+    onKeyDown, 
+    label, 
+    error, 
+    className = "", 
+    autoFocus,
+    variant = 'large'
+}, ref) => {
     const [displayValue, setDisplayValue] = useState('');
 
     useEffect(() => {
@@ -30,6 +40,10 @@ const CurrencyInput = forwardRef<HTMLInputElement, Props>(({ value, onChange, on
         onChange(cents / 100);
     };
 
+    const inputStyles = variant === 'large' 
+        ? `w-full bg-slate-50 border-none focus:ring-2 focus:ring-primary/20 rounded-2xl px-4 py-4 text-2xl font-black text-slate-900 placeholder:text-slate-300 transition-all ${error ? 'ring-2 ring-rose-500/20' : ''}`
+        : `w-full bg-white border border-slate-200 rounded-lg px-3 py-2.5 text-sm placeholder:text-slate-400 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5 ${error ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500/5' : ''}`;
+
     return (
         <div className={className}>
             {label && (
@@ -45,7 +59,7 @@ const CurrencyInput = forwardRef<HTMLInputElement, Props>(({ value, onChange, on
                     value={displayValue}
                     onChange={handleChange}
                     onKeyDown={onKeyDown}
-                    className={`w-full bg-slate-50 border-none focus:ring-2 focus:ring-primary/20 rounded-2xl px-4 py-4 text-2xl font-black text-slate-900 placeholder:text-slate-300 transition-all ${error ? 'ring-2 ring-rose-500/20' : ''}`}
+                    className={inputStyles}
                     placeholder="R$ 0,00"
                 />
             </div>

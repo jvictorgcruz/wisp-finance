@@ -60,7 +60,7 @@ class AccountBalanceSeeder extends Seeder
                 'transaction_id' => $transaction->id,
                 'account_id' => $openingBalanceRoot->id,
                 'type' => 'CREDIT',
-                'amount' => 10000.00,
+                'amount' => 1000000,
                 'entry_date' => now()->subDays(10),
             ]);
 
@@ -68,7 +68,7 @@ class AccountBalanceSeeder extends Seeder
                 'transaction_id' => $transaction->id,
                 'account_id' => $checkingAccount->id,
                 'type' => 'DEBIT',
-                'amount' => 10000.00,
+                'amount' => 1000000,
                 'entry_date' => now()->subDays(10),
             ]);
         });

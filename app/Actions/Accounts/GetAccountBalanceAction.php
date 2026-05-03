@@ -11,7 +11,7 @@ class GetAccountBalanceAction
 {
     /**
      * Calculate the current balance of accounts based on their type.
-     * Returns a collection keyed by account ID.
+     * Returns a collection keyed by account ID (in cents).
      * 
      * @param int|array|Collection $accountIds
      */
@@ -71,6 +71,6 @@ class GetAccountBalanceAction
      */
     public function executeSingle(Account $account): int
     {
-        return $this->execute([$account->id])->get($account->id, 0);
+        return (int) $this->execute([$account->id])->get($account->id, 0);
     }
 }

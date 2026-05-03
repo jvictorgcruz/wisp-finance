@@ -215,7 +215,7 @@ test('it inactivates the entire tree when a category has historical entries', fu
         'transaction_id' => $transaction->id,
         'account_id' => $sub->id,
         'type' => 'DEBIT',
-        'amount' => 1500.00,
+        'amount' => 150000,
         'entry_date' => now(),
     ]);
 

@@ -25,6 +25,7 @@ vi.mock('@inertiajs/react', () => ({
         post: vi.fn(),
         reset: vi.fn(),
         clearErrors: vi.fn(),
+        transform: function(this: any) { return this; },
         processing: false,
         errors: {},
     }),

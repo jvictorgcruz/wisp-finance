@@ -82,7 +82,7 @@ export default function InvoiceSummary({ invoice }: Props) {
                     <div className="flex items-baseline gap-2">
                         <span className="text-2xl font-bold text-slate-300">R$</span>
                         <h2 className="text-5xl font-black tracking-tighter text-slate-900">
-                            {(invoice.total_amount / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                            {formatCurrency(invoice.total_amount, false)}
                         </h2>
                     </div>
                 </div>

@@ -56,7 +56,7 @@ test('it inactivates a category with history instead of deleting', function () {
         'transaction_id' => $transaction->id,
         'account_id' => $sub->id,
         'type' => 'DEBIT',
-        'amount' => 1500.00,
+        'amount' => 150000,
         'entry_date' => now(),
     ]);
 

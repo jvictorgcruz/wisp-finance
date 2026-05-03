@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { useTranslation } from '@/Hooks/useTranslation';
 import Modal from '@/Components/Common/Modal';
+import CurrencyInput from '@/Components/Common/CurrencyInput';
 import TextField from '@/Components/Common/TextField';
 import LucideIcon from '@/Components/Common/LucideIcon';
 import DropdownSelector from '@/Components/Common/DropdownSelector';
 import { Account } from './AccountRow';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { toCents, fromCents } from '@/Utils/money';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -75,7 +77,7 @@ export default function AccountModal({
                     },
                     is_credit_card: account.is_credit_card || false,
                     credit_card_details: {
-                        limit: account.credit_card_details?.limit ?? 0,
+                        limit: fromCents(account.credit_card_details?.limit ?? 0),
                         closing_day: account.credit_card_details?.closing_day ?? 10,
                         due_day: account.credit_card_details?.due_day ?? 17,
                         invoice_control_enabled: account.credit_card_details?.invoice_control_enabled ?? true
@@ -149,7 +151,11 @@ export default function AccountModal({
 
         transform((data) => ({
             ...data,
-            is_credit_card: data.parent_Key === 'credit_card'
+            is_credit_card: data.parent_Key === 'credit_card',
+            credit_card_details: {
+                ...data.credit_card_details,
+                limit: toCents(data.credit_card_details.limit)
+            }
         }));
 
         if (mode === 'edit' && account) {
@@ -169,18 +175,10 @@ export default function AccountModal({
         }
     };
 
-    const formatLimit = (val: number) => {
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-        }).format(val / 100);
-    };
-
-    const handleLimitChange = (val: string) => {
-        const numericValue = parseInt(val.replace(/\D/g, '')) || 0;
+    const handleLimitChange = (val: number) => {
         setData(d => ({
             ...d,
-            credit_card_details: { ...d.credit_card_details, limit: numericValue }
+            credit_card_details: { ...d.credit_card_details, limit: val }
         }));
     };
 
@@ -366,12 +364,11 @@ export default function AccountModal({
                     {/* Credit Card Details */}
                     {data.parent_Key === 'credit_card' && (
                         <div className="space-y-6 animate-in fade-in slide-in-from-top-2 duration-300">
-                            <TextField
-                                id="limit"
+                            <CurrencyInput
+                                variant="normal"
                                 label={t('accounts.modal.limit_label')}
-                                value={formatLimit(data.credit_card_details.limit)}
+                                value={data.credit_card_details.limit}
                                 onChange={handleLimitChange}
-                                placeholder={t('accounts.modal.limit_placeholder')}
                                 error={errors['credit_card_details.limit' as keyof typeof errors]}
                             />
                             

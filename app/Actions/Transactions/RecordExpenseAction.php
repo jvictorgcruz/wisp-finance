@@ -14,11 +14,12 @@ class RecordExpenseAction extends BaseFinancialAction
      * 
      * @param Account $sourceAccount The asset account being decreased (e.g., Wallet)
      * @param Account $categoryAccount The expense category being increased
+     * @param int $amount Amount in cents
      */
     public function execute(
         Account $sourceAccount,
         Account $categoryAccount,
-        float|int $amount,
+        int $amount,
         Carbon $date,
         ?string $description,
         array $metadata = []
@@ -47,14 +48,8 @@ class RecordExpenseAction extends BaseFinancialAction
             // Handle cash flows (Paid for assets, Pending for credit cards)
             $this->resolveCashFlows($transaction, $sourceAccount, $amount, $date, $description);
 
-            // Validate balance using the raw attributes to avoid float precision issues in comparison
-            $entries = collect([$destEntry, $sourceEntry]);
-            $debitSum = (int) round($destEntry->getAttributes()['amount']);
-            $creditSum = (int) round($sourceEntry->getAttributes()['amount']);
-
-            if ($debitSum !== $creditSum) {
-                throw new \App\Exceptions\InconsistentJournalEntryException($debitSum, $creditSum);
-            }
+            // Validate balance
+            $this->validateBalance(collect([$destEntry, $sourceEntry]));
 
             return $transaction;
         });

@@ -125,7 +125,7 @@ class GetPaginatedTransactionsAction
                     'id' => $transaction->id,
                     'date' => $transaction->date ? \Illuminate\Support\Carbon::parse($transaction->date)->format('Y-m-d') : null,
                     'description' => $transaction->description,
-                    'amount' => $debitEntry ? (int) round($debitEntry->amount * 100) : 0,
+                    'amount' => $debitEntry ? (int) $debitEntry->amount : 0,
                     'type' => $type,
                     'status' => $transaction->status->value,
                     'source_account_id' => $type === 'INCOME' ? $category?->id : $account?->id,

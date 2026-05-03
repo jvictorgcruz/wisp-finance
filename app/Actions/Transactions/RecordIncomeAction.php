@@ -14,11 +14,12 @@ class RecordIncomeAction extends BaseFinancialAction
      * 
      * @param Account $categoryAccount The revenue category (source of income)
      * @param Account $destinationAccount The asset account being increased (e.g., Bank)
+     * @param int $amount Amount in cents
      */
     public function execute(
         Account $categoryAccount,
         Account $destinationAccount,
-        float|int $amount,
+        int $amount,
         Carbon $date,
         ?string $description,
         array $metadata = []
@@ -48,12 +49,7 @@ class RecordIncomeAction extends BaseFinancialAction
             $this->resolveCashFlows($transaction, $destinationAccount, $amount, $date, $description, 1, true);
 
             // Validate balance
-            $debitSum = (int) round($destEntry->getAttributes()['amount']);
-            $creditSum = (int) round($sourceEntry->getAttributes()['amount']);
-
-            if ($debitSum !== $creditSum) {
-                throw new \App\Exceptions\InconsistentJournalEntryException($debitSum, $creditSum);
-            }
+            $this->validateBalance(collect([$destEntry, $sourceEntry]));
 
             return $transaction;
         });

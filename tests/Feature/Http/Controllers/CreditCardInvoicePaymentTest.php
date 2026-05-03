@@ -43,17 +43,17 @@ test('it can pay a credit card invoice', function () {
     ExpectedCashFlow::factory()->create([
         'account_id' => $this->cardAccount->id,
         'credit_card_invoice_id' => $this->invoice->id,
-        'amount' => 150.00, // R$ 150,00 (factory uses cast)
+        'amount' => 15000, // R$ 150,00 (factory uses cast)
         'status' => 'PENDING',
     ]);
 
     $response = $this->actingAs($this->user)
-        ->post(route('accounts.invoices.pay', [
+        ->post(route('cards.invoices.pay', [
             'account' => $this->cardAccount->id,
             'invoice' => $this->invoice->id,
         ]), [
             'source_account_id' => $this->sourceAccount->id,
-            'amount' => 150.00,
+            'amount' => 15000,
             'date' => Carbon::now()->toDateString(),
         ]);
 
@@ -82,12 +82,12 @@ test('it can pay a credit card invoice', function () {
 test('it handles overpayment by creating a credit entry', function () {
     // User pays R$ 150
     $this->actingAs($this->user)
-        ->post(route('accounts.invoices.pay', [
+        ->post(route('cards.invoices.pay', [
             'account' => $this->cardAccount->id,
             'invoice' => $this->invoice->id,
         ]), [
             'source_account_id' => $this->sourceAccount->id,
-            'amount' => 150.00,
+            'amount' => 15000,
             'date' => Carbon::now()->toDateString(),
         ]);
 

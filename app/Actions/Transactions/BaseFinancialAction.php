@@ -8,7 +8,6 @@ use App\Models\JournalEntry;
 use App\Models\ExpectedCashFlow;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
-
 use Illuminate\Support\Carbon;
 
 abstract class BaseFinancialAction
@@ -20,8 +19,9 @@ abstract class BaseFinancialAction
      */
     protected function validateBalance(Collection $entries): void
     {
-        $debitSum = $entries->where('type', 'DEBIT')->sum('amount_raw');
-        $creditSum = $entries->where('type', 'CREDIT')->sum('amount_raw');
+        // We use amount directly as it is now always cents (int)
+        $debitSum = (int) $entries->where('type', 'DEBIT')->sum('amount');
+        $creditSum = (int) $entries->where('type', 'CREDIT')->sum('amount');
 
         if ($debitSum !== $creditSum) {
             throw new InconsistentJournalEntryException($debitSum, $creditSum);
@@ -30,8 +30,9 @@ abstract class BaseFinancialAction
 
     /**
      * Create a journal entry and return it.
+     * @param int $amount Amount in cents
      */
-    protected function createEntry(Transaction $transaction, int $accountId, string $type, float|int $amount, string $date): JournalEntry
+    protected function createEntry(Transaction $transaction, int $accountId, string $type, int $amount, string $date): JournalEntry
     {
         return JournalEntry::create([
             'transaction_id' => $transaction->id,
@@ -44,8 +45,9 @@ abstract class BaseFinancialAction
 
     /**
      * Create a paid cash flow for the transaction.
+     * @param int $amount Amount in cents
      */
-    protected function createPaidCashFlow(Transaction $transaction, int $accountId, float|int $amount, string $date, ?string $description): ExpectedCashFlow
+    protected function createPaidCashFlow(Transaction $transaction, int $accountId, int $amount, string $date, ?string $description): ExpectedCashFlow
     {
         return ExpectedCashFlow::create([
             'transaction_id' => $transaction->id,
@@ -59,11 +61,12 @@ abstract class BaseFinancialAction
 
     /**
      * Handle cash flow creation, detecting credit cards with invoice control.
+     * @param int $amount Amount in cents
      */
     protected function resolveCashFlows(
         Transaction $transaction,
         \App\Models\Account $account,
-        float|int $amount,
+        int $amount,
         Carbon $date,
         ?string $description,
         int $installments = 1,
@@ -71,7 +74,9 @@ abstract class BaseFinancialAction
     ): void {
         if ($account->is_credit_card && $account->creditCardDetail?->invoice_control_enabled) {
             $card = $account->creditCardDetail;
-            $installmentAmount = round($amount / $installments, 2);
+            
+            // Integer division for installments
+            $installmentAmount = (int) floor($amount / $installments);
             $remainingAmount = $amount;
 
             for ($i = 0; $i < $installments; $i++) {

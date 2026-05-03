@@ -44,7 +44,7 @@ beforeEach(function () {
 });
 
 test('it records a simple purchase correctly', function () {
-    $amount = 100.00;
+    $amount = 10000;
     $date = Carbon::parse('2024-10-02');
 
     $transaction = $this->action->execute(
@@ -66,13 +66,13 @@ test('it records a simple purchase correctly', function () {
 
     // Check cash flow
     $cashFlow = ExpectedCashFlow::where('transaction_id', $transaction->id)->first();
-    expect($cashFlow->amount)->toBe(100.00);
+    expect($cashFlow->amount)->toBe(10000);
     expect($cashFlow->credit_card_invoice_id)->toBe($invoice->id);
     expect($cashFlow->status)->toBe('PENDING');
 });
 
 test('it records installment purchase across multiple invoices', function () {
-    $amount = 300.00;
+    $amount = 30000;
     $date = Carbon::parse('2024-10-06'); // After closing (05), so first installment in 2024-11
 
     $transaction = $this->action->execute(
@@ -90,7 +90,7 @@ test('it records installment purchase across multiple invoices', function () {
     
     // Installment 1: 2024-11
     expect($cashFlows[0]->invoice->reference_year_month)->toBe('2024-11');
-    expect($cashFlows[0]->amount)->toBe(100.00);
+    expect($cashFlows[0]->amount)->toBe(10000);
 
     // Installment 2: 2024-12
     expect($cashFlows[1]->invoice->reference_year_month)->toBe('2024-12');
@@ -100,7 +100,7 @@ test('it records installment purchase across multiple invoices', function () {
 });
 
 test('it records a refund correctly', function () {
-    $amount = 50.00;
+    $amount = 5000;
     $date = Carbon::parse('2024-10-02');
 
     $transaction = $this->action->execute(
@@ -122,13 +122,13 @@ test('it records a refund correctly', function () {
 
     // Cash flow should be negative (reducing the invoice total)
     $cashFlow = ExpectedCashFlow::where('transaction_id', $transaction->id)->first();
-    expect($cashFlow->amount)->toBe(-50.00); 
+    expect($cashFlow->amount)->toBe(-5000); 
 });
 
 test('it allows transactions exceeding the card limit', function () {
-    $this->cardDetail->update(['limit' => 500.00]);
+    $this->cardDetail->update(['limit' => 50000]);
     
-    $amount = 1000.00;
+    $amount = 100000;
     $date = Carbon::today();
 
     $transaction = $this->action->execute(
@@ -142,13 +142,13 @@ test('it allows transactions exceeding the card limit', function () {
     expect($transaction)->not->toBeNull();
     // Use raw query or check model to avoid cast confusion in where clause
     expect(JournalEntry::where('transaction_id', $transaction->id)->count())->toBe(2);
-    expect($transaction->journalEntries->first()->amount)->toBe(1000.00);
+    expect($transaction->journalEntries->first()->amount)->toBe(100000);
 });
 
 test('it records directly as paid if invoice control is disabled', function () {
     $this->cardDetail->update(['invoice_control_enabled' => false]);
     
-    $amount = 100.00;
+    $amount = 10000;
     $date = Carbon::today();
 
     $transaction = $this->action->execute(

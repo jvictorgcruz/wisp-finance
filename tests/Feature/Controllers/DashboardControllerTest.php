@@ -27,7 +27,7 @@ test('dashboard displays summary and transactions', function () {
 
     // Record a transaction
     $this->post(route('transactions.store-expense'), [
-        'amount' => 1000,
+        'amount' => 100000,
         'date' => now()->format('Y-m-d'),
         'description' => 'Test Expense',
         'source_account_id' => $asset->id,

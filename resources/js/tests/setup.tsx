@@ -1,13 +1,4 @@
 import '@testing-library/jest-dom';
-import { URL, URLSearchParams } from 'node:url';
-
-// Fix for whatwg-url / jsdom issues in certain environments
-if (typeof global.URL === 'undefined') {
-  global.URL = URL as any;
-}
-if (typeof global.URLSearchParams === 'undefined') {
-  global.URLSearchParams = URLSearchParams as any;
-}
 
 import { expect, afterEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';

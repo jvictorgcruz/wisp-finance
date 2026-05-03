@@ -12,6 +12,7 @@ import Modal from '@/Components/Common/Modal';
 import PaymentModal from './Invoices/components/PaymentModal';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { formatCurrency } from '@/Utils/format';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -25,12 +26,6 @@ interface CreditCardsProps {
     accounts: Account[]; // Root accounts for the modal
 }
 
-const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-    }).format(amount / 100);
-};
 
 export default function CreditCards({ cards, root_categories, available_colors, available_icons, accounts }: CreditCardsProps) {
     const { t } = useTranslation();

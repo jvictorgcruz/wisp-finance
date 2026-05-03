@@ -38,7 +38,7 @@ test('it returns paginated and formatted transactions', function () {
         'transaction_id' => $transaction->id,
         'account_id' => $expense->id,
         'type' => 'DEBIT',
-        'amount' => 50.00, // 5000 cents
+        'amount' => 5000, // 5000 cents
         'entry_date' => now()
     ]);
 
@@ -46,7 +46,7 @@ test('it returns paginated and formatted transactions', function () {
         'transaction_id' => $transaction->id,
         'account_id' => $asset->id,
         'type' => 'CREDIT',
-        'amount' => 50.00,
+        'amount' => 5000,
         'entry_date' => now()
     ]);
 

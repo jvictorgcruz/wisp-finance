@@ -46,7 +46,7 @@ test('invoice resolves status correctly', function () {
     // 4. PAID: total paid >= total amount
     ExpectedCashFlow::factory()->create([
         'credit_card_invoice_id' => $invoice->id,
-        'amount' => 100.00,
+        'amount' => 10000,
         'status' => 'PAID',
         'account_id' => $this->account->id,
     ]);
@@ -64,14 +64,14 @@ test('invoice calculates total and paid amounts', function () {
 
     ExpectedCashFlow::factory()->create([
         'credit_card_invoice_id' => $invoice->id,
-        'amount' => 100.00,
+        'amount' => 10000,
         'status' => 'PAID',
         'account_id' => $this->account->id,
     ]);
 
     ExpectedCashFlow::factory()->create([
         'credit_card_invoice_id' => $invoice->id,
-        'amount' => 50.00,
+        'amount' => 5000,
         'status' => 'PENDING',
         'account_id' => $this->account->id,
     ]);

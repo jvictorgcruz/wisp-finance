@@ -9,6 +9,7 @@ import TextField from '@/Components/Common/TextField';
 import DatePicker from '@/Components/Common/DatePicker';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { toCents, fromCents } from '@/Utils/money';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -34,7 +35,7 @@ export default function TransactionModal({ show, onClose, initialType, transacti
     const sourceSelectRef = useRef<HTMLButtonElement>(null);
     const destinationSelectRef = useRef<HTMLButtonElement>(null);
 
-    const { data, setData, post, put, delete: destroy, processing, errors, reset, clearErrors } = useForm({
+    const form = useForm({
         amount: 0,
         date: new Date().toISOString().split('T')[0],
         description: '',
@@ -43,12 +44,19 @@ export default function TransactionModal({ show, onClose, initialType, transacti
         metadata: {},
     });
 
+    const { data, setData, post, put, delete: destroy, processing, errors, reset, clearErrors } = form;
+
+    form.transform((data) => ({
+        ...data,
+        amount: toCents(data.amount),
+    }));
+
     useEffect(() => {
         if (show) {
             if (transaction) {
                 setActiveTab(transaction.type);
                 setData({
-                    amount: transaction.amount / 100,
+                    amount: fromCents(transaction.amount),
                     date: transaction.date,
                     description: transaction.description || '',
                     source_account_id: transaction.source_account_id,

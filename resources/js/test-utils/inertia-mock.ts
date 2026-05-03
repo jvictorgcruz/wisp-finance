@@ -43,6 +43,9 @@ export const createInertiaMock = (options: MockOptions = {}) => {
             errors,
             reset,
             clearErrors,
+            transform: vi.fn().mockImplementation(function(this: any, callback) {
+                return this;
+            }),
         })),
         usePage: vi.fn(() => ({
             url,

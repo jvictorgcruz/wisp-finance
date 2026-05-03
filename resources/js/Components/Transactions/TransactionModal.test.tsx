@@ -19,6 +19,7 @@ vi.mock('@inertiajs/react', () => ({
         errors: {},
         reset: vi.fn(),
         clearErrors: vi.fn(),
+        transform: function(this: any) { return this; },
     })),
     usePage: vi.fn(() => ({
         props: {

@@ -47,7 +47,7 @@ beforeEach(function () {
 });
 
 test('it records a regular expense as a paid cash flow', function () {
-    $amount = 100.00;
+    $amount = 10000;
     $date = Carbon::today();
 
     $transaction = $this->action->execute(
@@ -67,7 +67,7 @@ test('it records a regular expense as a paid cash flow', function () {
 });
 
 test('it records a credit card expense as a pending cash flow linked to an invoice', function () {
-    $amount = 150.00;
+    $amount = 15000;
     $date = Carbon::parse('2024-10-02'); // Before closing 05
 
     $transaction = $this->action->execute(

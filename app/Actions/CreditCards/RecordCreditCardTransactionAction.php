@@ -7,8 +7,6 @@ use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
 use App\Models\Account;
 use App\Models\CreditCardDetail;
-use App\Models\CreditCardInvoice;
-use App\Models\ExpectedCashFlow;
 use App\Models\Transaction;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -17,11 +15,12 @@ class RecordCreditCardTransactionAction extends BaseFinancialAction
 {
     /**
      * Record a credit card transaction (Expense or Income/Refund).
+     * @param int $amount Amount in cents
      */
     public function execute(
         CreditCardDetail $card,
         Account $categoryAccount,
-        float $amount,
+        int $amount,
         Carbon $date,
         string $description,
         int $installments = 1,
@@ -41,13 +40,13 @@ class RecordCreditCardTransactionAction extends BaseFinancialAction
             // 2. Journal Entries (Accounting)
             if ($type === 'EXPENSE') {
                 // DEBIT Category (Expense), CREDIT Card (Liability)
-                $this->createEntry($transaction, $categoryAccount->id, 'DEBIT', $amount, $date->toDateString());
-                $this->createEntry($transaction, $card->account_id, 'CREDIT', $amount, $date->toDateString());
+                $destEntry = $this->createEntry($transaction, $categoryAccount->id, 'DEBIT', $amount, $date->toDateString());
+                $sourceEntry = $this->createEntry($transaction, $card->account_id, 'CREDIT', $amount, $date->toDateString());
             } else {
                 // INCOME / REFUND
                 // DEBIT Card (Liability), CREDIT Category (Revenue/Expense reversal)
-                $this->createEntry($transaction, $card->account_id, 'DEBIT', $amount, $date->toDateString());
-                $this->createEntry($transaction, $categoryAccount->id, 'CREDIT', $amount, $date->toDateString());
+                $destEntry = $this->createEntry($transaction, $card->account_id, 'DEBIT', $amount, $date->toDateString());
+                $sourceEntry = $this->createEntry($transaction, $categoryAccount->id, 'CREDIT', $amount, $date->toDateString());
             }
 
             // 3. Invoice & CashFlow Logic
@@ -60,6 +59,9 @@ class RecordCreditCardTransactionAction extends BaseFinancialAction
                 $installments, 
                 $type === 'INCOME'
             );
+
+            // Validate balance
+            $this->validateBalance(collect([$destEntry, $sourceEntry]));
 
             return $transaction;
         });

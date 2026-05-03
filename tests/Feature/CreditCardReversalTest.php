@@ -39,7 +39,7 @@ beforeEach(function () {
 
 test('reversing a credit card transaction updates the invoice total', function () {
     $date = Carbon::parse('2024-01-15');
-    $amount = 100.00;
+    $amount = 10000;
 
     // 1. Record Transaction
     $action = app(RecordCreditCardTransactionAction::class);
