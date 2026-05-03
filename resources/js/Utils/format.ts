@@ -14,9 +14,9 @@ export const formatCurrency = (amount: number, showSymbol: boolean = true): stri
 /**
  * Format a date string to a readable format.
  */
-export const formatDate = (date: string | Date, locale: string = 'pt-BR') => {
+export const formatDate = (date: string | Date, locale: string = 'pt-BR', options?: Intl.DateTimeFormatOptions) => {
     try {
-        return new Intl.DateTimeFormat(locale).format(new Date(date));
+        return new Intl.DateTimeFormat(locale, options).format(new Date(date));
     } catch (e) {
         return date.toString();
     }

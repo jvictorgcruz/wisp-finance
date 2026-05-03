@@ -10,6 +10,8 @@ return [
         'limit' => 'Limite',
         'status_paid' => 'Paga',
         'status_open' => 'Aberta',
+        'status_open_current' => 'Atual',
+        'status_open_future' => 'Futura',
         'status_closed' => 'Fechada',
         'status_overdue' => 'Atrasada',
         'total_invoice' => 'Total da Fatura',

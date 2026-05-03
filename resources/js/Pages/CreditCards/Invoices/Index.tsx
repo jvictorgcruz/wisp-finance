@@ -17,10 +17,11 @@ interface Props {
   invoice: any;
   availableMonths: string[];
   currentYearMonth: string;
+  activeYearMonth: string;
   sourceAccounts: any[];
 }
 
-export default function Index({ account, invoice, availableMonths, currentYearMonth, sourceAccounts }: Props) {
+export default function Index({ account, invoice, availableMonths, currentYearMonth, activeYearMonth, sourceAccounts }: Props) {
     const { t } = useTranslation();
     const [showPaymentModal, setShowPaymentModal] = useState(false);
 
@@ -94,7 +95,10 @@ export default function Index({ account, invoice, availableMonths, currentYearMo
                 <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
                     {/* Main Invoice Content */}
                     <div className="xl:col-span-8 space-y-8">
-                        <InvoiceSummary invoice={invoice} />
+                        <InvoiceSummary 
+                            invoice={invoice} 
+                            isActive={invoice.reference_year_month === activeYearMonth}
+                        />
                         
                         <div className="space-y-6">
                             <div className="flex items-center gap-4 mb-6">

@@ -24,6 +24,9 @@ export default function InvoiceTimeline({ months, currentMonth, accountId }: Pro
       {sortedMonths.map((month) => {
         const isActive = month === currentMonth;
         
+        const monthDate = new Date(month + '-02');
+        const isCurrentYear = monthDate.getFullYear() === new Date().getFullYear();
+        
         return (
           <Link
             key={month}
@@ -32,10 +35,15 @@ export default function InvoiceTimeline({ months, currentMonth, accountId }: Pro
               "shrink-0 px-6 py-2 rounded-full text-sm transition-all duration-200 whitespace-nowrap",
               isActive 
                 ? "bg-primary text-white font-bold" 
-                : "text-slate-500 font-medium hover:bg-slate-100 active:opacity-70"
+                : "text-slate-500 font-medium bg-slate-100 hover:bg-slate-200"
             )}
           >
-            {formatDate(month, locale, { month: 'long' })}
+            <span className="capitalize">
+              {formatDate(monthDate, locale, { 
+                month: 'long', 
+                year: isCurrentYear ? undefined : 'numeric' 
+              })}
+            </span>
           </Link>
         );
       })}

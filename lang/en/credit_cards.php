@@ -10,6 +10,8 @@ return [
         'limit' => 'Limit',
         'status_paid' => 'Paid',
         'status_open' => 'Open',
+        'status_open_current' => 'Current',
+        'status_open_future' => 'Future',
         'status_closed' => 'Closed',
         'status_overdue' => 'Overdue',
         'total_invoice' => 'Total Invoice',

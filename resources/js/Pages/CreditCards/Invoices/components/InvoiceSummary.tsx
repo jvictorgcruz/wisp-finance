@@ -10,9 +10,10 @@ function cn(...inputs: ClassValue[]) {
 
 interface Props {
   invoice: any;
+  isActive?: boolean;
 }
 
-export default function InvoiceSummary({ invoice }: Props) {
+export default function InvoiceSummary({ invoice, isActive }: Props) {
   const { t, locale } = useTranslation();
 
   const getStatusConfig = (status: string) => {
@@ -27,7 +28,9 @@ export default function InvoiceSummary({ invoice }: Props) {
         };
       case 'OPEN':
         return { 
-            label: t('credit_cards.invoices.status_open'), 
+            label: isActive 
+                ? t('credit_cards.invoices.status_open_current') 
+                : t('credit_cards.invoices.status_open_future'), 
             color: 'text-primary', 
             bg: 'bg-primary/5',
             borderColor: 'border-primary/10',
@@ -108,7 +111,7 @@ export default function InvoiceSummary({ invoice }: Props) {
             </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-slate-50">
+        <div className="gap-8 pt-6 border-t border-slate-50">
             <div className="space-y-4">
                 <div className="flex justify-between items-end">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
@@ -128,17 +131,6 @@ export default function InvoiceSummary({ invoice }: Props) {
                     <span className="text-emerald-600">{t('credit_cards.invoices.paid_amount')}: {formatCurrency(invoice.paid_amount)}</span>
                     <span className="text-slate-400">{t('credit_cards.invoices.remaining')}: {formatCurrency(remaining)}</span>
                 </div>
-            </div>
-
-            <div className="bg-slate-50 rounded-2xl p-4 flex items-start gap-3">
-                <div className="p-1.5 bg-white rounded-lg border border-slate-200">
-                    <TrendingUp className="w-3.5 h-3.5 text-primary" />
-                </div>
-                <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
-                    {t('credit_cards.invoices.auto_close_hint', { 
-                        day: new Date(invoice.closing_date).getDate() 
-                    })}
-                </p>
             </div>
         </div>
     </div>

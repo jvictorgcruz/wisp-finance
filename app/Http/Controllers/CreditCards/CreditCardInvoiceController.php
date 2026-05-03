@@ -57,6 +57,8 @@ class CreditCardInvoiceController extends Controller
             ->orderBy('name')
             ->get();
 
+        $activeInvoice = CreditCardInvoice::resolveActiveInvoice($account->creditCardDetail);
+
         return Inertia::render('CreditCards/Invoices/Index', [
             'account' => array_merge($account->load('creditCardDetail')->toArray(), [
                 'balance' => $balance
@@ -64,6 +66,7 @@ class CreditCardInvoiceController extends Controller
             'invoice' => $invoice,
             'availableMonths' => $availableMonths,
             'currentYearMonth' => $yearMonth,
+            'activeYearMonth' => $activeInvoice->reference_year_month,
             'sourceAccounts' => $sourceAccounts,
         ]);
     }
