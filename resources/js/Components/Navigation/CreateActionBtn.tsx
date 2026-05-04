@@ -50,7 +50,7 @@ export default function CreateActionBtn({ className, showText = true }: Props) {
         <Menu as="div" className={cn("relative", className)}>
             <Menu.Button
                 className={cn(
-                    "w-full bg-primary text-surface-lowest py-3 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-lg shadow-primary/20 group",
+                    "w-full bg-primary text-surface-lowest py-3 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-all group cursor-pointer",
                 )}
             >
                 <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />

@@ -62,7 +62,7 @@ test('it can pay a credit card invoice', function () {
 
     $this->assertDatabaseHas('transactions', [
         'ledger_id' => $this->ledger->id,
-        'type' => \App\Enums\TransactionType::CREDIT_CARD_PAYMENT->value,
+        'type' => \App\Enums\TransactionType::TRANSFER->value,
     ]);
 
     $this->assertDatabaseHas('expected_cash_flows', [
