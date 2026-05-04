@@ -61,10 +61,10 @@ export default function CategoryRow({
         <div className={cn(
             "flex items-center justify-between p-4 transition-all duration-200 group/row",
             isRoot 
-                ? "bg-white hover:bg-slate-50 border-b border-slate-100" 
-                : "bg-slate-50 border-l-2 border-b border-slate-100"
+                ? "bg-surface/40 hover:bg-surface/60 border-b border-slate-100" 
+                : "bg-white ml-8 border-l border-slate-200"
         )}>
-            <div className={cn("flex items-center gap-4", !isRoot && "ml-4")}>
+            <div className="flex items-center gap-4">
                 <div 
                     className={cn("w-9 h-9 min-w-[36px] rounded-xl flex items-center justify-center transition-colors overflow-hidden", typeColorClass)}
                     style={customColor ? { 
@@ -186,7 +186,7 @@ export default function CategoryRow({
                         leaveFrom="transform scale-100 opacity-100"
                         leaveTo="transform scale-95 opacity-0"
                     >
-                        <DisclosurePanel className="pb-0">
+                        <DisclosurePanel className="pb-2">
                             {category.children?.map(child => (
                                 <CategoryRow 
                                     key={child.id} 

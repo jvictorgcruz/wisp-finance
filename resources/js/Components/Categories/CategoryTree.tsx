@@ -28,7 +28,7 @@ export default function CategoryTree({ categories, onEdit, onDelete, onAddSub }:
     }
 
     return (
-        <div className="bg-white rounded-4xl border border-slate-100">
+        <div className="bg-white/50 backdrop-blur-sm rounded-4xl border border-slate-100 overflow-hidden">
             <div className="divide-y divide-slate-100">
                 {categories.map(category => (
                     <CategoryRow 

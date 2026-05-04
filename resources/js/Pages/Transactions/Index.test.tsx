@@ -7,7 +7,7 @@ import Index from './Index';
 vi.mock('@/Hooks/useTranslation', () => ({
     useTranslation: () => ({
         t: (key: string, params?: any) => {
-            if (params?.count) return `${params.count}X`;
+            if (params?.count) return `${params.count}×`;
             return key;
         },
         locale: 'pt',
@@ -93,7 +93,7 @@ describe('Transactions Index Page', () => {
         render(<Index transactions={mockTransactions} filters={mockFilters} />);
         
         expect(screen.getByText('Supermarket')).toBeInTheDocument();
-        expect(screen.getByText('(10X)')).toBeInTheDocument();
+        expect(screen.getByText('10X')).toBeInTheDocument();
         expect(screen.getByText('Salary')).toBeInTheDocument();
         // Check for relative date label (today/yesterday or formatted date)
         // Since it uses format(new Date(), ...) in the component, we might need to be careful.
