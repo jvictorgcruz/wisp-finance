@@ -6,6 +6,7 @@ import { twMerge } from 'tailwind-merge';
 import LucideIcon from '@/Components/Common/LucideIcon';
 import { useTranslation } from '@/Hooks/useTranslation';
 import DropdownSelector from '@/Components/Common/DropdownSelector';
+import FinancialAvatar from './FinancialAvatar';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -98,24 +99,11 @@ export default function AccountRow({
         )}>
             <div className="flex items-center gap-4">
                 
-                <div 
-                    className={cn("w-9 h-9 min-w-[36px] rounded-xl flex items-center justify-center transition-colors overflow-hidden", typeColorClass)}
-                    style={customColor ? { 
-                        backgroundColor: `${customColor}15`, 
-                        color: customColor 
-                    } : undefined}
-                >
-                    {isRoot || account.ui_metadata?.icon ? (
-                        <LucideIcon 
-                            name={isRoot ? (rootCategory?.icon || account.ui_metadata?.icon || getTypeIcon(account.type)) : account.ui_metadata?.icon!} 
-                            className="w-4 h-4" 
-                        />
-                    ) : (
-                        <span className="text-[10px] font-black tracking-tight leading-none pointer-events-none">
-                            {initials}
-                        </span>
-                    )}
-                </div>
+                <FinancialAvatar 
+                    account={account} 
+                    size="sm" 
+                    className={cn(!account.ui_metadata?.color && typeColorClass)}
+                />
                 
                 <div className="flex flex-col">
                     <div className="flex items-center gap-2">

@@ -152,7 +152,7 @@ class GetPaginatedTransactionsAction
     protected function deriveIcon(Transaction $transaction, string $type): string
     {
         if ($type === 'INCOME') return 'Banknote';
-        if ($type === 'TRANSFER') return 'ArrowLeftRight';
+        if ($type === 'TRANSFER') return 'RefreshCcw';
         
         // Try to get icon from category/account
         $debitAccount = $transaction->journalEntries->firstWhere('type', 'DEBIT')?->account;

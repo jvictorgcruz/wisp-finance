@@ -31,7 +31,7 @@ class PayInvoiceAction extends BaseFinancialAction
                 'created_by_user_id' => auth()->id(),
                 'date' => $date,
                 'description' => __('Pagamento de Fatura') . " - " . $invoice->reference_year_month,
-                'type' => TransactionType::CREDIT_CARD_PAYMENT,
+                'type' => TransactionType::TRANSFER,
                 'status' => TransactionStatus::ACTIVE,
             ]);
 

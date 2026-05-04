@@ -13,6 +13,7 @@ import PaymentModal from './Invoices/components/PaymentModal';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { formatCurrency } from '@/Utils/format';
+import FinancialAvatar from '@/Components/Accounts/FinancialAvatar';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -100,15 +101,7 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                         >
                             <div className="flex justify-between items-start">
                                 <div className="flex items-center gap-4">
-                                    <div 
-                                        className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden"
-                                        style={{ 
-                                            backgroundColor: `${card.ui_metadata?.color || '#3b82f6'}15`,
-                                            color: card.ui_metadata?.color || '#3b82f6'
-                                        }}
-                                    >
-                                        <LucideIcon name={card.ui_metadata?.icon || 'CreditCard'} className="w-5 h-5" />
-                                    </div>
+                                    <FinancialAvatar account={card} size="md" />
                                     <div>
                                         <h3 className="font-bold text-lg text-slate-900 leading-tight">{card.name}</h3>
                                         <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 opacity-60 leading-none mt-1">

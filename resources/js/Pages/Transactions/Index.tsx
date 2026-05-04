@@ -16,6 +16,7 @@ import DropdownSelector from '@/Components/Common/DropdownSelector';
 import Tooltip from '@/Components/Common/Tooltip';
 import Modal from '@/Components/Common/Modal';
 import { formatCurrency } from '@/Utils/format';
+import FinancialAvatar from '@/Components/Accounts/FinancialAvatar';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -70,6 +71,8 @@ interface Transaction {
     main_account_type: string;
     icon: string;
     running_balance: number | null;
+    account?: Account;
+    category?: Account;
 }
 
 export default function Index({ transactions, filters }: Props) {
@@ -401,15 +404,11 @@ export default function Index({ transactions, filters }: Props) {
                                                 transaction.status === 'ACTIVE' ? "hover:bg-slate-50/50" : "opacity-40 grayscale pointer-events-none"
                                             )}
                                         >
-                                                <div className={cn(
-                                                    "w-12 h-12 rounded-xl flex items-center justify-center transition-colors",
-                                                    transaction.type === 'INCOME' ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-500"
-                                                )}>
-                                                    <LucideIcon 
-                                                        name={transaction.icon} 
-                                                        className="w-5 h-5" 
-                                                    />
-                                                </div>
+                                                <FinancialAvatar 
+                                                    account={(transaction.category || transaction.account) as any} 
+                                                    size="lg" 
+                                                    icon={transaction.type === 'TRANSFER' ? 'RefreshCcw' : undefined}
+                                                />
                                                 
                                                 <div className="grow flex items-center justify-between gap-6">
                                                     <div className="flex flex-col">

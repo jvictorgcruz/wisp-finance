@@ -9,8 +9,9 @@ import InvoiceSummary from './components/InvoiceSummary';
 import InvoiceItemsTable from './components/InvoiceItemsTable';
 import PaymentModal from './components/PaymentModal';
 import PageHeader from '@/Components/Common/PageHeader';
-import { CreditCard, Banknote, ChevronLeft, LayoutDashboard, Plus } from 'lucide-react';
+import { CreditCard, Banknote, ChevronLeft, Info, LayoutDashboard, Plus } from 'lucide-react';
 import LucideIcon from '@/Components/Common/LucideIcon';
+import FinancialAvatar from '@/Components/Accounts/FinancialAvatar';
 
 interface Props {
   account: any;
@@ -31,67 +32,61 @@ export default function Index({ account, invoice, availableMonths, currentYearMo
     return (
         <AppLayout title={`${t('credit_cards.invoices.page_title')} - ${account.name}`}>
             <PageHeader>
-                <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-                    <div className="flex items-center gap-5">
-                        <Link 
-                            href="/cards"
-                            className="p-2.5 bg-slate-100 text-slate-400 hover:text-slate-900 hover:bg-slate-200 rounded-xl transition-all"
-                        >
-                            <ChevronLeft className="w-5 h-5" />
-                        </Link>
-                        
-                        <div className="flex items-center gap-4">
-                            <div 
-                                className="w-12 h-12 rounded-xl flex items-center justify-center overflow-hidden"
-                                style={{ 
-                                    backgroundColor: `${account.ui_metadata?.color || '#6366f1'}15`,
-                                    color: account.ui_metadata?.color || '#6366f1'
-                                }}
+                <div className="space-y-8">
+                    <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+                        <div className="flex items-center gap-5">
+                            <Link 
+                                href="/cards"
+                                className="p-2.5 bg-slate-100 text-slate-400 hover:text-slate-900 hover:bg-slate-200 rounded-xl transition-all"
                             >
-                                <LucideIcon name={account.ui_metadata?.icon || 'CreditCard'} className="w-6 h-6" />
+                                <ChevronLeft className="w-5 h-5" />
+                            </Link>
+                            
+                            <div className="flex items-center gap-4">
+                                <FinancialAvatar account={account} size="lg" />
+                                <div className="space-y-0.5">
+                                    <h2 className="text-2xl font-black tracking-tight text-slate-900 leading-none">
+                                        {account.name}
+                                    </h2>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                                        {t('credit_cards.invoices.page_subtitle')}
+                                    </p>
+                                </div>
                             </div>
-                            <div className="space-y-0.5">
-                                <h2 className="text-2xl font-black tracking-tight text-slate-900 leading-none">
-                                    {account.name}
-                                </h2>
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                                    {t('credit_cards.invoices.page_subtitle')}
-                                </p>
-                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setShowPaymentModal(true)}
+                                disabled={invoice.status === 'PAID'}
+                                className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-primary/90 transition-all cursor-pointer whitespace-nowrap disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed"
+                            >
+                                <Banknote className="w-4 h-4" />
+                                {t('credit_cards.invoices.pay_btn')}
+                            </button>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
-                        <button
-                            type="button"
-                            onClick={() => setShowPaymentModal(true)}
-                            disabled={invoice.status === 'PAID'}
-                            className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-primary/90 transition-all cursor-pointer whitespace-nowrap disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed"
-                        >
-                            <Banknote className="w-4 h-4" />
-                            {t('credit_cards.invoices.pay_btn')}
-                        </button>
-                    </div>
+                    {/* Timeline Navigation */}
+                    <section>
+                        <div className="flex items-center gap-4 mb-4">
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                                {t('credit_cards.invoices.timeline_title')}
+                            </h3>
+                            <div className="h-px grow bg-slate-200/60" />
+                        </div>
+                        <InvoiceTimeline 
+                            months={availableMonths} 
+                            currentMonth={currentYearMonth} 
+                            activeYearMonth={activeYearMonth}
+                            accountId={account.id} 
+                        />
+                    </section>
                 </div>
             </PageHeader>
 
-            <div className="max-w-7xl mx-auto space-y-8">
-                {/* Timeline Navigation */}
-                <section>
-                    <div className="flex items-center gap-4 mb-6">
-                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                            {t('credit_cards.invoices.timeline_title')}
-                        </h3>
-                        <div className="h-px grow bg-slate-100" />
-                    </div>
-                    <InvoiceTimeline 
-                        months={availableMonths} 
-                        currentMonth={currentYearMonth} 
-                        activeYearMonth={activeYearMonth}
-                        accountId={account.id} 
-                    />
-                </section>
-
+            <div className="max-w-7xl mx-auto space-y-8 mt-8">
                 <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
                     {/* Main Invoice Content */}
                     <div className="xl:col-span-8 space-y-8">
@@ -115,7 +110,7 @@ export default function Index({ account, invoice, availableMonths, currentYearMo
                     </div>
 
                     {/* Sidebar / Limit Info */}
-                    <div className="xl:col-span-4 space-y-8">
+                    <div className="xl:col-span-4">
                         <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm sticky top-24">
                             <div className="flex items-center justify-between mb-8">
                                 <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
@@ -137,17 +132,13 @@ export default function Index({ account, invoice, availableMonths, currentYearMo
                                     <span className="text-sm font-black text-slate-900">{formatCurrency(currentBalance)}</span>
                                 </div>
                                 <div className="flex justify-between items-center p-4 bg-primary/5 rounded-2xl border border-primary/10">
-                                    <span className="text-[11px] font-bold text-primary uppercase tracking-tight">{t('credit_cards.invoices.available_limit')}</span>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[11px] font-bold text-primary uppercase tracking-tight">{t('credit_cards.invoices.available_limit')}</span>
+                                        <span title={t('credit_cards.invoices.limit_disclaimer')}>
+                                            <Info className="w-3 h-3 text-primary/50" />
+                                        </span>
+                                    </div>
                                     <span className="text-sm font-black text-primary">{formatCurrency(Math.max(0, limit - currentBalance))}</span>
-                                </div>
-                            </div>
-
-                            <div className="mt-8 pt-8 border-t border-slate-50">
-                                <div className="bg-amber-50/50 p-4 rounded-2xl border border-amber-100/50">
-                                    <p className="text-[10px] text-amber-700 font-bold leading-relaxed">
-                                        <span className="block uppercase tracking-widest mb-1 opacity-60 text-[9px]">{t('common.attention')}</span>
-                                        {t('credit_cards.invoices.limit_disclaimer')}
-                                    </p>
                                 </div>
                             </div>
                         </div>

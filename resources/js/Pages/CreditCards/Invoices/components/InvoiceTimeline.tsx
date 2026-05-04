@@ -21,7 +21,7 @@ export default function InvoiceTimeline({ months, currentMonth, activeYearMonth,
   const sortedMonths = [...months].sort();
 
   return (
-    <div className="flex items-center gap-4 overflow-x-auto pb-4 px-2 -mx-2 scrollbar-hide">
+    <div className="flex items-center gap-4 overflow-x-auto pt-2 pb-4 px-2 -mx-2 scrollbar-hide">
       {sortedMonths.map((month) => {
         const isActive = month === currentMonth;
         
