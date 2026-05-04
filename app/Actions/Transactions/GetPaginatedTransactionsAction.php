@@ -13,7 +13,7 @@ class GetPaginatedTransactionsAction
      */
     public function execute(int $perPage = 15, array $filters = []): LengthAwarePaginator
     {
-        $paginator = Transaction::with(['journalEntries.account'])
+        $paginator = Transaction::with(['journalEntries.account', 'expectedCashFlows'])
             ->when($filters['search'] ?? null, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('description', 'like', "%{$search}%")
@@ -145,6 +145,9 @@ class GetPaginatedTransactionsAction
                         'ui_metadata' => $category->ui_metadata,
                     ] : null,
                     'running_balance' => $transaction->running_balance ?? null,
+                    // Installment total: taken from the first ECF that has it set.
+                    // Null means a single payment (À vista).
+                    'installment_total' => $transaction->expectedCashFlows->first()?->installment_total,
                 ];
             });
     }

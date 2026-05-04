@@ -14,7 +14,7 @@ interface Props {
             icon?: string;
             color?: string;
         };
-    };
+    } | null | undefined;
     size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
     className?: string;
     icon?: string;
@@ -37,6 +37,19 @@ const iconSizes = {
 };
 
 export default function FinancialAvatar({ account, size = 'md', className, icon }: Props) {
+    // Guard against null/undefined account (e.g. transactions with unresolved journal entries)
+    if (!account) {
+        return (
+            <div className={cn(
+                'flex items-center justify-center shrink-0 overflow-hidden font-black tracking-tighter leading-none uppercase transition-colors bg-slate-100',
+                sizeClasses[size],
+                className
+            )}>
+                <span className="text-slate-400">?</span>
+            </div>
+        );
+    }
+
     const color = account.ui_metadata?.color || '#6366f1';
     const displayIcon = icon || account.ui_metadata?.icon;
     

@@ -41,6 +41,10 @@ return [
         'delete_button' => 'Delete Transaction',
         'cta' => 'New Transaction',
         'select_type' => 'What do you want to record?',
+        'installments_label' => 'Installments',
+        'installments_single' => 'Single payment',
+        'installments_hint' => ':n× of :value each',
+        'installments_count' => ':countX',
     ],
     'dashboard' => [
         'title' => 'Dashboard',

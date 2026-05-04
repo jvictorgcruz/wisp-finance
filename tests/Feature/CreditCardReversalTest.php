@@ -1,6 +1,6 @@
 <?php
 
-use App\Actions\CreditCards\RecordCreditCardTransactionAction;
+use App\Actions\Transactions\RecordExpenseAction;
 use App\Actions\Transactions\VoidTransactionAction;
 use App\Models\Account;
 use App\Models\CreditCardDetail;
@@ -41,10 +41,10 @@ test('reversing a credit card transaction updates the invoice total', function (
     $date = Carbon::parse('2024-01-15');
     $amount = 10000;
 
-    // 1. Record Transaction
-    $action = app(RecordCreditCardTransactionAction::class);
+    // 1. Record Transaction using the standard RecordExpenseAction with a credit card source
+    $action = app(RecordExpenseAction::class);
     $transaction = $action->execute(
-        $this->cardDetail,
+        $this->cardAccount, // Credit card is the source (liability account)
         $this->category,
         $amount,
         $date,
@@ -52,7 +52,7 @@ test('reversing a credit card transaction updates the invoice total', function (
     );
 
     $invoice = CreditCardInvoice::resolveForCardAndDate($this->cardDetail, $date);
-    expect($invoice->total_amount)->toBe(10000); // 100.00 in cents
+    expect($invoice->total_amount)->toBe(10000);
 
     // 2. Void Transaction
     $voidAction = app(VoidTransactionAction::class);

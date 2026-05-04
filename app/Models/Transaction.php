@@ -9,12 +9,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Transaction extends Model
 {
     /** @use HasFactory */
     use HasFactory, HasLedger;
+
+    /**
+     * Override date serialization to emit date-only strings (Y-m-d) for date columns.
+     */
+    protected function serializeDate(\DateTimeInterface $date): string
+    {
+        return $date->format('Y-m-d');
+    }
 
     /**
      * The "booted" method of the model.

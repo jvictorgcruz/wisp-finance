@@ -15,7 +15,7 @@ import CategorySelect from '@/Components/Transactions/CategorySelect';
 import DropdownSelector from '@/Components/Common/DropdownSelector';
 import Tooltip from '@/Components/Common/Tooltip';
 import Modal from '@/Components/Common/Modal';
-import { formatCurrency } from '@/Utils/format';
+import { formatDate, formatCurrency } from '@/Utils/format';
 import FinancialAvatar from '@/Components/Accounts/FinancialAvatar';
 
 function cn(...inputs: ClassValue[]) {
@@ -70,6 +70,7 @@ interface Transaction {
     other_account: string;
     main_account_type: string;
     icon: string;
+    installment_total: number | null;
     running_balance: number | null;
     account?: Account;
     category?: Account;
@@ -168,7 +169,7 @@ export default function Index({ transactions, filters }: Props) {
         });
     };
 
-    const formatDate = (date: Date, options: Intl.DateTimeFormatOptions = {}) => {
+    const localFormatDate = (date: Date, options: Intl.DateTimeFormatOptions = {}) => {
         return new Intl.DateTimeFormat(locale === 'pt' ? 'pt-BR' : 'en-US', options).format(date);
     };
 
@@ -179,15 +180,11 @@ export default function Index({ transactions, filters }: Props) {
         const to = filters.date_to ? new Date(filters.date_to + 'T12:00:00') : null;
 
         if (from && to) {
-            if (from.getMonth() === to.getMonth() && from.getFullYear() === to.getFullYear()) {
-                const label = formatDate(from, { month: 'long', year: 'numeric' });
-                return label.charAt(0).toUpperCase() + label.slice(1);
-            }
-            return `${formatDate(from, { day: 'numeric', month: 'short' })} - ${formatDate(to, { day: 'numeric', month: 'short', year: 'numeric' })}`;
+            return `${localFormatDate(from, { day: 'numeric', month: 'short' })} - ${localFormatDate(to, { day: 'numeric', month: 'short', year: 'numeric' })}`;
         }
 
-        if (from) return `${formatDate(from, { day: 'numeric', month: 'long', year: 'numeric' })}`;
-        if (to) return `${formatDate(to, { day: 'numeric', month: 'long', year: 'numeric' })}`;
+        if (from) return `${localFormatDate(from, { day: 'numeric', month: 'long', year: 'numeric' })}`;
+        if (to) return `${localFormatDate(to, { day: 'numeric', month: 'long', year: 'numeric' })}`;
         
         return '';
     };
@@ -210,7 +207,9 @@ export default function Index({ transactions, filters }: Props) {
     const sortedDates = Object.keys(groupedTransactions).sort((a, b) => b.localeCompare(a));
 
     const getRelativeDateLabel = (dateStr: string) => {
-        const date = new Date(dateStr + 'T12:00:00'); 
+        const [year, month, day] = dateStr.split('-').map(Number);
+        const date = new Date(year, month - 1, day);
+        
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         
@@ -218,17 +217,14 @@ export default function Index({ transactions, filters }: Props) {
         yesterday.setDate(today.getDate() - 1);
         yesterday.setHours(0, 0, 0, 0);
 
-        const compareDate = new Date(dateStr + 'T12:00:00');
-        compareDate.setHours(0, 0, 0, 0);
-
-        if (compareDate.getTime() === today.getTime()) {
+        if (date.getTime() === today.getTime()) {
             return t('transactions.date.today');
         }
-        if (compareDate.getTime() === yesterday.getTime()) {
+        if (date.getTime() === yesterday.getTime()) {
             return t('transactions.date.yesterday');
         }
 
-        return formatDate(date, { day: 'numeric', month: 'long' });
+        return formatDate(dateStr, { day: 'numeric', month: 'long' });
     };
 
     return (
@@ -412,15 +408,17 @@ export default function Index({ transactions, filters }: Props) {
                                                 
                                                 <div className="grow flex items-center justify-between gap-6">
                                                     <div className="flex flex-col">
-                                                        <span className="font-bold text-slate-900 group-hover:text-primary transition-colors">
-                                                            {transaction.description || (
-                                                                transaction.type === 'TRANSFER' ? (
-                                                                    `${t(transaction.other_account)} → ${t(transaction.main_account)}`
-                                                                ) : (
-                                                                    t(transaction.main_account)
-                                                                )
-                                                            )}
-                                                        </span>
+                                                         <div className="flex items-center gap-2">
+                                                            <span className="font-bold text-slate-900 group-hover:text-primary transition-colors">
+                                                                {transaction.description || (
+                                                                    transaction.type === 'TRANSFER' ? (
+                                                                        `${t(transaction.other_account)} → ${t(transaction.main_account)}`
+                                                                    ) : (
+                                                                        t(transaction.main_account)
+                                                                    )
+                                                                )}
+                                                            </span>
+                                                         </div>
                                                         <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
                                                             {transaction.status === 'REVERSED' ? (
                                                                 <span className="text-rose-500 bg-rose-50 px-1.5 py-0.5 rounded-md border border-rose-100">
@@ -440,24 +438,29 @@ export default function Index({ transactions, filters }: Props) {
                                                     
                                                     <div className="flex items-center gap-6">
                                                         <div className="flex flex-col items-end gap-1 justify-center">
-                                                            <span className={cn(
-                                                                "text-lg font-black tracking-tight",
-                                                                transaction.type === 'INCOME' ? "text-emerald-600" : 
-                                                                transaction.type === 'EXPENSE' ? "text-rose-600" : 
-                                                                "text-slate-900"
-                                                            )}>
-                                                                {transaction.type === 'INCOME' ? '+ ' : transaction.type === 'EXPENSE' ? '- ' : ''} 
-                                                                {formatCurrency(Math.abs(transaction.amount))}
-                                                            </span>
+                                                                <span className={cn(
+                                                                    "text-lg font-black tracking-tight",
+                                                                    transaction.type === 'INCOME' ? "text-emerald-600" : 
+                                                                    transaction.type === 'EXPENSE' ? "text-rose-600" : 
+                                                                    "text-slate-900"
+                                                                )}>
+                                                                    {transaction.type === 'INCOME' ? '+ ' : transaction.type === 'EXPENSE' ? '- ' : ''} 
+                                                                    {formatCurrency(Math.abs(transaction.amount))}
+                                                                </span>
                                                             {transaction.running_balance !== null && (
                                                                 <span className="text-[10px] font-bold text-slate-400">
                                                                     {t('transactions.table.running_balance')}: {formatCurrency(transaction.running_balance)}
                                                                 </span>
                                                             )}
                                                             {transaction.type !== 'TRANSFER' && (
-                                                                <span className="py-0.5 bg-slate-50 text-[9px] font-black rounded-full text-slate-400 uppercase tracking-widest">
+                                                                 <span className="py-0.5 bg-slate-50 text-[9px] font-black rounded-full text-slate-400 uppercase tracking-widest px-2 border border-slate-100/50">
                                                                     {t(transaction.other_account)}
-                                                                </span>
+                                                                    {transaction.installment_total && transaction.installment_total > 1 && (
+                                                                        <span className="ml-1">
+                                                                            ({t('transactions.modal.installments_count', { count: transaction.installment_total })})
+                                                                        </span>
+                                                                    )}
+                                                                 </span>
                                                             )}
                                                         </div>
 

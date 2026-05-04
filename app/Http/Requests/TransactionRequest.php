@@ -25,6 +25,7 @@ class TransactionRequest extends FormRequest
             'amount' => ['required', 'numeric', 'min:0.01'],
             'date' => ['required', 'date'],
             'description' => ['nullable', 'string', 'max:255'],
+            'installments' => ['nullable', 'integer', 'min:1', 'max:48'],
             'source_account_id' => [
                 'required',
                 Rule::exists('accounts', 'id')->where('ledger_id', \App\Support\LedgerContext::currentId()),

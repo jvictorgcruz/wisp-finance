@@ -15,6 +15,17 @@ class ExpectedCashFlow extends Model
     use HasFactory, SoftDeletes;
 
     /**
+     * Override date serialization to emit date-only strings (Y-m-d) for date columns.
+     * Without this, Inertia serializes Carbon date casts as ISO 8601 with UTC offset
+     * (e.g. "2026-05-01T00:00:00.000000Z"), which shifts the displayed date by one day
+     * in UTC- timezones like Brazil (UTC-3).
+     */
+    protected function serializeDate(\DateTimeInterface $date): string
+    {
+        return $date->format('Y-m-d');
+    }
+
+    /**
      * The "booted" method of the model.
      */
     protected static function booted(): void

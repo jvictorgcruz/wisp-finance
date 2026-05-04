@@ -15,6 +15,7 @@ class RecordExpenseAction extends BaseFinancialAction
      * @param Account $sourceAccount The asset account being decreased (e.g., Wallet)
      * @param Account $categoryAccount The expense category being increased
      * @param int $amount Amount in cents
+     * @param int $installments Number of installments (1 = single payment, N = spread across N invoices)
      */
     public function execute(
         Account $sourceAccount,
@@ -22,13 +23,14 @@ class RecordExpenseAction extends BaseFinancialAction
         int $amount,
         Carbon $date,
         ?string $description,
-        array $metadata = []
+        array $metadata = [],
+        int $installments = 1,
     ): Transaction {
         if ($sourceAccount->id === $categoryAccount->id) {
             throw new \InvalidArgumentException("Source and category accounts must be different.");
         }
 
-        return DB::transaction(function () use ($sourceAccount, $categoryAccount, $amount, $date, $description, $metadata) {
+        return DB::transaction(function () use ($sourceAccount, $categoryAccount, $amount, $date, $description, $metadata, $installments) {
             $transaction = Transaction::create([
                 'ledger_id' => $sourceAccount->ledger_id,
                 'created_by_user_id' => auth()->id(),
@@ -46,7 +48,8 @@ class RecordExpenseAction extends BaseFinancialAction
             $sourceEntry = $this->createEntry($transaction, $sourceAccount->id, 'CREDIT', $amount, $date->toDateString());
 
             // Handle cash flows (Paid for assets, Pending for credit cards)
-            $this->resolveCashFlows($transaction, $sourceAccount, $amount, $date, $description);
+            // For credit card accounts with invoice control, $installments spreads the ECFs across N invoices.
+            $this->resolveCashFlows($transaction, $sourceAccount, $amount, $date, $description, $installments);
 
             // Validate balance
             $this->validateBalance(collect([$destEntry, $sourceEntry]));

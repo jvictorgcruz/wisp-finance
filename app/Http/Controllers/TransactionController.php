@@ -55,7 +55,8 @@ class TransactionController extends Controller
             $data['amount'],
             Carbon::parse($data['date']),
             $data['description'],
-            $data['metadata'] ?? []
+            $data['metadata'] ?? [],
+            $data['installments'] ?? 1,
         );
 
         return back()->with('success', __('transactions.modal.success.expense'));
@@ -134,7 +135,8 @@ class TransactionController extends Controller
                     $data['amount'],
                     $date,
                     $data['description'],
-                    $data['metadata'] ?? []
+                    $data['metadata'] ?? [],
+                    $data['installments'] ?? 1,
                 ),
                 TransactionType::INCOME => $incomeAction->execute(
                     Account::findOrFail($data['source_account_id']),

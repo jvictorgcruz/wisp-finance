@@ -41,6 +41,10 @@ return [
         'delete_button' => 'Excluir Transação',
         'cta' => 'Nova Transação',
         'select_type' => 'O que deseja registrar?',
+        'installments_label' => 'Parcelas',
+        'installments_single' => 'À vista',
+        'installments_hint' => ':n× de :value cada',
+        'installments_count' => ':countX',
     ],
     'dashboard' => [
         'title' => 'Dashboard',

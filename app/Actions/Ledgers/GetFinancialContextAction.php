@@ -22,7 +22,7 @@ class GetFinancialContextAction
                 ->whereNotNull('parent_id')
                 ->whereDoesntHave('children') // Only leaf accounts can receive transactions
                 ->where('status', AccountStatus::ACTIVE)
-                ->get(['id', 'name', 'type', 'ui_metadata']),
+                ->get(['id', 'name', 'type', 'ui_metadata', 'is_credit_card']),
                 
             'categories' => Account::where('ledger_id', $ledgerId)
                 ->whereIn('type', [AccountType::REVENUE, AccountType::EXPENSE])

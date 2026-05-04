@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useForm, usePage } from '@inertiajs/react';
 import { useTranslation } from '@/Hooks/useTranslation';
 import Modal from '@/Components/Common/Modal';
@@ -10,6 +10,7 @@ import DatePicker from '@/Components/Common/DatePicker';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { toCents, fromCents } from '@/Utils/money';
+import { formatCurrency } from '@/Utils/format';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -42,6 +43,7 @@ export default function TransactionModal({ show, onClose, initialType, transacti
         source_account_id: null as number | null,
         destination_account_id: null as number | null,
         metadata: {},
+        installments: 1,
     });
 
     const { data, setData, post, put, delete: destroy, processing, errors, reset, clearErrors } = form;
@@ -50,6 +52,36 @@ export default function TransactionModal({ show, onClose, initialType, transacti
         ...data,
         amount: toCents(data.amount),
     }));
+
+    // Detect if the selected source account is a credit card
+    const assetAccounts = financial_context?.accounts || [];
+    const categories = financial_context?.categories || [];
+
+    const isCreditCardSource = useMemo(() => {
+        if (activeTab !== 'EXPENSE' || !data.source_account_id) return false;
+        return assetAccounts.some(
+            (a: any) => a.id === data.source_account_id && a.is_credit_card
+        );
+    }, [activeTab, data.source_account_id, assetAccounts]);
+
+    // Reset installments only when the user actively switches AWAY from a credit card,
+    // not on initial mount or when loading an edit (false→true transition).
+    const prevIsCreditCardRef = useRef<boolean | null>(null);
+    useEffect(() => {
+        const prev = prevIsCreditCardRef.current;
+        prevIsCreditCardRef.current = isCreditCardSource;
+        // Only reset when transitioning from true → false (user changed source account)
+        if (prev === true && !isCreditCardSource) {
+            setData('installments', 1);
+        }
+    }, [isCreditCardSource]);
+
+    // Live installment preview
+    const installmentPreview = useMemo(() => {
+        if (!isCreditCardSource || data.installments <= 1 || data.amount <= 0) return null;
+        const perInstallment = formatCurrency(Math.floor(toCents(data.amount) / data.installments));
+        return `${data.installments}× ${perInstallment}`;
+    }, [isCreditCardSource, data.installments, data.amount]);
 
     useEffect(() => {
         if (show) {
@@ -62,6 +94,7 @@ export default function TransactionModal({ show, onClose, initialType, transacti
                     source_account_id: transaction.source_account_id,
                     destination_account_id: transaction.destination_account_id,
                     metadata: transaction.metadata || {},
+                    installments: transaction.installment_total ?? 1,
                 });
             } else {
                 reset();
@@ -113,9 +146,6 @@ export default function TransactionModal({ show, onClose, initialType, transacti
         }
     };
 
-    const assetAccounts = financial_context?.accounts || [];
-    const categories = financial_context?.categories || [];
-    
     const expenseCategories = categories.filter((c: any) => c.type === 'expense');
     const revenueCategories = categories.filter((c: any) => c.type === 'revenue');
 
@@ -243,6 +273,37 @@ export default function TransactionModal({ show, onClose, initialType, transacti
 
                     {renderSourceSelector()}
                     {renderDestinationSelector()}
+
+                    {/* Installments — only visible for credit card expense */}
+                    {isCreditCardSource && (
+                        <div className="space-y-2">
+                            <label className="block text-xs font-black uppercase tracking-widest text-slate-500">
+                                {t('transactions.modal.installments_label')}
+                            </label>
+                            <div className="flex gap-3 items-center">
+                                <div className="relative flex-1">
+                                    <select
+                                        value={data.installments}
+                                        onChange={(e) => setData('installments', parseInt(e.target.value))}
+                                        className="w-full h-12 pl-4 pr-10 bg-slate-50 border-0 rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-primary/20 appearance-none cursor-pointer"
+                                    >
+                                        <option value={1}>{t('transactions.modal.installments_single')}</option>
+                                        {Array.from({ length: 47 }, (_, i) => i + 2).map((n) => (
+                                            <option key={n} value={n}>{n}×</option>
+                                        ))}
+                                    </select>
+                                    <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                    </div>
+                                </div>
+                                {installmentPreview && (
+                                    <span className="text-xs font-black text-primary bg-primary/5 px-3 py-2 rounded-xl border border-primary/10 whitespace-nowrap">
+                                        {installmentPreview}
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex items-center justify-end gap-3 mt-10">
