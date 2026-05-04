@@ -70,7 +70,9 @@ abstract class BaseFinancialAction
         Carbon $date,
         ?string $description,
         int $installments = 1,
-        bool $isRefund = false
+        bool $isRefund = false,
+        bool $isPayment = false,
+        ?int $forceInvoiceId = null
     ): void {
         if ($account->is_credit_card && $account->creditCardDetail?->invoice_control_enabled) {
             $card = $account->creditCardDetail;
@@ -83,22 +85,30 @@ abstract class BaseFinancialAction
                 $currentInstallmentAmount = ($i === $installments - 1) ? $remainingAmount : $installmentAmount;
                 $remainingAmount -= $currentInstallmentAmount;
 
-                // For credit cards, refunds (INCOME) must be negative to reduce invoice total
-                if ($isRefund) {
+                // For credit cards:
+                // - Refunds (isRefund) reduce the invoice total (Negative ECF)
+                // - Payments (isPayment) reduce the invoice total (Negative ECF)
+                // - Regular purchases (EXPENSE) increase the invoice total (Positive ECF)
+                if ($isRefund || $isPayment) {
                     $currentInstallmentAmount = -$currentInstallmentAmount;
                 }
 
                 $installmentDate = $date->copy()->addMonths($i);
-                $invoice = \App\Models\CreditCardInvoice::resolveForCardAndDate($card, $installmentDate);
+                $invoiceId = $forceInvoiceId;
+                
+                if (!$invoiceId) {
+                    $invoice = \App\Models\CreditCardInvoice::resolveForCardAndDate($card, $installmentDate);
+                    $invoiceId = $invoice->id;
+                }
 
                 ExpectedCashFlow::create([
                     'transaction_id' => $transaction->id,
                     'account_id' => $account->id,
-                    'credit_card_invoice_id' => $invoice->id,
+                    'credit_card_invoice_id' => $invoiceId,
                     'amount' => $currentInstallmentAmount,
-                    'due_date' => $invoice->due_date,
+                    'due_date' => $isPayment ? $date : $installmentDate,
                     'description' => $installments > 1 ? "($description) " . ($i + 1) . "/$installments" : $description,
-                    'status' => 'PENDING',
+                    'status' => $isPayment ? 'PAID' : 'PENDING',
                 ]);
             }
         } else {

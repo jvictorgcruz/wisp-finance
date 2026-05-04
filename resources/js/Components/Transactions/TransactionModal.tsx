@@ -54,7 +54,9 @@ export default function TransactionModal({ show, onClose, initialType, transacti
     useEffect(() => {
         if (show) {
             if (transaction) {
-                setActiveTab(transaction.type);
+                // Map CREDIT_CARD_PAYMENT to TRANSFER for the UI tab
+                const type = transaction.type === 'CREDIT_CARD_PAYMENT' ? 'TRANSFER' : transaction.type;
+                setActiveTab(type);
                 setData({
                     amount: fromCents(transaction.amount),
                     date: transaction.date,

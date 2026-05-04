@@ -87,5 +87,7 @@ test('it records a credit card refund as a negative pending cash flow linked to 
     
     $invoice = CreditCardInvoice::where('reference_year_month', '2024-10')->first();
     expect($invoice)->not->toBeNull();
-    expect($invoice->total_amount)->toBe(-5000); // Verify it reduces the total (in cents)
+    // total_amount sums only positive values. paid_amount sums absolute negative values.
+    expect($invoice->total_amount)->toBe(0); 
+    expect($invoice->paid_amount)->toBe(5000); // Refund counts as a "credit/payment"
 });

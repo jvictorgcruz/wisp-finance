@@ -113,27 +113,33 @@ class CreditCardInvoice extends Model
 
     protected function totalAmount(): Attribute
     {
-        // Using query builder sum() to get raw BigInt (cents) as integer
-        return Attribute::get(fn () => (int) $this->expectedCashFlows()->sum('amount'));
+        // Total of purchases (positive amounts)
+        return Attribute::get(fn () => (int) $this->expectedCashFlows()
+            ->where('amount', '>', 0)
+            ->sum('amount'));
     }
 
     protected function paidAmount(): Attribute
     {
-        // Using query builder sum() to get raw BigInt (cents) as integer
-        return Attribute::get(fn () => (int) $this->expectedCashFlows()->where('status', 'PAID')->sum('amount'));
+        // Total of payments (negative amounts)
+        return Attribute::get(fn () => (int) abs($this->expectedCashFlows()
+            ->where('amount', '<', 0)
+            ->sum('amount')));
     }
 
     protected function status(): Attribute
     {
         return Attribute::get(function () {
-            $total = $this->total_amount;
-            $paid = $this->paid_amount;
+            // Net balance (Purchases + Payments)
+            $balance = (int) $this->expectedCashFlows()->sum('amount');
             
-            // Financial comparison in cents
-            $isPaid = $total > 0 && $paid >= $total;
-
-            if ($isPaid) {
-                return 'PAID';
+            // If balance is 0 or negative (overpaid), the invoice is PAID
+            if ($balance <= 0) {
+                // Special case: an empty invoice (sum 0) with no items might be considered OPEN,
+                // but usually, if it has items and balance is 0, it is PAID.
+                if ($this->expectedCashFlows()->exists()) {
+                    return 'PAID';
+                }
             }
 
             $today = Carbon::today();

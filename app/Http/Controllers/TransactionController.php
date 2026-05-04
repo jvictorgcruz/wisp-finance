@@ -144,7 +144,7 @@ class TransactionController extends Controller
                     $data['description'],
                     $data['metadata'] ?? []
                 ),
-                TransactionType::TRANSFER => $transferAction->execute(
+                TransactionType::TRANSFER, TransactionType::CREDIT_CARD_PAYMENT => $transferAction->execute(
                     Account::findOrFail($data['source_account_id']),
                     Account::findOrFail($data['destination_account_id']),
                     $data['amount'],

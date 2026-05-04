@@ -76,7 +76,12 @@ test('it does not sync already paid invoices', function () {
     \App\Models\ExpectedCashFlow::factory()->create([
         'credit_card_invoice_id' => $invoice->id,
         'amount' => 100,
-        'status' => 'PAID',
+        'account_id' => $this->cardAccount->id,
+    ]);
+    
+    \App\Models\ExpectedCashFlow::factory()->create([
+        'credit_card_invoice_id' => $invoice->id,
+        'amount' => -100,
         'account_id' => $this->cardAccount->id,
     ]);
 

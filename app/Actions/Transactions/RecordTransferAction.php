@@ -45,8 +45,12 @@ class RecordTransferAction extends BaseFinancialAction
             // Source (Asset) -> CREDIT (decreases asset)
             $sourceEntry = $this->createEntry($transaction, $sourceAccount->id, 'CREDIT', $amount, $date->toDateString());
 
-            // For transfers, we record it on the source side.
-            $this->createPaidCashFlow($transaction, $sourceAccount->id, $amount, $date->toDateString(), $description);
+            // Handle cash flows for both sides
+            // For Source: usually a standard "paid" flow, but if it's a credit card, it's like a withdrawal
+            $this->resolveCashFlows($transaction, $sourceAccount, $amount, $date, $description);
+
+            // For Destination: if it's a credit card, it's a PAYMENT
+            $this->resolveCashFlows($transaction, $destinationAccount, $amount, $date, $description, 1, false, true);
 
             // Validate balance
             $this->validateBalance(collect([$destEntry, $sourceEntry]));

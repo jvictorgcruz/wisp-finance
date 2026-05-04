@@ -40,59 +40,13 @@ class PayInvoiceAction extends BaseFinancialAction
             $this->createEntry($transaction, $card->account_id, 'DEBIT', $amount, $date->toDateString());
             $this->createEntry($transaction, $sourceAccount->id, 'CREDIT', $amount, $date->toDateString());
 
-            // 3. Resolve CashFlows (Sequential Liquidation)
-            // We look at all pending cash flows for this card, starting with this invoice's items
-            $pendingCashFlows = ExpectedCashFlow::query()
-                ->where('account_id', $card->account_id)
-                ->where('status', 'PENDING')
-                ->orderBy('due_date')
-                ->orderBy('id')
-                ->get();
+            // 3. Handle Cash Flows
+            // For Source: standard "paid" flow (Bank/Cash)
+            $this->resolveCashFlows($transaction, $sourceAccount, $amount, $date, $transaction->description);
 
-            $remainingToPay = $amount;
-
-            /** @var \App\Models\ExpectedCashFlow $cf */
-            foreach ($pendingCashFlows as $cf) {
-                if ($remainingToPay <= 0) break;
-
-                $cfAmount = $cf->amount;
-
-                if ($remainingToPay >= $cfAmount) {
-                    $cf->status = 'PAID';
-                    $cf->save();
-                    
-                    $remainingToPay -= $cfAmount;
-                } else {
-                    // Partial payment of this specific item -> SPLIT it
-                    $paidPart = $remainingToPay;
-                    $pendingPart = $cfAmount - $paidPart;
-
-                    $cf->setAttribute('amount', $paidPart);
-                    $cf->status = 'PAID';
-                    $cf->save();
-
-                    $cf->replicate()->fill([
-                        'amount' => $pendingPart,
-                        'status' => 'PENDING',
-                    ])->save();
-
-                    $remainingToPay = 0;
-                }
-            }
-
-            // 4. Handle Overpayment (Credit)
-            if ($remainingToPay > 0) {
-                // If there's money left after paying ALL pending items, create a credit entry in the current invoice
-                ExpectedCashFlow::create([
-                    'transaction_id' => $transaction->id,
-                    'account_id' => $card->account_id,
-                    'credit_card_invoice_id' => $invoice->id,
-                    'amount' => -$remainingToPay, // Negative amount = credit
-                    'due_date' => $invoice->due_date,
-                    'description' => __('Crédito de Pagamento a Maior'),
-                    'status' => 'PAID',
-                ]);
-            }
+            // For Destination (Card): PAYMENT flow (Negative ECF)
+            // We force the invoice ID to ensure it links to the one we are paying
+            $this->resolveCashFlows($transaction, $card->account, $amount, $date, $transaction->description, 1, false, true, $invoice->id);
 
             return $transaction;
         });

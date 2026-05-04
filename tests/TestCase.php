@@ -33,4 +33,6 @@ abstract class TestCase extends BaseTestCase
     public $revenue;
     public $sourceAccount;
     public $balanceAction;
+    public $cardParent;
+    public $bankParent;
 }

@@ -11,16 +11,17 @@ function cn(...inputs: ClassValue[]) {
 interface Props {
   months: string[];
   currentMonth: string;
+  activeYearMonth: string;
   accountId: number;
 }
 
-export default function InvoiceTimeline({ months, currentMonth, accountId }: Props) {
+export default function InvoiceTimeline({ months, currentMonth, activeYearMonth, accountId }: Props) {
   const { t, locale } = useTranslation();
 
   const sortedMonths = [...months].sort();
 
   return (
-    <div className="flex items-center gap-4 overflow-x-auto pb-4 scrollbar-hide">
+    <div className="flex items-center gap-4 overflow-x-auto pb-4 px-2 -mx-2 scrollbar-hide">
       {sortedMonths.map((month) => {
         const isActive = month === currentMonth;
         
@@ -32,13 +33,13 @@ export default function InvoiceTimeline({ months, currentMonth, accountId }: Pro
             key={month}
             href={`/cards/${accountId}/invoices/${month}`}
             className={cn(
-              "shrink-0 px-6 py-2 rounded-full text-sm transition-all duration-200 whitespace-nowrap",
+              "shrink-0 px-6 py-2.5 rounded-2xl text-xs transition-all duration-200 whitespace-nowrap flex flex-col items-center gap-1",
               isActive 
-                ? "bg-primary text-white font-bold" 
-                : "text-slate-500 font-medium bg-slate-100 hover:bg-slate-200"
+                ? "bg-primary text-white font-black scale-105 z-10" 
+                : "text-slate-500 font-bold bg-white border border-slate-200 hover:border-primary/30 hover:bg-slate-50"
             )}
           >
-            <span className="capitalize">
+            <span className="capitalize tracking-tight">
               {formatDate(monthDate, locale, { 
                 month: 'long', 
                 year: isCurrentYear ? undefined : 'numeric' 

@@ -68,7 +68,7 @@ test('it can pay a credit card invoice', function () {
     $this->assertDatabaseHas('expected_cash_flows', [
         'credit_card_invoice_id' => $this->invoice->id,
         'status' => 'PAID',
-        'amount' => 15000,
+        'amount' => -15000,
     ]);
 
     // Check account balance impact (payment reduces debt)

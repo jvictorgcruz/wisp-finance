@@ -22,9 +22,17 @@ beforeEach(function () {
     $result = createAuthenticatedLedger();
     $this->ledger = $result['ledger'];
     
+    $this->cardParent = Account::factory()->create([
+        'ledger_id' => $this->ledger->id,
+        'type' => \App\Enums\AccountType::LIABILITY,
+        'parent_id' => null,
+    ]);
+
     $this->cardAccount = Account::factory()->create([
         'ledger_id' => $this->ledger->id,
         'type' => \App\Enums\AccountType::LIABILITY,
+        'is_credit_card' => true,
+        'parent_id' => $this->cardParent->id,
     ]);
     
     $this->cardDetail = CreditCardDetail::factory()->create([
@@ -34,9 +42,16 @@ beforeEach(function () {
         'invoice_control_enabled' => true,
     ]);
 
+    $this->bankParent = Account::factory()->create([
+        'ledger_id' => $this->ledger->id,
+        'type' => \App\Enums\AccountType::ASSET,
+        'parent_id' => null,
+    ]);
+
     $this->bankAccount = Account::factory()->create([
         'ledger_id' => $this->ledger->id,
         'type' => \App\Enums\AccountType::ASSET,
+        'parent_id' => $this->bankParent->id,
     ]);
 
     $this->invoice = CreditCardInvoice::factory()->create([
@@ -48,7 +63,7 @@ beforeEach(function () {
 });
 
 test('it pays an invoice fully', function () {
-    // 1. Create 2 pending cash flows
+    // 1. Create 2 pending cash flows (purchases)
     ExpectedCashFlow::factory()->create([
         'credit_card_invoice_id' => $this->invoice->id,
         'amount' => 10000,
@@ -65,20 +80,30 @@ test('it pays an invoice fully', function () {
     expect($this->invoice->fresh()->total_amount)->toBe(15000);
 
     // 2. Pay 15000 cents
+    $date = Carbon::parse('2024-10-15');
+    Carbon::setTestNow($date);
+    
     $transaction = $this->action->execute(
         $this->invoice,
         $this->bankAccount,
         15000,
-        Carbon::now()
+        $date
     );
 
     // 3. Verify
-    expect(JournalEntry::where('transaction_id', $transaction->id)->count())->toBe(2);
-    expect(ExpectedCashFlow::where('status', 'PAID')->count())->toBe(2);
+    // 2 purchases + 1 payment (card) + 1 payment (bank) = 4 cashflows
+    expect(ExpectedCashFlow::count())->toBe(4);
+    
+    // The payment cashflow should be negative
+    $payment = ExpectedCashFlow::where('amount', -15000)->first();
+    expect($payment)->not->toBeNull();
+    expect($payment->transaction_id)->toBe($transaction->id);
+    
+    expect($this->invoice->fresh()->paid_amount)->toBe(15000);
     expect($this->invoice->fresh()->isPaid())->toBeTrue();
 });
 
-test('it handles partial payment by splitting items', function () {
+test('it handles partial payment without splitting items', function () {
     // 1. One item of 10000 cents
     ExpectedCashFlow::factory()->create([
         'credit_card_invoice_id' => $this->invoice->id,
@@ -88,16 +113,21 @@ test('it handles partial payment by splitting items', function () {
     ]);
 
     // 2. Pay 4000 cents
-    $this->action->execute($this->invoice, $this->bankAccount, 4000, Carbon::now());
+    $date = Carbon::parse('2024-10-15');
+    Carbon::setTestNow($date);
+    $this->action->execute($this->invoice, $this->bankAccount, 4000, $date);
 
-    // 3. Verify: should have 2 cashflows now (40 paid, 60 pending)
-    expect(ExpectedCashFlow::count())->toBe(2);
-    expect(ExpectedCashFlow::where('status', 'PAID')->first()->amount)->toBe(4000);
-    expect(ExpectedCashFlow::where('status', 'PENDING')->first()->amount)->toBe(6000);
+    // 3. Verify: should have 3 cashflows (1 purchase + 1 payment card + 1 payment bank)
+    expect(ExpectedCashFlow::count())->toBe(3);
+    expect(ExpectedCashFlow::where('amount', 10000)->count())->toBe(1);
+    expect(ExpectedCashFlow::where('amount', -4000)->count())->toBe(1);
+    
     expect($this->invoice->fresh()->paid_amount)->toBe(4000);
+    expect($this->invoice->fresh()->total_amount)->toBe(10000);
+    expect($this->invoice->fresh()->isPaid())->toBeFalse();
 });
 
-test('it handles overpayment by creating credit in the invoice', function () {
+test('it handles overpayment', function () {
     // 1. One item of 10000 cents
     ExpectedCashFlow::factory()->create([
         'credit_card_invoice_id' => $this->invoice->id,
@@ -106,23 +136,19 @@ test('it handles overpayment by creating credit in the invoice', function () {
         'account_id' => $this->cardAccount->id,
     ]);
 
-    // 2. Pay 15000 cents
-    $this->action->execute($this->invoice, $this->bankAccount, 15000, Carbon::now());
+    // 2. Pay 15000 cents on a fixed date within the invoice period
+    $date = Carbon::parse('2024-10-15');
+    Carbon::setTestNow($date);
+    
+    $this->action->execute($this->invoice, $this->bankAccount, 15000, $date);
 
-    // 3. Verify: 100 paid + 50 credit (negative)
-    expect(ExpectedCashFlow::count())->toBe(2);
+    // 3. Verify: 1 purchase + 1 payment card + 1 payment bank
+    expect(ExpectedCashFlow::count())->toBe(3);
     
-    $paidItems = ExpectedCashFlow::withoutGlobalScopes()->where('status', 'PAID')->get();
+    expect(ExpectedCashFlow::where('amount', 10000)->count())->toBe(1);
+    expect(ExpectedCashFlow::where('amount', -15000)->count())->toBe(1);
     
-    $paidItem = $paidItems->first(fn($item) => $item->amount > 0);
-    $creditItem = $paidItems->first(fn($item) => $item->amount < 0);
-
-    expect($paidItem)->not->toBeNull();
-    expect($creditItem)->not->toBeNull();
-    expect($paidItem->amount)->toBe(10000);
-    expect($creditItem->amount)->toBe(-5000);
-    
-    // Invoice total is now 5000 cents (10000 - 5000)
-    expect($this->invoice->fresh()->total_amount)->toBe(5000);
+    expect($this->invoice->fresh()->total_amount)->toBe(10000);
+    expect($this->invoice->fresh()->paid_amount)->toBe(15000);
     expect($this->invoice->fresh()->isPaid())->toBeTrue();
 });

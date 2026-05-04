@@ -43,15 +43,23 @@ test('invoice resolves status correctly', function () {
     ]);
     expect($invoice->fresh()->status)->toBe('OVERDUE');
 
-    // 4. PAID: total paid >= total amount
+    // 4. PAID: sum(amount) <= 0
     ExpectedCashFlow::factory()->create([
         'credit_card_invoice_id' => $invoice->id,
         'amount' => 10000,
-        'status' => 'PAID',
         'account_id' => $this->account->id,
     ]);
     
-    // We need to ensure total_amount reflects the cashflows
+    // Still not paid (balance 10000)
+    expect($invoice->fresh()->status)->not->toBe('PAID');
+
+    // Add payment (negative amount)
+    ExpectedCashFlow::factory()->create([
+        'credit_card_invoice_id' => $invoice->id,
+        'amount' => -10000,
+        'account_id' => $this->account->id,
+    ]);
+    
     expect($invoice->fresh()->status)->toBe('PAID');
 });
 
@@ -62,23 +70,30 @@ test('invoice calculates total and paid amounts', function () {
         'due_date' => now()->addDays(20),
     ]);
 
+    // Purchase 1
     ExpectedCashFlow::factory()->create([
         'credit_card_invoice_id' => $invoice->id,
         'amount' => 10000,
-        'status' => 'PAID',
         'account_id' => $this->account->id,
     ]);
 
+    // Purchase 2
     ExpectedCashFlow::factory()->create([
         'credit_card_invoice_id' => $invoice->id,
         'amount' => 5000,
-        'status' => 'PENDING',
+        'account_id' => $this->account->id,
+    ]);
+
+    // Payment
+    ExpectedCashFlow::factory()->create([
+        'credit_card_invoice_id' => $invoice->id,
+        'amount' => -4000,
         'account_id' => $this->account->id,
     ]);
 
     expect($invoice->total_amount)->toBe(15000);
-    expect($invoice->paid_amount)->toBe(10000);
-    expect($invoice->status)->toBe('OPEN'); // Because today < closing_date (factory default)
+    expect($invoice->paid_amount)->toBe(4000);
+    expect($invoice->status)->toBe('OPEN');
 });
 
 test('invoice is isolated by ledger scope', function () {

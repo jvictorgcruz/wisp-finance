@@ -33,13 +33,12 @@ export default function Index({ account, invoice, availableMonths, currentYearMo
             <PageHeader>
                 <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
                     <div className="flex items-center gap-5">
-                        <button 
-                            type="button"
-                            onClick={() => window.history.back()} 
+                        <Link 
+                            href="/cards"
                             className="p-2.5 bg-slate-100 text-slate-400 hover:text-slate-900 hover:bg-slate-200 rounded-xl transition-all"
                         >
                             <ChevronLeft className="w-5 h-5" />
-                        </button>
+                        </Link>
                         
                         <div className="flex items-center gap-4">
                             <div 
@@ -88,6 +87,7 @@ export default function Index({ account, invoice, availableMonths, currentYearMo
                     <InvoiceTimeline 
                         months={availableMonths} 
                         currentMonth={currentYearMonth} 
+                        activeYearMonth={activeYearMonth}
                         accountId={account.id} 
                     />
                 </section>

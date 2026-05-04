@@ -39,7 +39,8 @@ return [
         'timeline_title' => 'Histórico de Faturas',
         'items_count' => 'itens',
         'limit_disclaimer' => 'O limite disponível é uma estimativa baseada no saldo atual do cartão.',
-        'refund' => 'Reembolso / Crédito',
+        'refund' => 'Estorno / Crédito',
+        'payment' => 'Pagamento',
         'payment_progress' => 'Progresso do Pagamento',
     ],
 ];
