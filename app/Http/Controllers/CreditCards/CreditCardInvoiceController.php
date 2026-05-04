@@ -44,7 +44,7 @@ class CreditCardInvoiceController extends Controller
 
         // 4. Load relations for the view
         $invoice->load(['expectedCashFlows' => function ($query) {
-            $query->with('transaction')->orderBy('due_date')->orderBy('id');
+            $query->with(['transaction.journalEntries.account'])->orderBy('due_date')->orderBy('id');
         }]);
 
         $balanceAction = app(\App\Actions\Accounts\GetAccountBalanceAction::class);

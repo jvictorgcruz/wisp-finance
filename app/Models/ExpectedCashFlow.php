@@ -36,7 +36,8 @@ class ExpectedCashFlow extends Model
         'credit_card_invoice_id',
         'amount',
         'due_date',
-        'description',
+        'installment_number',
+        'installment_total',
         'status',
     ];
 
@@ -46,7 +47,9 @@ class ExpectedCashFlow extends Model
             'amount' => Money::class,
             'due_date' => 'date',
             'credit_card_invoice_id' => 'integer',
-            'status' => 'string', // Could use an enum
+            'installment_number' => 'integer',
+            'installment_total' => 'integer',
+            'status' => 'string',
         ];
     }
 

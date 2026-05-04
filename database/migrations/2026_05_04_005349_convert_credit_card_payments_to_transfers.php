@@ -19,7 +19,9 @@ return new class extends Migration
 
         // 2. Redefine enum column (this is database specific, but using statement for clarity)
         // Since we are likely on MariaDB/MySQL (Sail default)
-        DB::statement("ALTER TABLE transactions MODIFY COLUMN type ENUM('EXPENSE', 'INCOME', 'TRANSFER') NOT NULL");
+        if (collect(['mysql', 'mariadb'])->contains(Schema::getConnection()->getDriverName())) {
+            DB::statement("ALTER TABLE transactions MODIFY COLUMN type ENUM('EXPENSE', 'INCOME', 'TRANSFER') NOT NULL");
+        }
     }
 
     /**
@@ -27,6 +29,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("ALTER TABLE transactions MODIFY COLUMN type ENUM('EXPENSE', 'INCOME', 'TRANSFER', 'CREDIT_CARD_PAYMENT') NOT NULL");
+        if (collect(['mysql', 'mariadb'])->contains(Schema::getConnection()->getDriverName())) {
+            DB::statement("ALTER TABLE transactions MODIFY COLUMN type ENUM('EXPENSE', 'INCOME', 'TRANSFER', 'CREDIT_CARD_PAYMENT') NOT NULL");
+        }
     }
 };

@@ -47,14 +47,13 @@ abstract class BaseFinancialAction
      * Create a paid cash flow for the transaction.
      * @param int $amount Amount in cents
      */
-    protected function createPaidCashFlow(Transaction $transaction, int $accountId, int $amount, string $date, ?string $description): ExpectedCashFlow
+    protected function createPaidCashFlow(Transaction $transaction, int $accountId, int $amount, string $date): ExpectedCashFlow
     {
         return ExpectedCashFlow::create([
             'transaction_id' => $transaction->id,
             'account_id' => $accountId,
             'amount' => $amount,
             'due_date' => $date,
-            'description' => $description,
             'status' => 'PAID',
         ]);
     }
@@ -107,12 +106,13 @@ abstract class BaseFinancialAction
                     'credit_card_invoice_id' => $invoiceId,
                     'amount' => $currentInstallmentAmount,
                     'due_date' => $isPayment ? $date : $installmentDate,
-                    'description' => $installments > 1 ? "($description) " . ($i + 1) . "/$installments" : $description,
+                    'installment_number' => $installments > 1 ? ($i + 1) : null,
+                    'installment_total' => $installments > 1 ? $installments : null,
                     'status' => $isPayment ? 'PAID' : 'PENDING',
                 ]);
             }
         } else {
-            $this->createPaidCashFlow($transaction, $account->id, $amount, $date->toDateString(), $description);
+            $this->createPaidCashFlow($transaction, $account->id, $amount, $date->toDateString());
         }
     }
 }

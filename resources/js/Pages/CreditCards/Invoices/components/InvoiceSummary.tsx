@@ -80,12 +80,12 @@ export default function InvoiceSummary({ invoice, isActive }: Props) {
 
                 <div className="space-y-1">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                        {t('credit_cards.invoices.total_invoice')}
+                        {t('credit_cards.invoices.open_balance')}
                     </p>
                     <div className="flex items-baseline gap-2">
                         <span className="text-2xl font-bold text-slate-300">R$</span>
                         <h2 className="text-5xl font-black tracking-tighter text-slate-900">
-                            {formatCurrency(invoice.total_amount, false)}
+                            {formatCurrency(remaining, false)}
                         </h2>
                     </div>
                 </div>
@@ -128,8 +128,12 @@ export default function InvoiceSummary({ invoice, isActive }: Props) {
                     />
                 </div>
                 <div className="flex justify-between items-center text-[10px] font-bold">
-                    <span className="text-emerald-600">{t('credit_cards.invoices.paid_amount')}: {formatCurrency(invoice.paid_amount)}</span>
-                    <span className="text-slate-400">{t('credit_cards.invoices.remaining')}: {formatCurrency(remaining)}</span>
+                    <div className="flex items-center gap-4">
+                        <span className="text-emerald-600">{t('credit_cards.invoices.paid_amount')}: {formatCurrency(invoice.paid_amount)}</span>
+                    </div>
+                    <span className={cn(remaining > 0 ? "text-rose-500" : "text-slate-400")}>
+                        <span className="text-slate-400">{t('credit_cards.invoices.total_invoice')}: {formatCurrency(invoice.total_amount)}</span>
+                    </span>
                 </div>
             </div>
         </div>

@@ -23,7 +23,6 @@ class ExpectedCashFlowFactory extends Factory
             'transaction_id' => null,
             'amount' => $this->faker->numberBetween(100, 1000000),
             'due_date' => $this->faker->dateTimeBetween('now', '+1 year'),
-            'description' => $this->faker->sentence(),
             'status' => 'PENDING',
         ];
     }

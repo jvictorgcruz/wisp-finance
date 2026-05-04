@@ -15,6 +15,7 @@ return [
         'status_closed' => 'Fechada',
         'status_overdue' => 'Atrasada',
         'total_invoice' => 'Total da Fatura',
+        'open_balance' => 'Saldo em Aberto',
         'paid_amount' => 'Valor Pago',
         'remaining' => 'Faltam',
         'due_date' => 'Vencimento',

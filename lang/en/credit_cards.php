@@ -15,6 +15,7 @@ return [
         'status_closed' => 'Closed',
         'status_overdue' => 'Overdue',
         'total_invoice' => 'Total Invoice',
+        'open_balance' => 'Open Balance',
         'paid_amount' => 'Paid Amount',
         'remaining' => 'Remaining',
         'due_date' => 'Due Date',
