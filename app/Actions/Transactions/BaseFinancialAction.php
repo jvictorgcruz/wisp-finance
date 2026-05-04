@@ -60,7 +60,7 @@ abstract class BaseFinancialAction
 
     /**
      * Handle cash flow creation, detecting credit cards with invoice control.
-     * @param int $amount Amount in cents
+     * @param int $amount Signed amount (positive for inflow, negative for outflow)
      */
     protected function resolveCashFlows(
         Transaction $transaction,
@@ -69,26 +69,22 @@ abstract class BaseFinancialAction
         Carbon $date,
         ?string $description,
         int $installments = 1,
-        bool $isRefund = false,
-        bool $isPayment = false,
+        bool $forcePaid = false,
         ?int $forceInvoiceId = null
     ): void {
         if ($account->is_credit_card && $account->creditCardDetail?->invoice_control_enabled) {
             $card = $account->creditCardDetail;
             
             // Integer division for installments
-            $installmentAmount = (int) floor($amount / $installments);
-            $remainingAmount = $amount;
+            $installmentAmount = (int) floor(abs($amount) / $installments);
+            $remainingAmount = abs($amount);
 
             for ($i = 0; $i < $installments; $i++) {
                 $currentInstallmentAmount = ($i === $installments - 1) ? $remainingAmount : $installmentAmount;
                 $remainingAmount -= $currentInstallmentAmount;
 
-                // For credit cards:
-                // - Refunds (isRefund) reduce the invoice total (Negative ECF)
-                // - Payments (isPayment) reduce the invoice total (Negative ECF)
-                // - Regular purchases (EXPENSE) increase the invoice total (Positive ECF)
-                if ($isRefund || $isPayment) {
+                // Apply original sign to the installment
+                if ($amount < 0) {
                     $currentInstallmentAmount = -$currentInstallmentAmount;
                 }
 
@@ -105,10 +101,10 @@ abstract class BaseFinancialAction
                     'account_id' => $account->id,
                     'credit_card_invoice_id' => $invoiceId,
                     'amount' => $currentInstallmentAmount,
-                    'due_date' => $isPayment ? $date : $installmentDate,
+                    'due_date' => $forcePaid ? $date : $installmentDate,
                     'installment_number' => $installments > 1 ? ($i + 1) : null,
                     'installment_total' => $installments > 1 ? $installments : null,
-                    'status' => $isPayment ? 'PAID' : 'PENDING',
+                    'status' => $forcePaid ? 'PAID' : 'PENDING',
                 ]);
             }
         } else {

@@ -46,7 +46,8 @@ class RecordIncomeAction extends BaseFinancialAction
             $sourceEntry = $this->createEntry($transaction, $categoryAccount->id, 'CREDIT', $amount, $date->toDateString());
 
             // Handle cash flows (Paid for assets, Pending/Negative for credit card refunds)
-            $this->resolveCashFlows($transaction, $destinationAccount, $amount, $date, $description, 1, true);
+            $ecfAmount = $destinationAccount->is_credit_card ? -$amount : $amount;
+            $this->resolveCashFlows($transaction, $destinationAccount, $ecfAmount, $date, $description);
 
             // Validate balance
             $this->validateBalance(collect([$destEntry, $sourceEntry]));

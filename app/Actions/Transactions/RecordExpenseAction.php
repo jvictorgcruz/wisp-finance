@@ -47,9 +47,9 @@ class RecordExpenseAction extends BaseFinancialAction
             // Source (Asset) -> CREDIT (decreases asset)
             $sourceEntry = $this->createEntry($transaction, $sourceAccount->id, 'CREDIT', $amount, $date->toDateString());
 
-            // Handle cash flows (Paid for assets, Pending for credit cards)
-            // For credit card accounts with invoice control, $installments spreads the ECFs across N invoices.
-            $this->resolveCashFlows($transaction, $sourceAccount, $amount, $date, $description, $installments);
+            // Handle cash flows (Paid for assets, Pending/Negative for credit card refunds)
+            $ecfAmount = $sourceAccount->is_credit_card ? $amount : -$amount;
+            $this->resolveCashFlows($transaction, $sourceAccount, $ecfAmount, $date, $description, $installments);
 
             // Validate balance
             $this->validateBalance(collect([$destEntry, $sourceEntry]));

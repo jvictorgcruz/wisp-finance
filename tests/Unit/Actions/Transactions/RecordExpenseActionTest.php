@@ -63,6 +63,7 @@ test('it records a regular expense as a paid cash flow', function () {
     
     $cashFlow = ExpectedCashFlow::first();
     expect($cashFlow->status)->toBe('PAID');
+    expect($cashFlow->amount)->toBe(-10000); // Should be negative (outflow)
     expect($cashFlow->credit_card_invoice_id)->toBeNull();
 });
 
@@ -83,6 +84,7 @@ test('it records a credit card expense as a pending cash flow linked to an invoi
     
     $cashFlow = ExpectedCashFlow::first();
     expect($cashFlow->status)->toBe('PENDING');
+    expect($cashFlow->amount)->toBe(15000); // Positive because it increases debt
     expect($cashFlow->account_id)->toBe($this->cardAccount->id);
     
     $invoice = CreditCardInvoice::where('reference_year_month', '2024-10')->first();

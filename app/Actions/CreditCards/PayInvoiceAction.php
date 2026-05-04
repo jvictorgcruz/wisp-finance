@@ -41,12 +41,12 @@ class PayInvoiceAction extends BaseFinancialAction
             $this->createEntry($transaction, $sourceAccount->id, 'CREDIT', $amount, $date->toDateString());
 
             // 3. Handle Cash Flows
-            // For Source: standard "paid" flow (Bank/Cash)
-            $this->resolveCashFlows($transaction, $sourceAccount, $amount, $date, $transaction->description);
-
+            // For Source: negative cash flow (outflow from Bank/Cash)
+            $this->resolveCashFlows($transaction, $sourceAccount, -$amount, $date, $transaction->description);
+            
             // For Destination (Card): PAYMENT flow (Negative ECF)
             // We force the invoice ID to ensure it links to the one we are paying
-            $this->resolveCashFlows($transaction, $card->account, $amount, $date, $transaction->description, 1, false, true, $invoice->id);
+            $this->resolveCashFlows($transaction, $card->account, -$amount, $date, $transaction->description, 1, true, $invoice->id);
 
             return $transaction;
         });
