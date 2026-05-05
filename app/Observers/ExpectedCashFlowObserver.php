@@ -40,6 +40,7 @@ class ExpectedCashFlowObserver
         
         if ($ledgerId) {
             Cache::forget("ledger_{$ledgerId}_cash_flow_30d");
+            Cache::forget("ledger_{$ledgerId}_accrual_30d");
         }
     }
 }

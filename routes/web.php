@@ -90,6 +90,7 @@ Route::middleware('check_maintenance')->group(function () {
         Route::post('language/{locale}', [\App\Http\Controllers\LanguageController::class, 'update'])->name('language.update');
 
         Route::get('analytics/cash-flow', [\App\Http\Controllers\AnalyticsController::class, 'cashFlow'])->name('analytics.cash-flow');
+        Route::get('analytics/accrual-basis', [\App\Http\Controllers\AnalyticsController::class, 'accrualBasis'])->name('analytics.accrual-basis');
     });
 
 });

@@ -37,4 +37,8 @@ abstract class TestCase extends BaseTestCase
     public $bankParent;
     public $bankA;
     public $bankB;
+    public $expenseCategory;
+    public $recordExpense;
+    public $getCashFlow;
+    public $getAccrual;
 }
