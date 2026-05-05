@@ -41,6 +41,7 @@ test('dashboard displays summary and transactions', function () {
             ->has('summary', fn (Assert $page) => $page
                 ->has('total_assets')
                 ->has('total_liabilities')
+                ->etc()
             )
             ->has('transactions.data', 1)
             ->where('transactions.data.0.description', 'Test Expense')

@@ -48,9 +48,21 @@ return [
     ],
     'dashboard' => [
         'title' => 'Dashboard',
-        'assets' => 'Total Assets',
-        'liabilities' => 'Total Liabilities',
+        'assets' => 'Assets',
+        'liabilities' => 'Liabilities',
         'recent_activity' => 'Recent Activity',
+        'cash_flow' => 'Cash Flow View',
+        'accrual' => 'Accrual Basis (P&L)',
+        'monthly_balance' => 'Balance',
+        'expenses_by_category' => 'Expenses by Category',
+        'net_worth' => 'Net Worth',
+        'revenue' => 'Revenue',
+        'expenses' => 'Expense',
+        'net_worth_evolution' => 'Net Worth Evolution',
+        'last_30_days' => 'Last 30 days history',
+        'trend_positive' => '+:value%',
+        'trend_negative' => ':value%',
+        'liabilities_percentage' => ':value% of net worth',
     ],
     'table' => [
         'date' => 'Date',
@@ -63,6 +75,7 @@ return [
     'date' => [
         'today' => 'Today',
         'yesterday' => 'Yesterday',
+        'current_month' => 'Current month',
     ],
     'filters' => [
         'title' => 'Filters',

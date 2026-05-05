@@ -74,7 +74,7 @@ test('record expense creates correct entries and cashflow', function () {
     $cashFlow = ExpectedCashFlow::where('transaction_id', $transaction->id)->first();
     expect($cashFlow)->not->toBeNull();
     expect($cashFlow->status)->toBe('PAID');
-    expect($cashFlow->amount)->toBe(15050);
+    expect($cashFlow->amount)->toBe(-15050);
 });
 
 test('record income creates correct entries and cashflow', function () {

@@ -16,7 +16,7 @@ class GetCashFlowBuilderAction
      * 
      * @return array<string, int>
      */
-    public function execute(): array
+    public function execute(?int $month = null, ?int $year = null): array
     {
         $ledgerId = LedgerContext::currentId();
 
@@ -24,16 +24,32 @@ class GetCashFlowBuilderAction
             return [];
         }
 
-        $cacheKey = "ledger_{$ledgerId}_cash_flow_30d";
+        $cacheKey = ($month && $year) 
+            ? "ledger_{$ledgerId}_cash_flow_m{$month}_y{$year}" 
+            : "ledger_{$ledgerId}_cash_flow_30d";
 
-        return Cache::remember($cacheKey, now()->addDay(), function () {
-            $startDate = Carbon::today()->subDays(30);
+        return Cache::remember($cacheKey, now()->addDay(), function () use ($ledgerId, $month, $year) {
+            $selectedDate = ($month && $year) 
+                ? Carbon::createFromDate($year, $month, 1)->endOfMonth() 
+                : Carbon::today();
+
+            $startDate = $selectedDate->copy()->subDays(30);
+            $endDate = $selectedDate;
+
+            // 0. Starting Cash Balance (Asset accounts) before startDate
+            $initialBalance = (int) ExpectedCashFlow::query()
+                ->where('status', 'PAID')
+                ->where('due_date', '<', $startDate)
+                ->whereHas('account', function ($query) use ($ledgerId) {
+                    $query->where('ledger_id', $ledgerId)->where('type', AccountType::ASSET);
+                })
+                ->sum('amount');
 
             $results = ExpectedCashFlow::query()
                 ->where('status', 'PAID')
-                ->where('due_date', '>=', $startDate)
-                ->whereHas('account', function ($query) {
-                    $query->where('type', AccountType::ASSET);
+                ->whereBetween('due_date', [$startDate, $endDate])
+                ->whereHas('account', function ($query) use ($ledgerId) {
+                    $query->where('ledger_id', $ledgerId)->where('type', AccountType::ASSET);
                 })
                 ->selectRaw('due_date, SUM(amount) as total')
                 ->groupBy('due_date')
@@ -42,14 +58,24 @@ class GetCashFlowBuilderAction
 
             $timeline = [];
             
-            // Pre-fill with zeros for the last 30 days to ensure O(1) read for frontend
+            // Pre-fill with zeros for the window
             for ($i = 30; $i >= 0; $i--) {
-                $date = Carbon::today()->subDays($i)->toDateString();
+                $date = $endDate->copy()->subDays($i)->toDateString();
                 $timeline[$date] = 0;
             }
 
             foreach ($results as $result) {
-                $timeline[$result->due_date->toDateString()] = (int) $result->total;
+                $date = Carbon::parse($result->due_date)->toDateString();
+                if (isset($timeline[$date])) {
+                    $timeline[$date] = (int) $result->total;
+                }
+            }
+
+            // 2. Cumulative Calculation
+            $runningTotal = $initialBalance;
+            foreach ($timeline as $date => &$total) {
+                $runningTotal += $total;
+                $total = $runningTotal;
             }
 
             return $timeline;

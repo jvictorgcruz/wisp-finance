@@ -37,7 +37,7 @@ return [
         'payment_date' => 'Payment Date',
         'pay' => 'Pay',
         'payment_success' => 'Payment recorded successfully!',
-        'timeline_title' => 'Invoice History',
+        'timeline_title' => 'History',
         'items_count' => 'items',
         'limit_disclaimer' => 'The available limit is an estimate based on the current card balance.',
         'refund' => 'Refund / Credit',

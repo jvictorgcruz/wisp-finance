@@ -13,9 +13,9 @@ class GetAccountBalanceAction
      * Calculate the current balance of accounts based on their type.
      * Returns a collection keyed by account ID (in cents).
      * 
-     * @param int|array|Collection $accountIds
+     * @param string|\DateTimeInterface|null $beforeDate
      */
-    public function execute(mixed $accountIds): Collection
+    public function execute(mixed $accountIds, mixed $beforeDate = null): Collection
     {
         $ids = collect(is_iterable($accountIds) ? $accountIds : [$accountIds])
             ->map(fn ($id) => is_object($id) ? $id->id : $id)
@@ -26,7 +26,7 @@ class GetAccountBalanceAction
         }
 
         // Analytical summation (CQRS Pattern)
-        $totals = DB::table('journal_entries')
+        $query = DB::table('journal_entries')
             ->join('transactions', 'transactions.id', '=', 'journal_entries.transaction_id')
             ->select(
                 'account_id',
@@ -34,8 +34,13 @@ class GetAccountBalanceAction
                 DB::raw('COALESCE(SUM(CASE WHEN journal_entries.type = "CREDIT" THEN amount ELSE 0 END), 0) as total_credit')
             )
             ->whereIn('account_id', $ids)
-            ->where('transactions.ledger_id', \App\Support\LedgerContext::currentId())
-            ->groupBy('account_id')
+            ->where('transactions.ledger_id', \App\Support\LedgerContext::currentId());
+
+        if ($beforeDate) {
+            $query->where('transactions.date', '<=', $beforeDate);
+        }
+
+        $totals = $query->groupBy('account_id')
             ->get()
             ->keyBy('account_id');
 

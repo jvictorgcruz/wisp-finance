@@ -34,12 +34,17 @@ beforeEach(function () {
 });
 
 test('it syncs open invoices when card dates change', function () {
-    // 1. Create an invoice for next month (Reference 2024-11)
+    $nextMonth = Carbon::now()->addMonth();
+    $reference = $nextMonth->format('Y-m');
+    $closing = $nextMonth->copy()->day(5);
+    $due = $nextMonth->copy()->day(15);
+
+    // 1. Create an invoice for next month
     $invoice = CreditCardInvoice::factory()->create([
         'credit_card_detail_id' => $this->cardDetail->id,
-        'reference_year_month' => '2024-11',
-        'closing_date' => '2024-11-05',
-        'due_date' => '2024-11-15',
+        'reference_year_month' => $reference,
+        'closing_date' => $closing,
+        'due_date' => $due,
     ]);
 
     // 2. Update card closing day to 10 via UpsertAction
@@ -58,7 +63,7 @@ test('it syncs open invoices when card dates change', function () {
     $invoice->refresh();
     expect(Carbon::parse($invoice->closing_date)->day)->toBe(10);
     expect(Carbon::parse($invoice->due_date)->day)->toBe(20);
-    expect($invoice->closing_date->toDateString())->toBe('2024-11-10');
+    expect($invoice->closing_date->toDateString())->toBe($nextMonth->copy()->day(10)->toDateString());
 });
 
 test('it does not sync already paid invoices', function () {

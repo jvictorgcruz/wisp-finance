@@ -36,11 +36,19 @@ test('invoice resolves status correctly', function () {
     ]);
     expect($invoice->fresh()->status)->toBe('CLOSED');
 
-    // 3. OVERDUE: today > due_date
+    // 3. OVERDUE: today > due_date AND balance > 0
     $invoice->update([
         'closing_date' => Carbon::today()->subDays(10),
         'due_date' => Carbon::today()->subDays(1),
     ]);
+    
+    // Add a purchase so it's not empty
+    ExpectedCashFlow::factory()->create([
+        'credit_card_invoice_id' => $invoice->id,
+        'amount' => 1000,
+        'account_id' => $this->account->id,
+    ]);
+
     expect($invoice->fresh()->status)->toBe('OVERDUE');
 
     // 4. PAID: sum(amount) <= 0
@@ -56,7 +64,7 @@ test('invoice resolves status correctly', function () {
     // Add payment (negative amount)
     ExpectedCashFlow::factory()->create([
         'credit_card_invoice_id' => $invoice->id,
-        'amount' => -10000,
+        'amount' => -11000,
         'account_id' => $this->account->id,
     ]);
     

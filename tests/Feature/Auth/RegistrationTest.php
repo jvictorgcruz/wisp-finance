@@ -63,7 +63,7 @@ test('registration seeds default hierarchical accounts with translations', funct
 
     // Category accounts (REVENUE/EXPENSE) persist translated strings at creation time
     // using the user's locale at the moment of registration (en in this test).
-    expect($topLevelNames)->toContain(__('accounts.salary'));
+    expect($topLevelNames)->toContain(__('categories.salary'));
     expect($topLevelNames)->toContain(__('categories.housing'));
 
 

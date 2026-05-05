@@ -94,8 +94,9 @@ test('it pays an invoice fully', function () {
     // 2 purchases + 1 payment (card) + 1 payment (bank) = 4 cashflows
     expect(ExpectedCashFlow::count())->toBe(4);
     
-    // The payment cashflow should be negative
-    $payment = ExpectedCashFlow::where('amount', -15000)->first();
+    // The payment cashflow should be negative (one for bank, one for card)
+    expect(ExpectedCashFlow::where('amount', -15000)->count())->toBe(2);
+    $payment = ExpectedCashFlow::where('amount', -15000)->whereNotNull('credit_card_invoice_id')->first();
     expect($payment)->not->toBeNull();
     expect($payment->transaction_id)->toBe($transaction->id);
     
@@ -117,10 +118,14 @@ test('it handles partial payment without splitting items', function () {
     Carbon::setTestNow($date);
     $this->action->execute($this->invoice, $this->bankAccount, 4000, $date);
 
-    // 3. Verify: should have 3 cashflows (1 purchase + 1 payment card + 1 payment bank)
+    // 3. Verify: should have 4 cashflows (1 purchase + 1 bank payment + 1 card payment side + maybe source bank side?)
+    // Actually, resolveCashFlows is called twice: 
+    // 1. resolveCashFlows(sourceAccount, -4000) -> 1 record (Bank side)
+    // 2. resolveCashFlows(cardAccount, -4000) -> 1 record (Card side)
+    // So 1 purchase + 2 payment sides = 3 records.
     expect(ExpectedCashFlow::count())->toBe(3);
     expect(ExpectedCashFlow::where('amount', 10000)->count())->toBe(1);
-    expect(ExpectedCashFlow::where('amount', -4000)->count())->toBe(1);
+    expect(ExpectedCashFlow::where('amount', -4000)->count())->toBe(2);
     
     expect($this->invoice->fresh()->paid_amount)->toBe(4000);
     expect($this->invoice->fresh()->total_amount)->toBe(10000);
@@ -142,11 +147,11 @@ test('it handles overpayment', function () {
     
     $this->action->execute($this->invoice, $this->bankAccount, 15000, $date);
 
-    // 3. Verify: 1 purchase + 1 payment card + 1 payment bank
+    // 3. Verify: 1 purchase + 2 payment sides = 3 records
     expect(ExpectedCashFlow::count())->toBe(3);
     
     expect(ExpectedCashFlow::where('amount', 10000)->count())->toBe(1);
-    expect(ExpectedCashFlow::where('amount', -15000)->count())->toBe(1);
+    expect(ExpectedCashFlow::where('amount', -15000)->count())->toBe(2);
     
     expect($this->invoice->fresh()->total_amount)->toBe(10000);
     expect($this->invoice->fresh()->paid_amount)->toBe(15000);

@@ -37,7 +37,7 @@ return [
         'payment_date' => 'Data de Pagamento',
         'pay' => 'Pagar',
         'payment_success' => 'Pagamento realizado com sucesso!',
-        'timeline_title' => 'Histórico de Faturas',
+        'timeline_title' => 'Histórico',
         'items_count' => 'itens',
         'limit_disclaimer' => 'O limite disponível é uma estimativa baseada no saldo atual do cartão.',
         'refund' => 'Estorno / Crédito',

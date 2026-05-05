@@ -48,9 +48,21 @@ return [
     ],
     'dashboard' => [
         'title' => 'Dashboard',
-        'assets' => 'Total de Ativos',
-        'liabilities' => 'Total de Passivos',
+        'assets' => 'Ativo',
+        'liabilities' => 'Passivo',
         'recent_activity' => 'Atividade Recente',
+        'cash_flow' => 'Visão de Caixa',
+        'accrual' => 'Visão de Competência (DRE)',
+        'monthly_balance' => 'Balanço',
+        'expenses_by_category' => 'Despesas por Categoria',
+        'net_worth' => 'Patrimônio',
+        'revenue' => 'Receita',
+        'expenses' => 'Despesa',
+        'net_worth_evolution' => 'Evolução Patrimonial',
+        'last_30_days' => 'Histórico dos últimos 30 dias',
+        'trend_positive' => '+:value%',
+        'trend_negative' => ':value%',
+        'liabilities_percentage' => ':value% do patrimônio',
     ],
     'table' => [
         'date' => 'Data',
@@ -63,6 +75,7 @@ return [
     'date' => [
         'today' => 'Hoje',
         'yesterday' => 'Ontem',
+        'current_month' => 'Mês atual',
     ],
     'filters' => [
         'title' => 'Filtros',

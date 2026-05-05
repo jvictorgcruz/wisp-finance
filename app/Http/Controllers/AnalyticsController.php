@@ -18,7 +18,9 @@ class AnalyticsController extends Controller
      */
     public function cashFlow(): JsonResponse
     {
-        return response()->json($this->cashFlowAction->execute());
+        $month = request()->integer('month');
+        $year = request()->integer('year');
+        return response()->json($this->cashFlowAction->execute($month, $year));
     }
 
     /**
@@ -26,6 +28,8 @@ class AnalyticsController extends Controller
      */
     public function accrualBasis(): JsonResponse
     {
-        return response()->json($this->accrualAction->execute());
+        $month = request()->integer('month');
+        $year = request()->integer('year');
+        return response()->json($this->accrualAction->execute($month, $year));
     }
 }

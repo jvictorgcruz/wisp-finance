@@ -152,7 +152,11 @@ class CreditCardInvoice extends Model
                 return 'CLOSED';
             }
 
-            return 'OVERDUE';
+            if ($balance > 0) {
+                return 'OVERDUE';
+            }
+
+            return 'PAID';
         });
     }
 

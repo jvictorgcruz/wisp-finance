@@ -19,9 +19,16 @@ class DashboardController extends Controller
      */
     public function index(): Response
     {
+        $month = request()->integer('month', now()->month);
+        $year = request()->integer('year', now()->year);
+
         return Inertia::render('Dashboard', [
-            'summary' => $this->summaryAction->execute(),
+            'summary' => $this->summaryAction->execute($month, $year),
             'transactions' => $this->transactionsAction->execute(15),
+            'currentFilters' => [
+                'month' => $month,
+                'year' => $year,
+            ]
         ]);
     }
 }

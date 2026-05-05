@@ -82,10 +82,15 @@ test('it calculates daily cash flow for the last 30 days', function () {
     ]);
 
     $timeline = $this->action->execute();
+    
+    // Cumulative calculation:
+    // Day -2: -1500
+    // Yesterday: -1500 + -2000 = -3500
+    // Today: -3500 + 5000 = 1500
 
     expect($timeline)->toBeArray();
-    expect($timeline[Carbon::today()->toDateString()])->toBe(5000);
-    expect($timeline[Carbon::yesterday()->toDateString()])->toBe(-2000);
+    expect($timeline[Carbon::today()->toDateString()])->toBe(1500);
+    expect($timeline[Carbon::yesterday()->toDateString()])->toBe(-3500);
     expect($timeline[Carbon::today()->subDays(2)->toDateString()])->toBe(-1500);
     expect(count($timeline))->toBe(31); // 30 days + today
 });

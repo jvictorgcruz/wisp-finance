@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { useTranslation } from '@/Hooks/useTranslation';
 import { formatCurrency } from '@/Utils/format';
-import InvoiceTimeline from './components/InvoiceTimeline';
+import MonthSelector from '@/Components/Common/MonthSelector';
 import LimitProgressBar from './components/LimitProgressBar';
 import InvoiceSummary from './components/InvoiceSummary';
 import InvoiceItemsTable from './components/InvoiceItemsTable';
@@ -28,6 +28,11 @@ export default function Index({ account, invoice, availableMonths, currentYearMo
 
     const currentBalance = Math.abs(account.balance || 0);
     const limit = account.credit_card_detail.limit;
+
+    const sortedMonths = [...availableMonths].sort();
+    const currentIndex = sortedMonths.indexOf(currentYearMonth);
+    const prevDisabled = currentIndex <= 0;
+    const nextDisabled = currentIndex === -1 || currentIndex >= sortedMonths.length - 1;
 
     return (
         <AppLayout title={`${t('credit_cards.invoices.page_title')} - ${account.name}`}>
@@ -69,19 +74,25 @@ export default function Index({ account, invoice, availableMonths, currentYearMo
                     </div>
 
                     {/* Timeline Navigation */}
-                    <section>
-                        <div className="flex items-center gap-4 mb-4">
+                    <section className="space-y-4">
+                        <div className="flex items-center gap-4">
                             <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                                 {t('credit_cards.invoices.timeline_title')}
                             </h3>
                             <div className="h-px grow bg-slate-200/60" />
                         </div>
-                        <InvoiceTimeline 
-                            months={availableMonths} 
-                            currentMonth={currentYearMonth} 
-                            activeYearMonth={activeYearMonth}
-                            accountId={account.id} 
-                        />
+                        
+                            <MonthSelector 
+                                date={new Date(currentYearMonth + '-02')} 
+                                availableMonths={availableMonths}
+                                prevDisabled={prevDisabled}
+                                nextDisabled={nextDisabled}
+                                onChange={(date) => {
+                                    const year = date.getFullYear();
+                                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                                    router.get(`/cards/${account.id}/invoices/${year}-${month}`);
+                                }} 
+                            />
                     </section>
                 </div>
             </PageHeader>
