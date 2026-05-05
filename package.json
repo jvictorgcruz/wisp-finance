@@ -28,7 +28,7 @@
     },
     "dependencies": {
         "@headlessui/react": "^2.2.9",
-        "@inertiajs/react": "^3.0.2",
+        "@inertiajs/react": "^3.0.3",
         "clsx": "^2.1.1",
         "framer-motion": "^12.38.0",
         "lucide-react": "^1.7.0",
