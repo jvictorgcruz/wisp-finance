@@ -85,9 +85,10 @@ jobs:
           port: 22
           script: |
             cd htdocs/wisp-finance.duckdns.org
+            git checkout package-lock.json
             git pull origin main
             composer install --no-dev --optimize-autoloader
             php artisan migrate --force
             php artisan optimize
-            npm install
+            npm ci
             npm run build
