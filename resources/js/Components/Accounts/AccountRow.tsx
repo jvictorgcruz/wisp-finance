@@ -1,10 +1,12 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Transition } from '@headlessui/react';
-import { ChevronRight, Edit2, MoreVertical, PowerOff, Trash2 } from 'lucide-react';
+import { Link } from '@inertiajs/react';
+import { ChevronRight, Edit2, FileText, MoreVertical, PowerOff, Trash2, TrendingUp } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import LucideIcon from '@/Components/Common/LucideIcon';
 import { useTranslation } from '@/Hooks/useTranslation';
 import DropdownSelector from '@/Components/Common/DropdownSelector';
+import FinancialAvatar from './FinancialAvatar';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -24,6 +26,22 @@ export interface Account {
         icon?: string;
         color?: string;
     };
+    is_credit_card?: boolean;
+    credit_card_details?: {
+        limit: number;
+        closing_day: number;
+        due_day: number;
+        invoice_control_enabled?: boolean;
+        current_invoice?: {
+            id: number;
+            total_amount: number;
+            paid_amount: number;
+            status: string;
+            reference: string;
+            due_date: string;
+            closing_date: string;
+        } | null;
+    } | null;
     children?: Account[];
 }
 
@@ -81,31 +99,27 @@ export default function AccountRow({
         )}>
             <div className="flex items-center gap-4">
                 
-                <div 
-                    className={cn("w-9 h-9 min-w-[36px] rounded-xl flex items-center justify-center transition-colors overflow-hidden", typeColorClass)}
-                    style={customColor ? { 
-                        backgroundColor: `${customColor}15`, 
-                        color: customColor 
-                    } : undefined}
-                >
-                    {isRoot || account.ui_metadata?.icon ? (
-                        <LucideIcon 
-                            name={isRoot ? (rootCategory?.icon || account.ui_metadata?.icon || getTypeIcon(account.type)) : account.ui_metadata?.icon!} 
-                            className="w-4 h-4" 
-                        />
-                    ) : (
-                        <span className="text-[10px] font-black tracking-tight leading-none pointer-events-none">
-                            {initials}
-                        </span>
-                    )}
-                </div>
+                <FinancialAvatar 
+                    account={account} 
+                    size="sm" 
+                    className={cn(!account.ui_metadata?.color && typeColorClass)}
+                />
                 
                 <div className="flex flex-col">
-                    <h5 className={cn("font-bold text-slate-900", isRoot ? "text-sm text-slate-700" : "text-xs")}>
-                        {(!account.parent_id && (account.type === 'asset' || account.type === 'liability' || account.type === 'equity')) 
-                            ? t(account.name) 
-                            : account.name}
-                    </h5>
+                    <div className="flex items-center gap-2">
+                        <Link 
+                            href={`/transactions?${(account.type === 'asset' || account.type === 'liability') ? 'account_id' : 'category_id'}=${account.id}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className={cn(
+                                "font-bold text-slate-900 hover:text-primary transition-colors cursor-pointer", 
+                                isRoot ? "text-sm text-slate-700" : "text-xs"
+                            )}
+                        >
+                            {(!account.parent_id && (account.type === 'asset' || account.type === 'liability' || account.type === 'equity')) 
+                                ? t(account.name) 
+                                : account.name}
+                        </Link>
+                    </div>
                     {(account.children?.length ?? 0) > 0 && (
                         <span className="text-[10px] uppercase tracking-widest font-black text-slate-400">
                             {`${account.children?.length ?? 0} ${account.children?.length === 1 ? t('accounts.page.children_count_singular') : t('accounts.page.children_count')}`}
@@ -150,11 +164,20 @@ export default function AccountRow({
                             <DropdownSelector>
                                 <DropdownSelector.Trigger 
                                     showChevron={false}
-                                    className="p-1.5 h-8 w-8 min-w-[32px] rounded-lg border-none shadow-none! cursor-pointer focus:ring-0 focus:outline-none"
+                                    className="p-1.5 h-8 w-8 min-w-[32px] rounded-lg border-transparent shadow-none! cursor-pointer focus:ring-0 focus:outline-none"
                                 >
                                     <MoreVertical className="w-4 h-4 text-slate-400 group-hover:text-slate-900 transition-colors" />
                                 </DropdownSelector.Trigger>
                                 <DropdownSelector.Panel align="right" placement='top' className="w-48 p-1">
+                                    <DropdownSelector.Item 
+                                        as={Link}
+                                        href={`/transactions?account_id=${account.id}`}
+                                        className="flex items-center gap-2 p-2 text-xs font-bold text-slate-600 hover:bg-primary/5 hover:text-primary rounded-lg cursor-pointer transition-colors"
+                                    >
+                                        <FileText className="w-3.5 h-3.5" />
+                                        {t('accounts.actions.statement')}
+                                    </DropdownSelector.Item>
+                                    
                                     <DropdownSelector.Item 
                                         onClick={(e: any) => {
                                             e.stopPropagation();

@@ -69,7 +69,7 @@ return [
     'gifts' => 'Presentes',
     'page' => [
         'title' => 'Gestão de Categorias',
-        'description' => 'Organize seu plano de categorias para receitas e despesas. Categorias ajudam a classificar seus lançamentos de forma clara.',
+        'description' => 'Organize seu plano de categorias para receitas e despesas. Categorias ajudam a classificar suas transações de forma clara.',
         'coming_soon' => 'O gerenciador completo de categorias está chegando. Em breve você poderá criar, editar e organizar sua árvore de categorias aqui.',
         'create_btn' => 'Nova Categoria',
         'income_tab' => 'Receitas',

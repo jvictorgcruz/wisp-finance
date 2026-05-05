@@ -1,6 +1,7 @@
 import React from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
+import PageHeader from '@/Components/Common/PageHeader';
 import { Settings, ArrowLeft, Save, Info, Settings2, CheckCircle2, XCircle, Search, X } from 'lucide-react';
 import { useTranslation } from '@/Hooks/useTranslation';
 import Modal from '@/Components/Common/Modal';
@@ -150,26 +151,18 @@ export default function Index({ settings }: SettingsProps) {
         <AppLayout title={t('settings.title')}>
             <Head title={t('settings.title')} />
             
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <div>
-                    <div className="flex items-center gap-4 mb-2">
-                        <Link 
-                            href="/dashboard" 
-                            className="p-2 -ml-2 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-white transition-colors"
-                            title={t('settings.back')}
-                        >
-                            <ArrowLeft className="w-5 h-5" />
-                        </Link>
-                        <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+            <PageHeader>
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="space-y-1">
+                        <h2 className="text-2xl font-black text-slate-900 tracking-tight">
                             {t('settings.title')}
-                        </h1>
+                        </h2>
+                        <p className="text-sm font-medium text-slate-500">
+                            {t('settings.subtitle')}
+                        </p>
                     </div>
-                    <p className="text-sm font-medium text-slate-500">
-                        {t('settings.subtitle')}
-                    </p>
                 </div>
-
-            </div>
+            </PageHeader>
             
             {/* Filters */}
             <div className="flex flex-col md:flex-row gap-4 mb-6 p-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
@@ -182,7 +175,7 @@ export default function Index({ settings }: SettingsProps) {
                     />
                 </div>
                 <div className="w-full md:w-64 relative group">
-                    <label className="absolute left-3 top-[-8px] px-1 bg-white text-[10px] font-black text-slate-400 uppercase tracking-widest z-10 transition-colors group-focus-within:text-primary">
+                    <label className="absolute left-3 top-[-8px] px-1 bg-white block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 z-10 transition-colors group-focus-within:text-primary">
                         {t('settings.filter_status')}
                     </label>
                     <select
@@ -276,7 +269,7 @@ export default function Index({ settings }: SettingsProps) {
                     </div>
 
                     <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                        <label className="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-1.5 ml-1">
                             {t('settings.setting_value')}
                         </label>
                         <input

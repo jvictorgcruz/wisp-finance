@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { useTranslation } from '@/Hooks/useTranslation';
 import Modal from '@/Components/Common/Modal';
+import CurrencyInput from '@/Components/Common/CurrencyInput';
 import TextField from '@/Components/Common/TextField';
 import LucideIcon from '@/Components/Common/LucideIcon';
 import DropdownSelector from '@/Components/Common/DropdownSelector';
 import { Account } from './AccountRow';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { toCents, fromCents } from '@/Utils/money';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -25,6 +27,8 @@ interface AccountModalProps {
     rootCategories?: any[];
     availableColors?: string[];
     availableIcons?: string[];
+    title?: string;
+    forceType?: string;
 }
 
 export default function AccountModal({ 
@@ -36,10 +40,12 @@ export default function AccountModal({
     rootAccounts = [],
     rootCategories = [],
     availableColors = [],
-    availableIcons = []
+    availableIcons = [],
+    title: customTitle,
+    forceType
 }: AccountModalProps) {
     const { t } = useTranslation();
-    const { data, setData, post, put, processing, errors, reset, clearErrors } = useForm({
+    const { data, setData, post, put, transform, processing, errors, reset, clearErrors } = useForm({
         name: '',
         type: 'asset',
         parent_Key: 'bank', 
@@ -47,6 +53,13 @@ export default function AccountModal({
         ui_metadata: {
             icon: '', // Removed for accounts
             color: '#3b82f6',
+        },
+        is_credit_card: false,
+        credit_card_details: {
+            limit: 0,
+            closing_day: 10,
+            due_day: 17,
+            invoice_control_enabled: true
         }
     });
 
@@ -61,6 +74,13 @@ export default function AccountModal({
                     ui_metadata: {
                         icon: account.ui_metadata?.icon || '', 
                         color: account.ui_metadata?.color || '#3b82f6',
+                    },
+                    is_credit_card: account.is_credit_card || false,
+                    credit_card_details: {
+                        limit: fromCents(account.credit_card_details?.limit ?? 0),
+                        closing_day: account.credit_card_details?.closing_day ?? 10,
+                        due_day: account.credit_card_details?.due_day ?? 17,
+                        invoice_control_enabled: account.credit_card_details?.invoice_control_enabled ?? true
                     }
                 });
             } else if (mode === 'subaccount' && parentAccount) {
@@ -72,20 +92,35 @@ export default function AccountModal({
                     ui_metadata: {
                         icon: '',
                         color: parentAccount.ui_metadata?.color || '#3b82f6',
+                    },
+                    is_credit_card: false,
+                    credit_card_details: {
+                        limit: 0,
+                        closing_day: 10,
+                        due_day: 17,
+                        invoice_control_enabled: true
                     }
                 });
             } else {
-                const defaultCat = rootCategories.find(c => c.key === 'bank')!;
+                const initialCatKey = forceType || 'bank';
+                const defaultCat = rootCategories.find(c => c.key === initialCatKey)!;
                 const parent = rootAccounts.find(r => r.name === defaultCat.name);
                 
                 setData({
                     name: '',
                     type: defaultCat.type,
-                    parent_Key: 'bank',
+                    parent_Key: initialCatKey,
                     parent_id: parent?.id || null,
                     ui_metadata: {
                         icon: '',
                         color: '#3b82f6',
+                    },
+                    is_credit_card: initialCatKey === 'credit_card',
+                    credit_card_details: {
+                        limit: 0,
+                        closing_day: 10,
+                        due_day: 17,
+                        invoice_control_enabled: true
                     }
                 });
             }
@@ -114,6 +149,15 @@ export default function AccountModal({
             return;
         }
 
+        transform((data) => ({
+            ...data,
+            is_credit_card: data.parent_Key === 'credit_card',
+            credit_card_details: {
+                ...data.credit_card_details,
+                limit: toCents(data.credit_card_details.limit)
+            }
+        }));
+
         if (mode === 'edit' && account) {
             put(`/accounts/${account.id}`, {
                 onSuccess: () => {
@@ -131,8 +175,15 @@ export default function AccountModal({
         }
     };
 
+    const handleLimitChange = (val: number) => {
+        setData(d => ({
+            ...d,
+            credit_card_details: { ...d.credit_card_details, limit: val }
+        }));
+    };
+
     const initials = data.name ? data.name.substring(0, 3).toUpperCase() : '';
-    const title = mode === 'edit' 
+    const title = customTitle || (mode === 'edit' 
         ? t('accounts.modal.title_edit') 
         : (mode === 'subaccount' 
             ? t('accounts.modal.title_subaccount', { 
@@ -140,7 +191,7 @@ export default function AccountModal({
                     ? t(parentAccount.name) 
                     : parentAccount?.name || '' 
             }) 
-            : t('accounts.modal.title_create'));
+            : t('accounts.modal.title_create')));
 
     return (
         <Modal show={show} onClose={onClose} title={title} maxWidth="md">
@@ -170,10 +221,10 @@ export default function AccountModal({
                     </div>
                 </div>
 
-                {/* Account Type Cards - ONLY IN CREATE MODE */}
-                {mode === 'create' && (
+                {/* Account Type Cards - ONLY IN CREATE MODE AND NOT FORCED */}
+                {mode === 'create' && !forceType && (
                     <div className="space-y-4">
-                        <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">
+                        <label className="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-1.5 ml-1">
                             {t('accounts.modal.type_label')}
                         </label>
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -189,14 +240,20 @@ export default function AccountModal({
                                             "flex flex-col items-center justify-center p-4 rounded-3xl border-2 transition-all group relative overflow-hidden",
                                             isActive 
                                                 ? "border-primary bg-primary/5 shadow-lg shadow-primary/5" 
-                                                : "border-slate-100 hover:border-slate-300 hover:bg-slate-50",
+                                                : "border-slate-50 hover:border-slate-200 hover:bg-slate-50",
                                             cat.disabled && "opacity-40 cursor-not-allowed grayscale"
                                         )}
                                     >
-                                        <div className={cn(
-                                            "w-10 h-10 rounded-2xl flex items-center justify-center mb-3 transition-colors",
-                                            isActive ? "bg-primary text-white" : "bg-slate-100 text-slate-400 group-hover:bg-slate-200"
-                                        )}>
+                                        <div 
+                                            className={cn(
+                                                "w-10 h-10 rounded-2xl flex items-center justify-center mb-3 transition-all",
+                                                isActive ? "shadow-lg shadow-primary/20" : ""
+                                            )}
+                                            style={{ 
+                                                backgroundColor: isActive ? cat.color : `${cat.color}15`, 
+                                                color: isActive ? '#fff' : cat.color 
+                                            }}
+                                        >
                                             <LucideIcon name={cat.icon} className="w-5 h-5" />
                                         </div>
                                         <span className={cn(
@@ -216,7 +273,7 @@ export default function AccountModal({
                     <div>
                         <TextField
                             id="name"
-                            label={t('accounts.modal.name_label')}
+                            label={data.parent_Key === 'credit_card' ? t('accounts.modal.name_card_label') : t('accounts.modal.name_label')}
                             value={data.name}
                             onChange={(val) => setData('name', val)}
                             placeholder={t(`accounts.modal.name_placeholders.${data.parent_Key}`) !== `accounts.modal.name_placeholders.${data.parent_Key}` 
@@ -231,7 +288,7 @@ export default function AccountModal({
                     <div className="grid grid-cols-2 gap-6">
                         {/* Compact Icon Selector */}
                         <div className="space-y-3">
-                            <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">
+                            <label className="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-1.5 ml-1">
                                 Ícone
                             </label>
                             <DropdownSelector 
@@ -272,7 +329,7 @@ export default function AccountModal({
 
                         {/* Compact Color Selector */}
                         <div className="space-y-3">
-                            <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">
+                            <label className="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-1.5 ml-1">
                                 {t('accounts.modal.color_label')}
                             </label>
                             <DropdownSelector 
@@ -303,6 +360,73 @@ export default function AccountModal({
                             </DropdownSelector>
                         </div>
                     </div>
+
+                    {/* Credit Card Details */}
+                    {data.parent_Key === 'credit_card' && (
+                        <div className="space-y-6 animate-in fade-in slide-in-from-top-2 duration-300">
+                            <CurrencyInput
+                                variant="normal"
+                                label={t('accounts.modal.limit_label')}
+                                value={data.credit_card_details.limit}
+                                onChange={handleLimitChange}
+                                error={errors['credit_card_details.limit' as keyof typeof errors]}
+                            />
+                            
+                            <div className="flex items-center gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                <label className="relative inline-flex items-center cursor-pointer">
+                                    <input 
+                                        type="checkbox" 
+                                        className="sr-only peer"
+                                        checked={data.credit_card_details.invoice_control_enabled}
+                                        onChange={(e) => setData(d => ({
+                                            ...d,
+                                            credit_card_details: { ...d.credit_card_details, invoice_control_enabled: e.target.checked }
+                                        }))}
+                                    />
+                                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                </label>
+                                <div className="flex flex-col">
+                                    <span className="text-xs font-black uppercase tracking-widest text-slate-700">
+                                        {t('accounts.modal.invoice_control_label')}
+                                    </span>
+                                    <span className="text-[10px] text-slate-400 font-medium">
+                                        {t('accounts.modal.invoice_control_desc')}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {data.credit_card_details.invoice_control_enabled && (
+                                <div className="grid grid-cols-2 gap-6 animate-in fade-in slide-in-from-top-1">
+                                    <TextField
+                                        id="closing_day"
+                                        type="number"
+                                        min="1"
+                                        max="31"
+                                        label={t('accounts.modal.closing_day_label')}
+                                        value={data.credit_card_details.closing_day.toString()}
+                                        onChange={(val) => setData(d => ({
+                                            ...d,
+                                            credit_card_details: { ...d.credit_card_details, closing_day: parseInt(val) || 0 }
+                                        }))}
+                                        error={errors['credit_card_details.closing_day' as keyof typeof errors]}
+                                    />
+                                    <TextField
+                                        id="due_day"
+                                        type="number"
+                                        min="1"
+                                        max="31"
+                                        label={t('accounts.modal.due_day_label')}
+                                        value={data.credit_card_details.due_day.toString()}
+                                        onChange={(val) => setData(d => ({
+                                            ...d,
+                                            credit_card_details: { ...d.credit_card_details, due_day: parseInt(val) || 0 }
+                                        }))}
+                                        error={errors['credit_card_details.due_day' as keyof typeof errors]}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex items-center justify-end gap-3 pt-6 border-t border-slate-50">

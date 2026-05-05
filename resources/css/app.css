@@ -43,12 +43,26 @@
     --tracking-editorial-tight: -0.02em;
     --tracking-editorial-wide: 0.05em;
 
-    /* Shadows */
-    --shadow-editorial: 0 8px 32px rgba(0, 0, 0, 0.05);
-    --shadow-soft: 0 4px 24px rgba(0, 0, 0, 0.04);
+    /* Borders */
+    --color-border-editorial: #f1f5f9;
+
+    /* Shadows (Reduced) */
+    --shadow-editorial: 0 2px 4px rgba(0, 0, 0, 0.02);
+    --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.01);
+
+    --tw-border-style: solid;
+}
+
+@utility border-editorial {
+  border: 1px solid var(--color-border-editorial);
 }
 
 @layer base {
+    /* Remove forced scrollbar to prevent conflicts with modal libraries */
+    html {
+        scrollbar-gutter: stable;
+    }
+
     *:focus {
         @apply outline-primary;
     }

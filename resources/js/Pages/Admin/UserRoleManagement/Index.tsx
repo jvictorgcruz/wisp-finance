@@ -1,6 +1,7 @@
 import React from 'react';
 import { Head, Link, useForm, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
+import PageHeader from '@/Components/Common/PageHeader';
 import { Users, ArrowLeft, ShieldCheck, User as UserIcon, ShieldAlert, Check, Loader2, AlertCircle } from 'lucide-react';
 import { useTranslation } from '@/Hooks/useTranslation';
 import Modal from '@/Components/Common/Modal';
@@ -67,25 +68,18 @@ export default function UserRoleManagement({ users, availableRoles }: UserRoleMa
     return (
         <AppLayout title={t('admin.role_management_title') || 'Role Management'}>
             <Head title={t('admin.role_management_title') || 'Role Management'} />
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <div>
-                    <div className="flex items-center gap-4 mb-2">
-                        <Link
-                            href="/dashboard"
-                            className="p-2 -ml-2 rounded-xl text-slate-400 hover:text-slate-900 transition-colors"
-                        >
-                            <ArrowLeft className="w-5 h-5" />
-                        </Link>
-                        <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-                            <Users className="w-6 h-6 text-[#4B3BC9]" />
+            <PageHeader>
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="space-y-1">
+                        <h2 className="text-2xl font-black text-slate-900 tracking-tight">
                             {t('admin.role_management_title') || 'Role Management'}
-                        </h1>
+                        </h2>
+                        <p className="text-sm font-medium text-slate-500">
+                            {t('admin.role_management_subtitle') || 'Assign system roles to users to control access level'}
+                        </p>
                     </div>
-                    <p className="text-sm font-medium text-slate-500">
-                        {t('admin.role_management_subtitle') || 'Assign system roles to users to control access level'}
-                    </p>
                 </div>
-            </div>
+            </PageHeader>
 
             <div className="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
                 <div className="">

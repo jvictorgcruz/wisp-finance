@@ -6,13 +6,16 @@ use App\Enums\AccountType;
 use App\Models\Account;
 use App\Models\Ledger;
 use App\Models\JournalEntry;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
+use Tests\TestCase;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    /** @var TestCase $this */
     $this->user   = User::factory()->create();
     $this->ledger = Ledger::factory()->create();
     $this->ledger->users()->attach($this->user, ['role' => 'owner']);
@@ -34,10 +37,12 @@ test('asset balance = debits minus credits', function () {
         'status' => AccountStatus::ACTIVE,
     ]);
 
-    JournalEntry::create(['account_id' => $account->id, 'type' => 'DEBIT',  'amount' => 50000, 'entry_date' => today()]);
-    JournalEntry::create(['account_id' => $account->id, 'type' => 'CREDIT', 'amount' => 20000, 'entry_date' => today()]);
+    $transaction = Transaction::factory()->create(['ledger_id' => $this->ledger->id]);
 
-    expect($this->action->execute($account))->toBe(30000);
+    JournalEntry::create(['transaction_id' => $transaction->id, 'account_id' => $account->id, 'type' => 'DEBIT',  'amount' => 50000, 'entry_date' => today()]);
+    JournalEntry::create(['transaction_id' => $transaction->id, 'account_id' => $account->id, 'type' => 'CREDIT', 'amount' => 20000, 'entry_date' => today()]);
+
+    expect($this->action->executeSingle($account))->toBe(30000);
 });
 
 test('asset account with only debits returns positive balance', function () {
@@ -47,9 +52,11 @@ test('asset account with only debits returns positive balance', function () {
         'status' => AccountStatus::ACTIVE,
     ]);
 
-    JournalEntry::create(['account_id' => $account->id, 'type' => 'DEBIT', 'amount' => 10000, 'entry_date' => today()]);
+    $transaction = Transaction::factory()->create(['ledger_id' => $this->ledger->id]);
 
-    expect($this->action->execute($account))->toBe(10000);
+    JournalEntry::create(['transaction_id' => $transaction->id, 'account_id' => $account->id, 'type' => 'DEBIT', 'amount' => 10000, 'entry_date' => today()]);
+
+    expect($this->action->executeSingle($account))->toBe(10000);
 });
 
 // -------------------------------------------------------------------------
@@ -63,10 +70,12 @@ test('liability balance = credits minus debits', function () {
         'status' => AccountStatus::ACTIVE,
     ]);
 
-    JournalEntry::create(['account_id' => $account->id, 'type' => 'CREDIT', 'amount' => 30000, 'entry_date' => today()]);
-    JournalEntry::create(['account_id' => $account->id, 'type' => 'DEBIT',  'amount' => 10000, 'entry_date' => today()]);
+    $transaction = Transaction::factory()->create(['ledger_id' => $this->ledger->id]);
 
-    expect($this->action->execute($account))->toBe(20000);
+    JournalEntry::create(['transaction_id' => $transaction->id, 'account_id' => $account->id, 'type' => 'CREDIT', 'amount' => 30000, 'entry_date' => today()]);
+    JournalEntry::create(['transaction_id' => $transaction->id, 'account_id' => $account->id, 'type' => 'DEBIT',  'amount' => 10000, 'entry_date' => today()]);
+
+    expect($this->action->executeSingle($account))->toBe(20000);
 });
 
 // -------------------------------------------------------------------------
@@ -80,10 +89,12 @@ test('expense balance = debits minus credits', function () {
         'status' => AccountStatus::ACTIVE,
     ]);
 
-    JournalEntry::create(['account_id' => $account->id, 'type' => 'DEBIT',  'amount' => 7500, 'entry_date' => today()]);
-    JournalEntry::create(['account_id' => $account->id, 'type' => 'CREDIT', 'amount' => 2500, 'entry_date' => today()]);
+    $transaction = Transaction::factory()->create(['ledger_id' => $this->ledger->id]);
 
-    expect($this->action->execute($account))->toBe(5000);
+    JournalEntry::create(['transaction_id' => $transaction->id, 'account_id' => $account->id, 'type' => 'DEBIT',  'amount' => 7500, 'entry_date' => today()]);
+    JournalEntry::create(['transaction_id' => $transaction->id, 'account_id' => $account->id, 'type' => 'CREDIT', 'amount' => 2500, 'entry_date' => today()]);
+
+    expect($this->action->executeSingle($account))->toBe(5000);
 });
 
 // -------------------------------------------------------------------------
@@ -97,9 +108,11 @@ test('revenue balance = credits minus debits', function () {
         'status' => AccountStatus::ACTIVE,
     ]);
 
-    JournalEntry::create(['account_id' => $account->id, 'type' => 'CREDIT', 'amount' => 500000, 'entry_date' => today()]);
+    $transaction = Transaction::factory()->create(['ledger_id' => $this->ledger->id]);
 
-    expect($this->action->execute($account))->toBe(500000);
+    JournalEntry::create(['transaction_id' => $transaction->id, 'account_id' => $account->id, 'type' => 'CREDIT', 'amount' => 500000, 'entry_date' => today()]);
+
+    expect($this->action->executeSingle($account))->toBe(500000);
 });
 
 // -------------------------------------------------------------------------
@@ -113,7 +126,7 @@ test('account with no journal entries returns zero', function () {
         'status' => AccountStatus::ACTIVE,
     ]);
 
-    expect($this->action->execute($account))->toBe(0);
+    expect($this->action->executeSingle($account))->toBe(0);
 });
 
 test('account with equal debits and credits returns zero', function () {
@@ -123,10 +136,12 @@ test('account with equal debits and credits returns zero', function () {
         'status' => AccountStatus::ACTIVE,
     ]);
 
-    JournalEntry::create(['account_id' => $account->id, 'type' => 'DEBIT',  'amount' => 15000, 'entry_date' => today()]);
-    JournalEntry::create(['account_id' => $account->id, 'type' => 'CREDIT', 'amount' => 15000, 'entry_date' => today()]);
+    $transaction = Transaction::factory()->create(['ledger_id' => $this->ledger->id]);
 
-    expect($this->action->execute($account))->toBe(0);
+    JournalEntry::create(['transaction_id' => $transaction->id, 'account_id' => $account->id, 'type' => 'DEBIT',  'amount' => 15000, 'entry_date' => today()]);
+    JournalEntry::create(['transaction_id' => $transaction->id, 'account_id' => $account->id, 'type' => 'CREDIT', 'amount' => 15000, 'entry_date' => today()]);
+
+    expect($this->action->executeSingle($account))->toBe(0);
 });
 
 // -------------------------------------------------------------------------
@@ -141,22 +156,26 @@ test('entries from another ledger do not contaminate balance', function () {
         'status' => AccountStatus::ACTIVE,
     ]);
 
-    JournalEntry::create(['account_id' => $account->id, 'type' => 'DEBIT', 'amount' => 5000, 'entry_date' => today()]);
+    $transaction = Transaction::factory()->create(['ledger_id' => $this->ledger->id]);
+    JournalEntry::create(['transaction_id' => $transaction->id, 'account_id' => $account->id, 'type' => 'DEBIT', 'amount' => 5000, 'entry_date' => today()]);
 
-    // Create another ledger with another user — journal entries for the same account_id
+    // Create another ledger with another user
     $otherUser   = User::factory()->create();
     $otherLedger = Ledger::factory()->create();
     $otherLedger->users()->attach($otherUser, ['role' => 'owner']);
 
-    // Insert entry directly bypassing global scope, forcing it into other ledger
-    JournalEntry::withoutGlobalScopes()->create([
-        'ledger_id'  => $otherLedger->id,
-        'account_id' => $account->id,
+    // Create a transaction in other ledger
+    $otherTransaction = Transaction::factory()->create(['ledger_id' => $otherLedger->id]);
+
+    // Insert entry in other ledger's transaction
+    JournalEntry::create([
+        'transaction_id' => $otherTransaction->id,
+        'account_id' => $account->id, // Linking to the SAME account but different transaction/ledger
         'type'       => 'DEBIT',
         'amount'     => 99999,
         'entry_date' => today(),
     ]);
 
     // Balance should only reflect this ledger's entries
-    expect($this->action->execute($account))->toBe(5000);
+    expect($this->action->executeSingle($account))->toBe(5000);
 });

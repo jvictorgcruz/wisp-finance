@@ -10,10 +10,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class JournalEntry extends Model
 {
     /** @use HasFactory */
-    use HasFactory, HasLedger;
+    use HasFactory;
+
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::addGlobalScope(new \App\Models\Scopes\JournalEntryLedgerScope());
+    }
+ 
+    /**
+     * The table is immutable; only created_at is maintained.
+     */
+    const UPDATED_AT = null;
 
     protected $fillable = [
-        'ledger_id',
+        'transaction_id',
         'account_id',
         'type',
         'amount',
@@ -23,10 +36,18 @@ class JournalEntry extends Model
     protected function casts(): array
     {
         return [
-            'type' => 'string', // Could use an enum if defined
-            'amount' => 'integer',
+            'type' => 'string',
+            'amount' => \App\Casts\Money::class,
             'entry_date' => 'date',
         ];
+    }
+
+    /**
+     * Get the transaction this entry belongs to.
+     */
+    public function transaction(): BelongsTo
+    {
+        return $this->belongsTo(Transaction::class);
     }
 
     /**

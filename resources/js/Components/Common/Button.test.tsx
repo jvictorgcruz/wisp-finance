@@ -25,7 +25,7 @@ describe('Button Component', () => {
   it('should apply primary variant classes by default', () => {
     render(<Button>Click Me</Button>);
     const button = screen.getByRole('button');
-    expect(button.closest('button')?.className).toContain('bg-indigo-600');
+    expect(button.closest('button')?.className).toContain('bg-primary');
   });
 
   it('should apply custom className', () => {

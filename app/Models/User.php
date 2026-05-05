@@ -12,7 +12,21 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, \Spatie\Activitylog\Traits\LogsActivity;
+
+    public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
+    {
+        return \Spatie\Activitylog\LogOptions::defaults()
+            ->logOnly(['role'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('domain');
+    }
+
+    public function tapActivity(\Spatie\Activitylog\Models\Activity $activity, string $eventName)
+    {
+        $activity->ledger_id = $this->current_ledger_id;
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -67,6 +81,10 @@ class User extends Authenticatable
      */
     public function currentLedger(): ?Ledger
     {
+        if ($this->current_ledger_id) {
+            return $this->ledgers->find($this->current_ledger_id);
+        }
+
         return $this->ledgers()->first();
     }
 

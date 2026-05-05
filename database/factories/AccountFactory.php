@@ -25,6 +25,7 @@ class AccountFactory extends Factory
             'type' => $this->faker->randomElement(AccountType::cases()),
             'status' => AccountStatus::ACTIVE,
             'is_system' => false,
+            'is_credit_card' => false,
         ];
     }
 }

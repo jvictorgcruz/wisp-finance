@@ -1,5 +1,6 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, Fragment } from 'react';
 import { X } from 'lucide-react';
+import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
 
 interface ModalProps {
     show: boolean;
@@ -7,6 +8,7 @@ interface ModalProps {
     title?: string;
     children: ReactNode;
     maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+    afterLeave?: () => void;
 }
 
 export default function Modal({
@@ -14,10 +16,9 @@ export default function Modal({
     onClose,
     title,
     children,
-    maxWidth = 'md'
+    maxWidth = 'md',
+    afterLeave
 }: ModalProps) {
-    if (!show) return null;
-
     const maxWidthClasses = {
         sm: 'sm:max-w-sm',
         md: 'sm:max-w-md',
@@ -27,32 +28,52 @@ export default function Modal({
     }[maxWidth];
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden p-4 sm:p-6">
-            {/* Backdrop */}
-            <div 
-                className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity cursor-pointer" 
-                onClick={onClose}
-                aria-hidden="true"
-            />
+        <Transition show={show} as={Fragment} afterLeave={afterLeave}>
+            <Dialog as="div" className="relative z-50" onClose={onClose}>
+                <TransitionChild
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                >
+                    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" />
+                </TransitionChild>
 
-            {/* Modal Content */}
-            <div className={`relative z-50 w-full bg-white rounded-3xl shadow-2xl transform transition-all animate-in fade-in zoom-in-95 duration-200 ${maxWidthClasses} max-h-[90vh] overflow-hidden flex flex-col`}>
-                <div className="px-6 py-4 border-b border-slate-50 flex items-center justify-between bg-white sticky top-0 z-10">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500">
-                        {title}
-                    </h3>
-                    <button 
-                        onClick={onClose}
-                        className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all"
-                    >
-                        <X className="w-5 h-5" />
-                    </button>
-                </div>
+                <div className="fixed inset-0 z-50 overflow-y-auto">
+                    <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-6">
+                        <TransitionChild
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0 scale-95"
+                            enterTo="opacity-100 scale-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100 scale-100"
+                            leaveTo="opacity-0 scale-95"
+                        >
+                            <DialogPanel className={`relative w-full bg-white rounded-3xl border-editorial text-left transform transition-all ${maxWidthClasses} flex flex-col my-auto`}>
+                                <div className="px-6 py-4 border-b border-editorial flex items-center justify-between bg-white sticky top-0 z-10 rounded-t-3xl">
+                                    <DialogTitle as="h3" className="text-sm font-bold uppercase tracking-widest text-slate-500">
+                                        {title}
+                                    </DialogTitle>
+                                    <button 
+                                        onClick={onClose}
+                                        className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all"
+                                    >
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                </div>
 
-                <div className="p-6 overflow-y-auto">
-                    {children}
+                                <div className="p-6">
+                                    {children}
+                                </div>
+                            </DialogPanel>
+                        </TransitionChild>
+                    </div>
                 </div>
-            </div>
-        </div>
+            </Dialog>
+        </Transition>
     );
 }

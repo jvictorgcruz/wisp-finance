@@ -68,14 +68,29 @@ Route::middleware('guest')->group(function () {
 Route::middleware('check_maintenance')->group(function () {
 
     Route::middleware('auth')->group(function () {
-        Route::get('dashboard', fn() => redirect()->route('accounts.index'))->name('dashboard');
+        Route::get('dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
         Route::resource('accounts', \App\Http\Controllers\AccountController::class)->only(['index', 'store', 'update', 'destroy']);
+        Route::get('cards/{account}/invoices/{yearMonth?}', [\App\Http\Controllers\CreditCards\CreditCardInvoiceController::class, 'show'])->name('cards.invoices.show');
+        Route::post('cards/{account}/invoices/{invoice}/pay', [\App\Http\Controllers\CreditCards\CreditCardInvoiceController::class, 'pay'])->name('cards.invoices.pay');
+        Route::get('cards', [\App\Http\Controllers\CreditCardController::class, 'index'])->name('cards.index');
         Route::resource('categories', \App\Http\Controllers\CategoryController::class)->only(['index', 'store', 'update', 'destroy']);
+
+        Route::prefix('transactions')->name('transactions.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\TransactionController::class, 'index'])->name('index');
+            Route::post('expense', [\App\Http\Controllers\TransactionController::class, 'storeExpense'])->name('store-expense');
+            Route::post('income', [\App\Http\Controllers\TransactionController::class, 'storeIncome'])->name('store-income');
+            Route::post('transfer', [\App\Http\Controllers\TransactionController::class, 'storeTransfer'])->name('store-transfer');
+            Route::put('{transaction}', [\App\Http\Controllers\TransactionController::class, 'update'])->name('update');
+            Route::delete('{transaction}', [\App\Http\Controllers\TransactionController::class, 'destroy'])->name('destroy');
+        });
 
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
         
         Route::post('language/{locale}', [\App\Http\Controllers\LanguageController::class, 'update'])->name('language.update');
+
+        Route::get('analytics/cash-flow', [\App\Http\Controllers\AnalyticsController::class, 'cashFlow'])->name('analytics.cash-flow');
+        Route::get('analytics/accrual-basis', [\App\Http\Controllers\AnalyticsController::class, 'accrualBasis'])->name('analytics.accrual-basis');
     });
 
 });
@@ -86,6 +101,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     Route::get('settings', [\App\Http\Controllers\Admin\SystemSettingController::class, 'index'])->name('settings.index');
     Route::put('settings', [\App\Http\Controllers\Admin\SystemSettingController::class, 'update'])->name('settings.update');
+
+    Route::get('audit-log', [\App\Http\Controllers\Admin\AuditLogController::class, 'index'])->name('audit-log.index');
 
     Route::middleware('super_admin')->group(function () {
         Route::get('users', [\App\Http\Controllers\Admin\UserRoleController::class, 'index'])->name('users.index');

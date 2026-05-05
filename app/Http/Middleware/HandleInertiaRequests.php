@@ -73,6 +73,9 @@ class HandleInertiaRequests extends Middleware
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),
             ],
+            'financial_context' => ($user && $currentLedgerId) 
+                ? app(\App\Actions\Ledgers\GetFinancialContextAction::class)->execute($currentLedgerId) 
+                : null,
         ]);
     }
 }

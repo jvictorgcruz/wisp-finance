@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('journal_entries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('ledger_id')->constrained()->cascadeOnDelete();
             $table->foreignId('account_id')->constrained()->cascadeOnDelete();
             $table->enum('type', ['DEBIT', 'CREDIT']);
             $table->bigInteger('amount');

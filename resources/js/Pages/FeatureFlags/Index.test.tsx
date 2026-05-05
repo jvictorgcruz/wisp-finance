@@ -1,14 +1,18 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import FeatureFlags from '@/Pages/FeatureFlags/Index';
 import React from 'react';
-import { useForm, router } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
 
 // Mock translations
 vi.mock('@/Hooks/useTranslation', () => ({
     useTranslation: () => ({
         t: (key: string) => key,
     }),
+}));
+
+vi.mock('@/Layouts/AppLayout', () => ({
+    default: ({ children }: { children: React.ReactNode }) => <div data-testid="app-layout">{children}</div>,
 }));
 
 vi.mock('@inertiajs/react', async () => {
@@ -47,12 +51,17 @@ describe('FeatureFlags Index Page', () => {
         errors: {},
     };
 
-    it('renders the page title and flag list', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
         (useForm as any).mockReturnValue({
+            data: { ledger_id: '', user_email: '' },
+            setData: vi.fn(),
             post: vi.fn(),
             processing: false,
         });
+    });
 
+    it('renders the page title and flag list', () => {
         render(<FeatureFlags {...defaultProps} />);
 
         expect(screen.getByText('feature_flags.title')).toBeInTheDocument();
@@ -61,11 +70,6 @@ describe('FeatureFlags Index Page', () => {
     });
 
     it('shows the cache expiration timer when expires_at is provided', () => {
-        (useForm as any).mockReturnValue({
-            post: vi.fn(),
-            processing: false,
-        });
-
         // Set expires_at to 10 minutes in the future
         const expiresAt = new Date().getTime() + 600000;
 
@@ -75,11 +79,6 @@ describe('FeatureFlags Index Page', () => {
     });
 
     it('renders and allows interaction with the context evaluation form', () => {
-        (useForm as any).mockReturnValue({
-            post: vi.fn(),
-            processing: false,
-        });
-
         render(<FeatureFlags {...defaultProps} />);
 
         expect(screen.getByLabelText('feature_flags.context_ledger_id')).toBeInTheDocument();

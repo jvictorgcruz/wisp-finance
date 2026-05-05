@@ -46,12 +46,12 @@ class DeleteAccountAction
      */
     protected function handleInactivation(Account $account): bool
     {
-        $balance = $this->getBalanceAction->execute($account);
+        $balance = $this->getBalanceAction->executeSingle($account);
 
         if ($balance !== 0) {
             throw ValidationException::withMessages([
                 'id' => __('Cannot inactivate an account with a non-zero balance (:balance).', [
-                    'balance' => number_format($balance / 100, 2),
+                    'balance' => $balance,
                 ]),
             ]);
         }

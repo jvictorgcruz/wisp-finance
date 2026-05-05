@@ -15,7 +15,7 @@ export default function CategoryTree({ categories, onEdit, onDelete, onAddSub }:
 
     if (categories.length === 0) {
         return (
-            <div className="bg-white rounded-4xl border border-slate-100 p-12 flex flex-col items-center justify-center text-center space-y-4 shadow-sm">
+            <div className="bg-white rounded-4xl border border-slate-100 p-12 flex flex-col items-center justify-center text-center space-y-4">
                 <Logo />
                 <div className="space-y-2">
                     <h3 className="text-lg font-bold text-slate-900">{t('categories.page.empty_title')}</h3>
@@ -28,7 +28,7 @@ export default function CategoryTree({ categories, onEdit, onDelete, onAddSub }:
     }
 
     return (
-        <div className="bg-white rounded-4xl border border-slate-100 shadow-sm overflow-hidden">
+        <div className="bg-white/50 backdrop-blur-sm rounded-4xl border border-slate-100 overflow-hidden">
             <div className="divide-y divide-slate-100">
                 {categories.map(category => (
                     <CategoryRow 

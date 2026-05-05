@@ -1,8 +1,12 @@
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import UserRoleManagement from '@/Pages/Admin/UserRoleManagement';
+import UserRoleManagement from '@/Pages/Admin/UserRoleManagement/Index';
 import React from 'react';
 import { router } from '@inertiajs/react';
+
+vi.mock('@/Layouts/AppLayout', () => ({
+    default: ({ children }: { children: React.ReactNode }) => <div data-testid="app-layout">{children}</div>,
+}));
 
 vi.mock('@/Hooks/useTranslation', () => ({
     useTranslation: () => ({

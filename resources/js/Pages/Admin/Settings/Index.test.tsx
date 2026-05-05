@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import Index from '@/Pages/Admin/Settings/Index';
 import React from 'react';
@@ -131,7 +131,7 @@ describe('Settings Index Page', () => {
         );
     });
 
-    it('closes the modal when clicking cancel', () => {
+    it('closes the modal when clicking cancel', async () => {
         render(<Index settings={settings} filters={{}}/>);
 
         const configureButtons = screen.getAllByText('settings.configure');
@@ -142,6 +142,8 @@ describe('Settings Index Page', () => {
         const cancelButton = screen.getByText('settings.cancel');
         fireEvent.click(cancelButton);
 
-        expect(screen.queryByText('settings.edit_setting')).not.toBeInTheDocument();
+        await waitFor(() => {
+            expect(screen.queryByText('settings.edit_setting')).not.toBeInTheDocument();
+        });
     });
 });

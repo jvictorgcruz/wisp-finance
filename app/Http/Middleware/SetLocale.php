@@ -19,6 +19,14 @@ class SetLocale
         $supportedLocales = Locale::values();
         $locale = $request->route('locale') ?: $request->segment(1);
 
+        if (!$locale && session()->has('locale')) {
+            $locale = session('locale');
+        }
+
+        if (!$locale && auth()->check()) {
+            $locale = auth()->user()->locale;
+        }
+
         if ($locale && in_array($locale, $supportedLocales)) {
             app()->setLocale($locale);
             config(['app.locale' => $locale]);

@@ -1,0 +1,115 @@
+<?php
+
+namespace Tests\Unit\Models;
+
+use App\Models\Account;
+use App\Models\CreditCardDetail;
+use App\Models\CreditCardInvoice;
+use App\Models\ExpectedCashFlow;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
+use Tests\TestCase;
+
+uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    /** @var TestCase $this */
+    $result = createAuthenticatedLedger();
+    $this->ledger = $result['ledger'];
+    $this->account = Account::factory()->create(['ledger_id' => $this->ledger->id]);
+    $this->cardDetail = CreditCardDetail::factory()->create(['account_id' => $this->account->id]);
+});
+
+test('invoice resolves status correctly', function () {
+    // 1. OPEN: today < closing_date
+    $invoice = CreditCardInvoice::factory()->create([
+        'credit_card_detail_id' => $this->cardDetail->id,
+        'closing_date' => Carbon::today()->addDays(5),
+        'due_date' => Carbon::today()->addDays(15),
+    ]);
+    expect($invoice->status)->toBe('OPEN');
+
+    // 2. CLOSED: today >= closing_date AND today <= due_date
+    $invoice->update([
+        'closing_date' => Carbon::today()->subDays(1),
+        'due_date' => Carbon::today()->addDays(5),
+    ]);
+    expect($invoice->fresh()->status)->toBe('CLOSED');
+
+    // 3. OVERDUE: today > due_date AND balance > 0
+    $invoice->update([
+        'closing_date' => Carbon::today()->subDays(10),
+        'due_date' => Carbon::today()->subDays(1),
+    ]);
+    
+    // Add a purchase so it's not empty
+    ExpectedCashFlow::factory()->create([
+        'credit_card_invoice_id' => $invoice->id,
+        'amount' => 1000,
+        'account_id' => $this->account->id,
+    ]);
+
+    expect($invoice->fresh()->status)->toBe('OVERDUE');
+
+    // 4. PAID: sum(amount) <= 0
+    ExpectedCashFlow::factory()->create([
+        'credit_card_invoice_id' => $invoice->id,
+        'amount' => 10000,
+        'account_id' => $this->account->id,
+    ]);
+    
+    // Still not paid (balance 10000)
+    expect($invoice->fresh()->status)->not->toBe('PAID');
+
+    // Add payment (negative amount)
+    ExpectedCashFlow::factory()->create([
+        'credit_card_invoice_id' => $invoice->id,
+        'amount' => -11000,
+        'account_id' => $this->account->id,
+    ]);
+    
+    expect($invoice->fresh()->status)->toBe('PAID');
+});
+
+test('invoice calculates total and paid amounts', function () {
+    $invoice = CreditCardInvoice::factory()->create([
+        'credit_card_detail_id' => $this->cardDetail->id,
+        'closing_date' => now()->addDays(10),
+        'due_date' => now()->addDays(20),
+    ]);
+
+    // Purchase 1
+    ExpectedCashFlow::factory()->create([
+        'credit_card_invoice_id' => $invoice->id,
+        'amount' => 10000,
+        'account_id' => $this->account->id,
+    ]);
+
+    // Purchase 2
+    ExpectedCashFlow::factory()->create([
+        'credit_card_invoice_id' => $invoice->id,
+        'amount' => 5000,
+        'account_id' => $this->account->id,
+    ]);
+
+    // Payment
+    ExpectedCashFlow::factory()->create([
+        'credit_card_invoice_id' => $invoice->id,
+        'amount' => -4000,
+        'account_id' => $this->account->id,
+    ]);
+
+    expect($invoice->total_amount)->toBe(15000);
+    expect($invoice->paid_amount)->toBe(4000);
+    expect($invoice->status)->toBe('OPEN');
+});
+
+test('invoice is isolated by ledger scope', function () {
+    $invoice = CreditCardInvoice::factory()->create(['credit_card_detail_id' => $this->cardDetail->id]);
+
+    // Switch context to a new user and ledger
+    createAuthenticatedLedger();
+
+    expect(CreditCardInvoice::find($invoice->id))->toBeNull();
+    expect(CreditCardInvoice::count())->toBe(0);
+});

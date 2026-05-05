@@ -46,6 +46,7 @@ No MVP, cada usuário terá exatamente 1 ledger criado automaticamente no onboar
 |:---|:---|:---|
 | `id` | BigInt (Unsigned) | PK, Auto-increment |
 | `name` | Varchar(255) | Ex: "Finanças da Família Silva" |
+| `slug` | Varchar(255) | Unique. Identificador amigável para URLs e roteamento |
 | `created_at` | Timestamp | |
 | `updated_at` | Timestamp | |
 
@@ -87,18 +88,21 @@ O **Plano de Contas unificado**. Atua como árvore recursiva, englobando:
 | `ui_metadata` | JSON | Nullable. Ex: `{"icon": "🍔", "color": "#FF5733"}` |
 | `created_at` | Timestamp | |
 | `updated_at` | Timestamp | |
-| `deleted_at` | Timestamp | Nullable. **Soft Delete** — Permitido apenas se **não houver** lançamentos. |
+| `deleted_at` | Timestamp | Nullable. **Soft Delete** — Apenas se **não houver** histórico contábil. Caso haja histórico, a conta deve ser **Inativada** (se saldo zero)
 
-**Contas raiz criadas automaticamente no onboarding (plano base, is_system = true):**
+**Plano Base de Contas (is_system = true):**
+O sistema inicializa automaticamente uma estrutura hierárquica baseada no `DefaultAccountDefinitions.php`. Os grupos principais são:
 
-| name | type |
-|---|---|
-| Conta Corrente | ASSET |
-| Carteira | ASSET |
-| Cartão de Crédito | LIABILITY |
-| Salário | REVENUE |
-| Alimentação | EXPENSE |
-| Transporte | EXPENSE |
+1. **Patrimônio (EQUITY)**: Saldo de Abertura.
+2. **Ativos (ASSETS)**:
+   - **Dinheiro**: Carteira.
+   - **Banco**: Conta Corrente.
+   - **Investimentos**: Poupança.
+3. **Passivos (LIABILITIES)**: Cartão de Crédito, Dívidas.
+4. **Receitas (REVENUE)**: Salário, Investimentos, Freelance.
+5. **Despesas (EXPENSE)**: Moradia, Alimentação, Transporte, Saúde, Entretenimento, Pessoal, Educação, Serviços, Outros.
+
+> **Nota:** A estrutura completa contém mais de 80 contas e subcategorias pré-definidas. A definição técnica exata de cada item (ícones, cores e hierarquia) reside em `app/Support/DefaultAccountDefinitions.php`.
 
 ---
 
@@ -110,8 +114,9 @@ Extensão 1:1 de `accounts` para contas do tipo `LIABILITY` que representam cart
 | `id` | BigInt (Unsigned) | PK, Auto-increment |
 | `account_id` | BigInt (Unsigned) | FK -> `accounts(id)`. **Unique** (relação 1:1) |
 | `credit_limit` | BigInt | Limite total em **centavos**. Nullable (opcional no MVP) |
-| `closing_day` | TinyInt (1–31) | Dia do mês em que a fatura fecha |
-| `due_day` | TinyInt (1–31) | Dia do mês em que a fatura vence |
+| `closing_day` | TinyInt (1–31) | Dia do mês em que a fatura fecha. Nullable se controle de fatura inativo |
+| `due_day` | TinyInt (1–31) | Dia do mês em que a fatura vence. Nullable se controle de fatura inativo |
+| `invoice_control_enabled` | Boolean | Se `true`, a conta funciona como cartão de crédito com faturas. Se `false`, atua como passivo simples. |
 | `created_at` | Timestamp | |
 | `updated_at` | Timestamp | |
 
@@ -128,12 +133,12 @@ Representa a **fatura mensal** de um cartão de crédito como uma entidade próp
 | `ledger_id` | BigInt (Unsigned) | FK -> `ledgers(id)` |
 | `account_id` | BigInt (Unsigned) | FK -> `accounts(id)`. A conta LIABILITY do cartão |
 | `reference_month` | Date | Primeiro dia do mês de referência (ex: `2025-08-01` para "Fatura Ago/25"). **Unique** por (`account_id`, `reference_month`) |
-| `closing_date` | Date | Data de fechamento calculada automaticamente |
-| `due_date` | Date | Data de vencimento calculada automaticamente |
-| `status` | Enum | `OPEN` (aceitando lançamentos), `CLOSED` (fechada, aguardando pagamento), `PAID` (quitada) |
-| `paid_transaction_id` | BigInt (Unsigned) | FK -> `transactions(id)`. Nullable. Aponta para a transação de pagamento da fatura |
+| `closing_date` | Date | Data de fechamento base |
+| `due_date` | Date | Data de vencimento limite |
 | `created_at` | Timestamp | |
 | `updated_at` | Timestamp | |
+
+> **⚠️ Nota Arquitetural:** Não existe mais a coluna de status (OPEN/CLOSED/PAID) nem dependência de rotinas de cronjob. O estado da fatura é computado via _Query_ (Accessor), confrontando as datas com o timestamp atual e calculando os `expected_cash_flows` (gastos vs. pagamentos recebidos). Faturas não "fecham" fisicamente, apenas superam a data. Pagamentos de fatura geram cashflows contrários (receitas).
 
 ---
 
@@ -145,7 +150,7 @@ O **Fato Gerador** — cabeçalho do evento financeiro. Agrupa as linhas de lan�
 | `id` | BigInt (Unsigned) | PK, Auto-increment |
 | `ledger_id` | BigInt (Unsigned) | FK -> `ledgers(id)` |
 | `created_by_user_id` | BigInt (Unsigned) | FK -> `users(id)`. Auditoria: quem registrou |
-| `description` | Varchar(255) | Descrição dada pelo usuário (ex: "Compra Mercado") |
+| `description` | Varchar(255) | Nullable. Descrição dada pelo usuário (ex: "Compra Mercado") |
 | `date` | Date | Data de Competência (quando o fato ocorreu) |
 | `type` | Enum | `EXPENSE`, `INCOME`, `TRANSFER`, `CREDIT_CARD_PAYMENT`. Facilita queries e UI |
 | `status` | Enum | `ACTIVE`, `REVERSED` |

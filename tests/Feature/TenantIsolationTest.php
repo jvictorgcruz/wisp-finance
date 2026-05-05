@@ -108,18 +108,3 @@ test('it automatically injects ledger_id when creating models', function () {
     expect($account->ledger_id)->toBe($ledger->id);
 });
 
-test('it automatically injects ledger_id when creating categories', function () {
-    $user = User::factory()->create();
-    $ledger = Ledger::factory()->create();
-    $ledger->users()->attach($user, ['role' => 'owner']);
-
-    Auth::login($user);
-
-    $category = Account::create([
-        'name' => 'New Injected Category',
-        'type' => AccountType::EXPENSE,
-        'status' => AccountStatus::ACTIVE,
-    ]);
-
-    expect($category->ledger_id)->toBe($ledger->id);
-});

@@ -22,9 +22,20 @@ class UpdateUserRoleAction
         }
 
         return DB::transaction(function () use ($user, $role) {
+            $oldRole = $user->role;
+
             $user->update([
                 'role' => $role,
             ]);
+
+            activity('domain')
+                ->performedOn($user)
+                ->withProperties([
+                    'before' => $oldRole,
+                    'after' => $role,
+                ])
+                ->tap(fn($activity) => $activity->ledger_id = $user->current_ledger_id)
+                ->log('user.role_changed');
 
             return $user;
         });
