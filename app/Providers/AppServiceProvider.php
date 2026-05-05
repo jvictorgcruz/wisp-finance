@@ -12,8 +12,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        if ($this->app->environment('local') && class_exists(\App\Providers\TelescopeServiceProvider::class)) {
+            $this->app->register(\App\Providers\TelescopeServiceProvider::class);
+        }
     }
+
 
     /**
      * Bootstrap any application services.
