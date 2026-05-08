@@ -34,10 +34,12 @@ class UpsertAccountAction
                 $data['type'] = AccountType::LIABILITY;
             }
 
+            $accountData = collect($data)->except(['credit_card_details'])->toArray();
+
             if ($account) {
-                $account->update($data);
+                $account->update($accountData);
             } else {
-                $account = Account::create($data);
+                $account = Account::create($accountData);
             }
 
             if ($isCreditCard && isset($data['credit_card_details'])) {
@@ -54,7 +56,7 @@ class UpsertAccountAction
 
                 $account->creditCardDetail()->updateOrCreate(
                     ['account_id' => $account->id],
-                    array_merge($details, ['ledger_id' => $account->ledger_id])
+                    collect($details)->except(['ledger_id'])->toArray()
                 );
 
                 // Sync open invoices with new dates
