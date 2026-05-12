@@ -1,5 +1,6 @@
 import { useTranslation } from '@/Hooks/useTranslation';
 import { formatDate, formatCurrency } from '@/Utils/format';
+import { CreditCard, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 
 interface Props {
   items: any[];
@@ -9,44 +10,55 @@ export default function InvoiceItemsTable({ items }: Props) {
   const { t, locale } = useTranslation();
 
   return (
-    <div className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/30">
+    <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
       <table className="w-full text-left border-collapse">
         <thead>
-          <tr className="bg-slate-900/80 border-b border-slate-800">
-            <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{t('credit_cards.invoices.table_date')}</th>
-            <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{t('credit_cards.invoices.table_description')}</th>
-            <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{t('credit_cards.invoices.table_status')}</th>
-            <th className="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-widest">{t('credit_cards.invoices.table_amount')}</th>
+          <tr className="bg-slate-50/50 border-b border-slate-200">
+            <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('credit_cards.invoices.table_date')}</th>
+            <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('credit_cards.invoices.table_description')}</th>
+            <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">{t('credit_cards.invoices.table_status')}</th>
+            <th className="px-8 py-5 text-right text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('credit_cards.invoices.table_amount')}</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-800/50">
+        <tbody className="divide-y divide-slate-100">
           {items.map((item) => {
-            const isIncome = item.amount < 0; // In credit cards, negative CashFlow = Credit/Refund
-            // Wait, let's check our logic. 
-            // Purchase = Expense = Positive ExpectedCashFlow amount? 
-            // In RecordCreditCardTransactionAction: we set 'amount' as passed.
-            // If it's EXPENSE (Purchase), amount is positive.
-            // If it's INCOME (Refund), amount is positive but we should probably store it as negative?
-            // Actually, usually in Wisp, Expenses are positive in the transaction but linked to a debit.
-            // Let's assume positive = Expense (Red), negative = Credit/Refund (Green).
+            const isRefund = item.amount < 0;
             
             return (
-              <tr key={item.id} className="hover:bg-slate-800/30 transition-colors">
-                <td className="px-6 py-4 text-sm text-slate-400 font-medium">
-                  {formatDate(item.due_date, locale)}
+              <tr key={item.id} className="group hover:bg-slate-50/50 transition-all duration-200">
+                <td className="px-8 py-5">
+                    <span className="text-xs font-bold text-slate-400 group-hover:text-slate-600 transition-colors">
+                        {formatDate(item.due_date, locale)}
+                    </span>
                 </td>
-                <td className="px-6 py-4">
-                  <div className="text-sm font-bold text-slate-200">{item.description}</div>
+                <td className="px-8 py-5">
+                  <div className="flex items-center gap-4">
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center border ${isRefund ? 'bg-emerald-50 border-emerald-100 text-emerald-500' : 'bg-slate-50 border-slate-100 text-slate-400'}`}>
+                        {isRefund ? <ArrowDownLeft className="w-4 h-4" /> : <ArrowUpRight className="w-4 h-4" />}
+                    </div>
+                    <div className="text-sm font-bold text-slate-700 group-hover:text-primary transition-colors">{item.description}</div>
+                  </div>
                 </td>
-                <td className="px-6 py-4">
-                  <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded ${
-                    item.status === 'PAID' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'
+                <td className="px-8 py-5 text-center">
+                  <span className={`text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full border transition-all ${
+                    item.status === 'PAID' 
+                        ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
+                        : 'bg-amber-50 text-amber-600 border-amber-100'
                   }`}>
                     {item.status}
                   </span>
                 </td>
-                <td className={`px-6 py-4 text-right font-black ${isIncome ? 'text-emerald-400' : 'text-rose-400'}`}>
-                  {isIncome ? '-' : ''} {formatCurrency(Math.abs(item.amount))}
+                <td className={`px-8 py-5 text-right font-black tracking-tight ${isRefund ? 'text-emerald-500' : 'text-slate-900'}`}>
+                  <div className="flex flex-col items-end">
+                    <span className="text-base">
+                        {isRefund ? '-' : ''} {formatCurrency(Math.abs(item.amount))}
+                    </span>
+                    {isRefund && (
+                        <span className="text-[9px] uppercase tracking-widest text-emerald-600/70 font-black">
+                            {t('credit_cards.invoices.refund')}
+                        </span>
+                    )}
+                  </div>
                 </td>
               </tr>
             );
@@ -54,8 +66,13 @@ export default function InvoiceItemsTable({ items }: Props) {
           
           {items.length === 0 && (
             <tr>
-              <td colSpan={4} className="px-6 py-12 text-center text-slate-500 font-medium italic">
-                {t('credit_cards.invoices.empty_items')}
+              <td colSpan={4} className="px-8 py-20 text-center">
+                <div className="flex flex-col items-center gap-4 opacity-30">
+                    <CreditCard className="w-12 h-12 text-slate-300" />
+                    <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 italic">
+                        {t('credit_cards.invoices.empty_items')}
+                    </p>
+                </div>
               </td>
             </tr>
           )}

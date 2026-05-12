@@ -1,6 +1,12 @@
 import { Link } from '@inertiajs/react';
 import { useTranslation } from '@/Hooks/useTranslation';
 import { formatDate } from '@/Utils/format';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+function cn(...inputs: ClassValue[]) {
+    return twMerge(clsx(inputs));
+}
 
 interface Props {
   months: string[];
@@ -14,7 +20,7 @@ export default function InvoiceTimeline({ months, currentMonth, accountId }: Pro
   const sortedMonths = [...months].sort();
 
   return (
-    <div className="flex items-center space-x-2 overflow-x-auto pb-4 scrollbar-hide">
+    <div className="flex items-center gap-4 overflow-x-auto pb-4 scrollbar-hide">
       {sortedMonths.map((month) => {
         const isActive = month === currentMonth;
         
@@ -22,18 +28,14 @@ export default function InvoiceTimeline({ months, currentMonth, accountId }: Pro
           <Link
             key={month}
             href={`/accounts/${accountId}/invoices/${month}`}
-            className={`shrink-0 px-6 py-3 rounded-2xl transition-all duration-300 border-2 ${
+            className={cn(
+              "shrink-0 px-6 py-2 rounded-full text-sm transition-all duration-200 whitespace-nowrap",
               isActive 
-                ? 'bg-indigo-600 border-indigo-400 text-white shadow-lg shadow-indigo-500/30 scale-105' 
-                : 'bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-600 hover:text-slate-200'
-            }`}
+                ? "bg-primary text-white font-bold" 
+                : "text-slate-500 font-medium hover:bg-slate-100 active:opacity-70"
+            )}
           >
-            <div className="text-[10px] uppercase font-bold opacity-60">
-              {month.split('-')[0]}
-            </div>
-            <div className="text-sm font-black capitalize">
-              {formatDate(month, locale, { month: 'long' })}
-            </div>
+            {formatDate(month, locale, { month: 'long' })}
           </Link>
         );
       })}

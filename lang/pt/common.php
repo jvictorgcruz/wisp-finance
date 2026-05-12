@@ -1,9 +1,10 @@
 <?php
 
 return [
-    'edit' => 'Editar',
-    'delete' => 'Excluir',
+    'attention' => 'Atenção',
     'cancel' => 'Cancelar',
     'save' => 'Salvar',
-    'locale_code' => 'pt-BR',
+    'delete' => 'Excluir',
+    'edit' => 'Editar',
+    'actions' => 'Ações',
 ];

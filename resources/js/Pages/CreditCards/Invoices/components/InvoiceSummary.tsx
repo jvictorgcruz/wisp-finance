@@ -1,5 +1,12 @@
 import { useTranslation } from '@/Hooks/useTranslation';
-import { formatDate } from '@/Utils/format';
+import { formatDate, formatCurrency } from '@/Utils/format';
+import { TrendingUp, Calendar, CheckCircle2, Clock } from 'lucide-react';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+function cn(...inputs: ClassValue[]) {
+    return twMerge(clsx(inputs));
+}
 
 interface Props {
   invoice: any;
@@ -11,57 +18,129 @@ export default function InvoiceSummary({ invoice }: Props) {
   const getStatusConfig = (status: string) => {
     switch (status) {
       case 'PAID':
-        return { label: t('credit_cards.invoices.status_paid'), color: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' };
+        return { 
+            label: t('credit_cards.invoices.status_paid'), 
+            color: 'text-emerald-500', 
+            bg: 'bg-emerald-50',
+            borderColor: 'border-emerald-100',
+            icon: CheckCircle2 
+        };
       case 'OPEN':
-        return { label: t('credit_cards.invoices.status_open'), color: 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20' };
+        return { 
+            label: t('credit_cards.invoices.status_open'), 
+            color: 'text-primary', 
+            bg: 'bg-primary/5',
+            borderColor: 'border-primary/10',
+            icon: TrendingUp 
+        };
       case 'CLOSED':
-        return { label: t('credit_cards.invoices.status_closed'), color: 'bg-amber-500/10 text-amber-500 border-amber-500/20' };
+        return { 
+            label: t('credit_cards.invoices.status_closed'), 
+            color: 'text-amber-500', 
+            bg: 'bg-amber-50',
+            borderColor: 'border-amber-100',
+            icon: Clock 
+        };
       case 'OVERDUE':
-        return { label: t('credit_cards.invoices.status_overdue'), color: 'bg-rose-500/10 text-rose-500 border-rose-500/20' };
+        return { 
+            label: t('credit_cards.invoices.status_overdue'), 
+            color: 'text-rose-500', 
+            bg: 'bg-rose-50',
+            borderColor: 'border-rose-100',
+            icon: Clock 
+        };
       default:
-        return { label: status, color: 'bg-slate-500/10 text-slate-500 border-slate-500/20' };
+        return { 
+            label: status, 
+            color: 'text-slate-500', 
+            bg: 'bg-slate-50',
+            borderColor: 'border-slate-100',
+            icon: Clock 
+        };
     }
   };
 
   const statusConfig = getStatusConfig(invoice.status);
   const remaining = Math.max(0, invoice.total_amount - invoice.paid_amount);
+  const payPercentage = Math.min(100, Math.round((invoice.paid_amount / invoice.total_amount) * 100) || 0);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {/* Total Amount Card */}
-      <div className="bg-slate-900/50 p-6 rounded-3xl border border-slate-800 backdrop-blur-sm">
-        <div className="flex justify-between items-start mb-4">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t('credit_cards.invoices.total_invoice')}</span>
-          <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase border ${statusConfig.color}`}>
-            {statusConfig.label}
-          </span>
-        </div>
-        <div className="text-3xl font-black text-white">
-          R$ {(invoice.total_amount / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-        </div>
-      </div>
+    <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm space-y-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                    <div className={cn("px-3 py-1 rounded-full border text-[9px] font-black uppercase tracking-widest flex items-center gap-2", statusConfig.bg, statusConfig.color, statusConfig.borderColor)}>
+                        <statusConfig.icon className="w-3 h-3" />
+                        {statusConfig.label}
+                    </div>
+                </div>
 
-      {/* Paid Amount Card */}
-      <div className="bg-slate-900/50 p-6 rounded-3xl border border-slate-800 backdrop-blur-sm">
-        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-4">{t('credit_cards.invoices.paid_amount')}</span>
-        <div className="text-3xl font-black text-emerald-400">
-          R$ {(invoice.paid_amount / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-        </div>
-        <div className="mt-2 text-xs text-slate-400">
-          {t('credit_cards.invoices.remaining')}: R$ {(remaining / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-        </div>
-      </div>
+                <div className="space-y-1">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                        {t('credit_cards.invoices.total_invoice')}
+                    </p>
+                    <div className="flex items-baseline gap-2">
+                        <span className="text-2xl font-bold text-slate-300">R$</span>
+                        <h2 className="text-5xl font-black tracking-tighter text-slate-900">
+                            {(invoice.total_amount / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        </h2>
+                    </div>
+                </div>
+            </div>
 
-      {/* Due Date Card */}
-      <div className="bg-slate-900/50 p-6 rounded-3xl border border-slate-800 backdrop-blur-sm">
-        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-4">{t('credit_cards.invoices.due_date')}</span>
-        <div className="text-3xl font-black text-white">
-          {formatDate(invoice.due_date, locale)}
+            <div className="grid grid-cols-2 gap-10 md:border-l md:border-slate-100 md:pl-10">
+                <div className="space-y-1">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+                        {t('credit_cards.invoices.due_date')}
+                    </p>
+                    <p className="text-sm font-bold text-slate-900">
+                        {formatDate(invoice.due_date, locale)}
+                    </p>
+                </div>
+                <div className="space-y-1">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+                        {t('credit_cards.invoices.closing_date')}
+                    </p>
+                    <p className="text-sm font-bold text-slate-500">
+                        {formatDate(invoice.closing_date, locale)}
+                    </p>
+                </div>
+            </div>
         </div>
-        <div className="mt-2 text-xs text-slate-400">
-          {t('credit_cards.invoices.closing_date')}: {formatDate(invoice.closing_date, locale)}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-slate-50">
+            <div className="space-y-4">
+                <div className="flex justify-between items-end">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                        {t('credit_cards.invoices.payment_progress')}
+                    </p>
+                    <p className="text-xs font-black text-slate-900">
+                        {payPercentage}%
+                    </p>
+                </div>
+                <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                    <div 
+                        className="h-full bg-emerald-500 rounded-full transition-all duration-1000"
+                        style={{ width: `${payPercentage}%` }}
+                    />
+                </div>
+                <div className="flex justify-between items-center text-[10px] font-bold">
+                    <span className="text-emerald-600">{t('credit_cards.invoices.paid_amount')}: {formatCurrency(invoice.paid_amount)}</span>
+                    <span className="text-slate-400">{t('credit_cards.invoices.remaining')}: {formatCurrency(remaining)}</span>
+                </div>
+            </div>
+
+            <div className="bg-slate-50 rounded-2xl p-4 flex items-start gap-3">
+                <div className="p-1.5 bg-white rounded-lg border border-slate-200">
+                    <TrendingUp className="w-3.5 h-3.5 text-primary" />
+                </div>
+                <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
+                    {t('credit_cards.invoices.auto_close_hint', { 
+                        day: new Date(invoice.closing_date).getDate() 
+                    })}
+                </p>
+            </div>
         </div>
-      </div>
     </div>
   );
 }
