@@ -13,11 +13,12 @@ use App\Models\Transaction;
 use App\Enums\AccountType;
 use App\Enums\AccountStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    /** @var \Tests\TestCase $this */
     $this->ledger = Ledger::factory()->create();
     
     $this->assetAccount = Account::factory()->create([

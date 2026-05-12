@@ -51,32 +51,15 @@ class RecordCreditCardTransactionAction extends BaseFinancialAction
             }
 
             // 3. Invoice & CashFlow Logic
-            if ($card->invoice_control_enabled) {
-                $installmentAmount = round($amount / $installments, 2);
-                $remainingAmount = $amount;
-
-                for ($i = 0; $i < $installments; $i++) {
-                    $currentInstallmentAmount = ($i === $installments - 1) ? $remainingAmount : $installmentAmount;
-                    $remainingAmount -= $currentInstallmentAmount;
-
-                    // Calculate installment date (for invoice resolution)
-                    $installmentDate = $date->copy()->addMonths($i);
-                    $invoice = CreditCardInvoice::resolveForCardAndDate($card, $installmentDate);
-
-                    ExpectedCashFlow::create([
-                        'transaction_id' => $transaction->id,
-                        'account_id' => $card->account_id,
-                        'credit_card_invoice_id' => $invoice->id,
-                        'amount' => $currentInstallmentAmount,
-                        'due_date' => $invoice->due_date,
-                        'description' => $installments > 1 ? "($description) " . ($i + 1) . "/$installments" : $description,
-                        'status' => 'PENDING',
-                    ]);
-                }
-            } else {
-                // No invoice control -> Direct paid cash flow
-                $this->createPaidCashFlow($transaction, $card->account_id, $amount, $date->toDateString(), $description);
-            }
+            $this->resolveCashFlows(
+                $transaction, 
+                $card->account, 
+                $amount, 
+                $date, 
+                $description, 
+                $installments, 
+                $type === 'INCOME'
+            );
 
             return $transaction;
         });

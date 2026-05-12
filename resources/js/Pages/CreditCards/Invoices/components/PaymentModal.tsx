@@ -6,6 +6,8 @@ import AccountSelect from '@/Components/Transactions/AccountSelect';
 import DatePicker from '@/Components/Common/DatePicker';
 import { useTranslation } from '@/Hooks/useTranslation';
 
+import CurrencyInput from '@/Components/Common/CurrencyInput';
+
 interface Props {
     show: boolean;
     onClose: () => void;
@@ -16,6 +18,7 @@ interface Props {
 
 export default function PaymentModal({ show, onClose, account, invoice, sourceAccounts }: Props) {
     const { t } = useTranslation();
+    const amountInputRef = React.useRef<HTMLInputElement>(null);
     
     const { data, setData, post, processing, errors, reset } = useForm({
         source_account_id: null as number | null,
@@ -27,6 +30,9 @@ export default function PaymentModal({ show, onClose, account, invoice, sourceAc
     React.useEffect(() => {
         if (show) {
             setData('amount', Math.abs(invoice.total_amount / 100) || 0);
+            setTimeout(() => {
+                amountInputRef.current?.focus();
+            }, 100);
         }
     }, [show, invoice.total_amount]);
 
@@ -49,6 +55,14 @@ export default function PaymentModal({ show, onClose, account, invoice, sourceAc
         >
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
+                    <DatePicker
+                        label={t('credit_cards.invoices.payment_date')}
+                        value={data.date}
+                        onChange={(date) => setData('date', date)}
+                        error={errors.date}
+                    />
+                </div>
+                <div>
                     <AccountSelect
                         label={t('credit_cards.invoices.source_account')}
                         placeholder={t('credit_cards.invoices.select_account')}
@@ -59,31 +73,14 @@ export default function PaymentModal({ show, onClose, account, invoice, sourceAc
                     />
                 </div>
 
-                <div className="space-y-1.5">
-                    <label className="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-1.5 ml-1">
-                        {t('credit_cards.invoices.amount')}
-                    </label>
-                    <div className="relative">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">R$</span>
-                        <input
-                            type="number"
-                            step="0.01"
-                            value={data.amount}
-                            onChange={(e) => setData('amount', parseFloat(e.target.value))}
-                            className="w-full bg-slate-50 border-none rounded-2xl py-3 pl-12 pr-4 h-14 text-sm font-bold focus:ring-2 focus:ring-primary/20 transition-all"
-                        />
-                    </div>
-                    {errors.amount && <p className="mt-1 text-xs font-bold text-rose-500 ml-1">{errors.amount}</p>}
-                </div>
+                <CurrencyInput
+                    ref={amountInputRef}
+                    label={t('credit_cards.invoices.amount')}
+                    value={data.amount}
+                    onChange={(val) => setData('amount', val)}
+                    error={errors.amount}
+                />
 
-                <div>
-                    <DatePicker
-                        label={t('credit_cards.invoices.payment_date')}
-                        value={data.date}
-                        onChange={(date) => setData('date', date)}
-                        error={errors.date}
-                    />
-                </div>
 
                 <div className="pt-4 flex gap-3">
                     <Button

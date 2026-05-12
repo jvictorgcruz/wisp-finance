@@ -28,7 +28,7 @@ return [
         'available_limit' => 'Disponível',
         'auto_close_hint' => 'As faturas são fechadas automaticamente no dia :day de cada mês.',
         'pay_invoice' => 'Pagar Fatura',
-        'source_account' => 'Conta de Origem',
+        'source_account' => 'Pagar de',
         'select_account' => 'Selecione uma conta',
         'amount' => 'Valor',
         'payment_date' => 'Data de Pagamento',

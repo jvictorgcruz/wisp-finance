@@ -16,7 +16,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 
 class TransactionController extends Controller
 {

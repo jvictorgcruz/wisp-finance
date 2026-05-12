@@ -5,7 +5,7 @@ namespace App\Actions\Transactions;
 use App\Models\Account;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 
 class RecordTransferAction extends BaseFinancialAction
 {

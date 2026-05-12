@@ -25,6 +25,7 @@ beforeEach(function () {
     $this->cardAccount = Account::factory()->create([
         'ledger_id' => $this->ledger->id,
         'type' => \App\Enums\AccountType::LIABILITY,
+        'is_credit_card' => true,
     ]);
     
     $this->cardDetail = CreditCardDetail::factory()->create([
@@ -119,10 +120,9 @@ test('it records a refund correctly', function () {
     $categoryEntry = JournalEntry::where('account_id', $this->category->id)->first();
     expect($categoryEntry->type)->toBe('CREDIT');
 
-    // Cash flow should be positive (reducing the invoice total)
+    // Cash flow should be negative (reducing the invoice total)
     $cashFlow = ExpectedCashFlow::where('transaction_id', $transaction->id)->first();
-    expect($cashFlow->amount)->toBe(50.00); 
-    // In our logic, income on card is a positive cash flow (money coming in to the card/reducing liability)
+    expect($cashFlow->amount)->toBe(-50.00); 
 });
 
 test('it allows transactions exceeding the card limit', function () {

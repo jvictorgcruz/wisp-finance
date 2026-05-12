@@ -9,6 +9,8 @@ use App\Models\ExpectedCashFlow;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 
+use Illuminate\Support\Carbon;
+
 abstract class BaseFinancialAction
 {
     /**
@@ -28,9 +30,6 @@ abstract class BaseFinancialAction
 
     /**
      * Create a journal entry and return it.
-     * Note: We use amount_raw because the Money cast expects float/string 
-     * but we want to be explicit about cent verification if needed.
-     * However, the cast handles conversion.
      */
     protected function createEntry(Transaction $transaction, int $accountId, string $type, float|int $amount, string $date): JournalEntry
     {
@@ -56,5 +55,49 @@ abstract class BaseFinancialAction
             'description' => $description,
             'status' => 'PAID',
         ]);
+    }
+
+    /**
+     * Handle cash flow creation, detecting credit cards with invoice control.
+     */
+    protected function resolveCashFlows(
+        Transaction $transaction,
+        \App\Models\Account $account,
+        float|int $amount,
+        Carbon $date,
+        ?string $description,
+        int $installments = 1,
+        bool $isRefund = false
+    ): void {
+        if ($account->is_credit_card && $account->creditCardDetail?->invoice_control_enabled) {
+            $card = $account->creditCardDetail;
+            $installmentAmount = round($amount / $installments, 2);
+            $remainingAmount = $amount;
+
+            for ($i = 0; $i < $installments; $i++) {
+                $currentInstallmentAmount = ($i === $installments - 1) ? $remainingAmount : $installmentAmount;
+                $remainingAmount -= $currentInstallmentAmount;
+
+                // For credit cards, refunds (INCOME) must be negative to reduce invoice total
+                if ($isRefund) {
+                    $currentInstallmentAmount = -$currentInstallmentAmount;
+                }
+
+                $installmentDate = $date->copy()->addMonths($i);
+                $invoice = \App\Models\CreditCardInvoice::resolveForCardAndDate($card, $installmentDate);
+
+                ExpectedCashFlow::create([
+                    'transaction_id' => $transaction->id,
+                    'account_id' => $account->id,
+                    'credit_card_invoice_id' => $invoice->id,
+                    'amount' => $currentInstallmentAmount,
+                    'due_date' => $invoice->due_date,
+                    'description' => $installments > 1 ? "($description) " . ($i + 1) . "/$installments" : $description,
+                    'status' => 'PENDING',
+                ]);
+            }
+        } else {
+            $this->createPaidCashFlow($transaction, $account->id, $amount, $date->toDateString(), $description);
+        }
     }
 }

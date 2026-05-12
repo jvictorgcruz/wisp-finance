@@ -5,7 +5,7 @@ namespace App\Actions\Transactions;
 use App\Models\Account;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 
 class RecordIncomeAction extends BaseFinancialAction
 {
@@ -44,8 +44,8 @@ class RecordIncomeAction extends BaseFinancialAction
             // Source (Revenue) -> CREDIT (increases revenue)
             $sourceEntry = $this->createEntry($transaction, $categoryAccount->id, 'CREDIT', $amount, $date->toDateString());
 
-            // Create paid cash flow
-            $this->createPaidCashFlow($transaction, $destinationAccount->id, $amount, $date->toDateString(), $description);
+            // Handle cash flows (Paid for assets, Pending/Negative for credit card refunds)
+            $this->resolveCashFlows($transaction, $destinationAccount, $amount, $date, $description, 1, true);
 
             // Validate balance
             $debitSum = (int) round($destEntry->getAttributes()['amount']);

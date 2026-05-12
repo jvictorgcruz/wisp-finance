@@ -28,7 +28,7 @@ return [
         'available_limit' => 'Available',
         'auto_close_hint' => 'Invoices are automatically closed on the :day of each month.',
         'pay_invoice' => 'Pay Invoice',
-        'source_account' => 'Source Account',
+        'source_account' => 'Pay from',
         'select_account' => 'Select an account',
         'amount' => 'Amount',
         'payment_date' => 'Payment Date',

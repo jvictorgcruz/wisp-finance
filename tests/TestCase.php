@@ -22,11 +22,15 @@ abstract class TestCase extends BaseTestCase
     public $expenseCat;
     public $revenueCat;
     public ?Account $parentAccount = null;
+    public ?Account $assetAccount = null;
+    public ?Account $expenseAccount = null;
+    public ?Account $revenueAccount = null;
     public $cardAccount;
     public $category;
     public $upsertAction;
     public $bankAccount;
     public $invoice;
+    public $revenue;
     public $sourceAccount;
     public $balanceAction;
 }
