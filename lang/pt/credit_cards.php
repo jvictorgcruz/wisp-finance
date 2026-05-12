@@ -27,5 +27,12 @@ return [
         'total_balance_due' => 'Saldo Total Devedor',
         'available_limit' => 'Disponível',
         'auto_close_hint' => 'As faturas são fechadas automaticamente no dia :day de cada mês.',
+        'pay_invoice' => 'Pagar Fatura',
+        'source_account' => 'Conta de Origem',
+        'select_account' => 'Selecione uma conta',
+        'amount' => 'Valor',
+        'payment_date' => 'Data de Pagamento',
+        'pay' => 'Pagar',
+        'payment_success' => 'Pagamento realizado com sucesso!',
     ],
 ];

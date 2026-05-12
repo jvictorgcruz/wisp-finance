@@ -62,13 +62,13 @@ test('it pays an invoice fully', function () {
         'account_id' => $this->cardAccount->id,
     ]);
 
-    expect($this->invoice->fresh()->total_amount)->toBe(150.00);
+    expect($this->invoice->fresh()->total_amount)->toBe(15000);
 
-    // 2. Pay 150
+    // 2. Pay 15000 cents
     $transaction = $this->action->execute(
         $this->invoice,
         $this->bankAccount,
-        150.00,
+        15000,
         Carbon::now()
     );
 
@@ -87,14 +87,14 @@ test('it handles partial payment by splitting items', function () {
         'account_id' => $this->cardAccount->id,
     ]);
 
-    // 2. Pay 40
-    $this->action->execute($this->invoice, $this->bankAccount, 40.00, Carbon::now());
+    // 2. Pay 4000 cents
+    $this->action->execute($this->invoice, $this->bankAccount, 4000, Carbon::now());
 
     // 3. Verify: should have 2 cashflows now (40 paid, 60 pending)
     expect(ExpectedCashFlow::count())->toBe(2);
     expect(ExpectedCashFlow::where('status', 'PAID')->first()->amount)->toBe(40.00);
     expect(ExpectedCashFlow::where('status', 'PENDING')->first()->amount)->toBe(60.00);
-    expect($this->invoice->fresh()->paid_amount)->toBe(40.00);
+    expect($this->invoice->fresh()->paid_amount)->toBe(4000);
 });
 
 test('it handles overpayment by creating credit in the invoice', function () {
@@ -106,8 +106,8 @@ test('it handles overpayment by creating credit in the invoice', function () {
         'account_id' => $this->cardAccount->id,
     ]);
 
-    // 2. Pay 150
-    $this->action->execute($this->invoice, $this->bankAccount, 150.00, Carbon::now());
+    // 2. Pay 15000 cents
+    $this->action->execute($this->invoice, $this->bankAccount, 15000, Carbon::now());
 
     // 3. Verify: 100 paid + 50 credit (negative)
     expect(ExpectedCashFlow::count())->toBe(2);
@@ -122,7 +122,7 @@ test('it handles overpayment by creating credit in the invoice', function () {
     expect($paidItem->amount)->toBe(100.00);
     expect($creditItem->amount)->toBe(-50.00);
     
-    // Invoice total is now 50 (100 - 50)
-    expect($this->invoice->fresh()->total_amount)->toBe(50.00);
+    // Invoice total is now 5000 cents (10000 - 5000)
+    expect($this->invoice->fresh()->total_amount)->toBe(5000);
     expect($this->invoice->fresh()->isPaid())->toBeTrue();
 });

@@ -37,7 +37,7 @@ export default function InvoiceSummary({ invoice }: Props) {
           </span>
         </div>
         <div className="text-3xl font-black text-white">
-          R$ {invoice.total_amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+          R$ {(invoice.total_amount / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
         </div>
       </div>
 
@@ -45,10 +45,10 @@ export default function InvoiceSummary({ invoice }: Props) {
       <div className="bg-slate-900/50 p-6 rounded-3xl border border-slate-800 backdrop-blur-sm">
         <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-4">{t('credit_cards.invoices.paid_amount')}</span>
         <div className="text-3xl font-black text-emerald-400">
-          R$ {invoice.paid_amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+          R$ {(invoice.paid_amount / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
         </div>
         <div className="mt-2 text-xs text-slate-400">
-          {t('credit_cards.invoices.remaining')}: R$ {remaining.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+          {t('credit_cards.invoices.remaining')}: R$ {(remaining / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
         </div>
       </div>
 

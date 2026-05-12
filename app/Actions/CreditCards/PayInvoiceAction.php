@@ -55,15 +55,17 @@ class PayInvoiceAction extends BaseFinancialAction
             foreach ($pendingCashFlows as $cf) {
                 if ($remainingToPay <= 0) break;
 
-                if ($remainingToPay >= $cf->amount) {
+                $cfAmountCents = (int)round($cf->amount * 100);
+
+                if ($remainingToPay >= $cfAmountCents) {
                     $cf->status = 'PAID';
                     $cf->save();
                     
-                    $remainingToPay -= $cf->amount;
+                    $remainingToPay -= $cfAmountCents;
                 } else {
                     // Partial payment of this specific item -> SPLIT it
                     $paidPart = $remainingToPay;
-                    $pendingPart = ((int)round($cf->amount * 100) - $paidPart);
+                    $pendingPart = $cfAmountCents - $paidPart;
 
                     $cf->setAttribute('amount', $paidPart / 100);
                     $cf->status = 'PAID';

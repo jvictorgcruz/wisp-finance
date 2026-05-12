@@ -43,6 +43,15 @@ class GetCreditCardsAction
                         'closing_day' => $card->creditCardDetail->closing_day,
                         'due_day' => $card->creditCardDetail->due_day,
                         'invoice_control_enabled' => $card->creditCardDetail->invoice_control_enabled,
+                        'current_invoice' => ($invoice = \App\Models\CreditCardInvoice::resolveActiveInvoice($card->creditCardDetail)) ? [
+                            'id' => $invoice->id,
+                            'total_amount' => $invoice->total_amount,
+                            'paid_amount' => $invoice->paid_amount,
+                            'status' => $invoice->status,
+                            'reference' => $invoice->reference_year_month,
+                            'due_date' => $invoice->due_date->toISOString(),
+                            'closing_date' => $invoice->closing_date->toISOString(),
+                        ] : null,
                     ] : null,
                 ];
             });

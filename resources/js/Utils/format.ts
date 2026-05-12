@@ -27,7 +27,7 @@ export const formatDate = (dateStr: string, locale: string = 'pt', options: Intl
         return new Intl.DateTimeFormat(locale === 'pt' ? 'pt-BR' : 'en-US', options).format(date);
     }
 
-    // Standard date (YYYY-MM-DD)
-    const date = new Date(dateStr + 'T12:00:00');
+    // Standard date (YYYY-MM-DD or ISO)
+    const date = dateStr.includes('T') ? new Date(dateStr) : new Date(dateStr + 'T12:00:00');
     return new Intl.DateTimeFormat(locale === 'pt' ? 'pt-BR' : 'en-US', options).format(date);
 };

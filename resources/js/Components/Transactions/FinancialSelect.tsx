@@ -325,10 +325,16 @@ function FinancialSelectContent({
                 {selectedItem ? (
                     <div className="flex items-center gap-3 text-left">
                         <div 
-                            className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+                            className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 overflow-hidden"
                             style={{ backgroundColor: `${selectedItem.ui_metadata.color}20`, color: selectedItem.ui_metadata.color }}
                         >
-                            <LucideIcon name={selectedItem.ui_metadata.icon || 'circle'} className="w-4 h-4" />
+                            {selectedItem.ui_metadata.icon ? (
+                                <LucideIcon name={selectedItem.ui_metadata.icon} className="w-4 h-4" />
+                            ) : (
+                                <span className="text-[10px] font-black tracking-tight leading-none uppercase">
+                                    {selectedItem.name.substring(0, 3)}
+                                </span>
+                            )}
                         </div>
                         <div className="flex flex-col leading-tight min-w-0">
                             <span className="font-bold text-slate-900 text-sm truncate">{selectedItem.name}</span>
@@ -343,7 +349,7 @@ function FinancialSelectContent({
                     <span className="text-slate-400 font-bold text-sm">{placeholder}</span>
                 )}
             </DropdownSelector.Trigger>
-            <DropdownSelector.Panel align="left" placement={placement} className="w-full max-h-[400px] overflow-hidden flex flex-col p-0">
+            <DropdownSelector.Panel align="left" placement={placement} className="max-h-[400px] overflow-hidden flex flex-col p-0">
                 {/* Search Bar */}
                 <div className="p-3 border-b border-slate-50 bg-white sticky top-0 z-10">
                     <div className="relative group">
@@ -552,10 +558,16 @@ function DropDownItem({ item, value, isHighlighted }: { item: FinancialItem, val
             {({ selected }) => (
                 <>
                     <div 
-                        className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+                        className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 overflow-hidden"
                         style={{ backgroundColor: `${item.ui_metadata.color}20`, color: item.ui_metadata.color }}
                     >
-                        <LucideIcon name={item.ui_metadata.icon || 'circle'} className="w-4 h-4" />
+                        {item.ui_metadata.icon ? (
+                            <LucideIcon name={item.ui_metadata.icon} className="w-4 h-4" />
+                        ) : (
+                            <span className="text-[10px] font-black tracking-tight leading-none uppercase">
+                                {item.name.substring(0, 3)}
+                            </span>
+                        )}
                     </div>
                     <span className="text-sm font-bold flex-1 truncate">{item.name}</span>
                     {selected && <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />}

@@ -27,5 +27,12 @@ return [
         'total_balance_due' => 'Total Balance Due',
         'available_limit' => 'Available',
         'auto_close_hint' => 'Invoices are automatically closed on the :day of each month.',
+        'pay_invoice' => 'Pay Invoice',
+        'source_account' => 'Source Account',
+        'select_account' => 'Select an account',
+        'amount' => 'Amount',
+        'payment_date' => 'Payment Date',
+        'pay' => 'Pay',
+        'payment_success' => 'Payment recorded successfully!',
     ],
 ];

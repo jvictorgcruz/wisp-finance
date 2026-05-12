@@ -7,8 +7,9 @@ import LucideIcon from '@/Components/Common/LucideIcon';
 import DropdownSelector from '@/Components/Common/DropdownSelector';
 import { Button } from '@/Components/Common/Button';
 import { useState } from 'react';
-import { router } from '@inertiajs/react';
+import { router, Link } from '@inertiajs/react';
 import Modal from '@/Components/Common/Modal';
+import PaymentModal from './Invoices/components/PaymentModal';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -43,6 +44,11 @@ export default function CreditCards({ cards, root_categories, available_colors, 
         show: false,
         account: null,
     });
+    const [paymentModal, setPaymentModal] = useState<{ show: boolean; card: Account | null; invoice: any }>({
+        show: false,
+        card: null,
+        invoice: null,
+    });
 
     const openCreate = () => setModal({ show: true, mode: 'create', account: null, parentAccount: null });
     
@@ -57,6 +63,15 @@ export default function CreditCards({ cards, root_categories, available_colors, 
         if (!confirmDelete.account) return;
         router.delete(`/accounts/${confirmDelete.account.id}`, {
             onSuccess: () => setConfirmDelete({ show: false, account: null }),
+        });
+    };
+
+    const openPayment = (card: Account) => {
+        if (!card.credit_card_details?.current_invoice) return;
+        setPaymentModal({
+            show: true,
+            card,
+            invoice: card.credit_card_details.current_invoice
         });
     };
 
@@ -109,7 +124,7 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                                 <DropdownSelector>
                                     <DropdownSelector.Trigger 
                                         showChevron={false}
-                                        className="text-slate-400 hover:bg-slate-50 rounded-full p-2 transition-colors border-none shadow-none! h-9 w-9 min-w-[36px]"
+                                        className="text-slate-400 hover:bg-slate-50 rounded-full p-2 transition-colors border-transparent shadow-none! h-9 w-9 min-w-[36px]"
                                     >
                                         <LucideIcon name="MoreVertical" className="w-5 h-5" />
                                     </DropdownSelector.Trigger>
@@ -188,19 +203,24 @@ export default function CreditCards({ cards, root_categories, available_colors, 
 
                                     <div className="flex gap-3 mt-auto pt-2">
                                         <Button 
-                                            disabled 
                                             variant="primary"
                                             className="flex-1"
+                                            onClick={() => openPayment(card)}
+                                            disabled={!card.credit_card_details?.current_invoice || card.credit_card_details.current_invoice.total_amount === 0}
                                         >
                                             {t('accounts.page.pay_bill')}
                                         </Button>
-                                        <Button 
-                                            disabled 
-                                            variant="outline"
+                                        <Link 
+                                            href={`/accounts/${card.id}/invoices`}
                                             className="flex-1"
                                         >
-                                            {t('accounts.page.view_bill')}
-                                        </Button>
+                                            <Button 
+                                                variant="outline"
+                                                className="w-full"
+                                            >
+                                                {t('accounts.page.view_bill')}
+                                            </Button>
+                                        </Link>
                                     </div>
                                 </div>
                             ) : (
@@ -300,6 +320,16 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                     </div>
                 </div>
             </Modal>
+
+            {paymentModal.card && (
+                <PaymentModal 
+                    show={paymentModal.show}
+                    onClose={() => setPaymentModal(p => ({ ...p, show: false }))}
+                    account={paymentModal.card}
+                    invoice={paymentModal.invoice}
+                    sourceAccounts={accounts}
+                />
+            )}
         </AppLayout>
     );
 }

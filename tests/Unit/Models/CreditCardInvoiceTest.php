@@ -76,8 +76,8 @@ test('invoice calculates total and paid amounts', function () {
         'account_id' => $this->account->id,
     ]);
 
-    expect($invoice->total_amount)->toBe(150.00);
-    expect($invoice->paid_amount)->toBe(100.00);
+    expect($invoice->total_amount)->toBe(15000);
+    expect($invoice->paid_amount)->toBe(10000);
     expect($invoice->status)->toBe('OPEN'); // Because today < closing_date (factory default)
 });
 

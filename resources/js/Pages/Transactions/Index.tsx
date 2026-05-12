@@ -472,7 +472,7 @@ export default function Index({ transactions, filters }: Props) {
                                                             <DropdownSelector className="opacity-0 group-hover:opacity-100 transition-all">
                                                                 <DropdownSelector.Trigger 
                                                                     showChevron={false}
-                                                                    className="p-2 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-600 transition-all active:scale-95 cursor-pointer border-none shadow-none!"
+                                                                    className="p-2 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-600 transition-colors cursor-pointer border-transparent shadow-none!"
                                                                 >
                                                                     <MoreVertical className="w-5 h-5" />
                                                                 </DropdownSelector.Trigger>

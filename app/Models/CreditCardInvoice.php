@@ -30,6 +30,12 @@ class CreditCardInvoice extends Model
         'closing_date',
     ];
 
+    protected $appends = [
+        'total_amount',
+        'paid_amount',
+        'status',
+    ];
+
     protected function casts(): array
     {
         return [
@@ -81,17 +87,40 @@ class CreditCardInvoice extends Model
     }
 
     /**
+     * Resolve the most relevant invoice for the card (unpaid or current).
+     */
+    public static function resolveActiveInvoice(CreditCardDetail $card): self
+    {
+        // 1. Try to find the oldest invoice that is not fully paid
+        $unpaidInvoice = self::where('credit_card_detail_id', $card->id)
+            ->whereHas('expectedCashFlows', function ($query) {
+                $query->where('status', '!=', 'PAID');
+            })
+            ->orderBy('reference_year_month', 'asc')
+            ->first();
+
+        if ($unpaidInvoice) {
+            return $unpaidInvoice;
+        }
+
+        // 2. If all paid, return the invoice for the current date
+        return self::resolveForCardAndDate($card, Carbon::now());
+    }
+
+    /**
      * Accessors
      */
 
     protected function totalAmount(): Attribute
     {
-        return Attribute::get(fn () => $this->expectedCashFlows->sum('amount'));
+        // Using query builder sum() to get raw BigInt (cents) as integer
+        return Attribute::get(fn () => (int) $this->expectedCashFlows()->sum('amount'));
     }
 
     protected function paidAmount(): Attribute
     {
-        return Attribute::get(fn () => $this->expectedCashFlows->where('status', 'PAID')->sum('amount'));
+        // Using query builder sum() to get raw BigInt (cents) as integer
+        return Attribute::get(fn () => (int) $this->expectedCashFlows()->where('status', 'PAID')->sum('amount'));
     }
 
     protected function status(): Attribute
@@ -99,6 +128,8 @@ class CreditCardInvoice extends Model
         return Attribute::get(function () {
             $total = $this->total_amount;
             $paid = $this->paid_amount;
+            
+            // Financial comparison in cents
             $isPaid = $total > 0 && $paid >= $total;
 
             if ($isPaid) {

@@ -19,16 +19,16 @@ export default function PaymentModal({ show, onClose, account, invoice, sourceAc
     
     const { data, setData, post, processing, errors, reset } = useForm({
         source_account_id: null as number | null,
-        amount: Math.abs(invoice.amount) || 0,
+        amount: Math.abs(invoice.total_amount / 100) || 0,
         date: new Date().toISOString().split('T')[0],
     });
 
     // Reset form when modal opens with a different invoice amount
     React.useEffect(() => {
         if (show) {
-            setData('amount', Math.abs(invoice.amount) || 0);
+            setData('amount', Math.abs(invoice.total_amount / 100) || 0);
         }
-    }, [show, invoice.amount]);
+    }, [show, invoice.total_amount]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

@@ -111,7 +111,7 @@ export default function CategoryRow({
                         <DropdownSelector>
                             <DropdownSelector.Trigger 
                                 showChevron={false}
-                                className="p-1.5 h-8 w-8 min-w-[32px] rounded-lg border-none shadow-none! cursor-pointer focus:ring-0 focus:outline-none"
+                                className="p-1.5 h-8 w-8 min-w-[32px] rounded-lg border-transparent shadow-none! cursor-pointer focus:ring-0 focus:outline-none"
                                 onClick={(e: React.MouseEvent) => e.stopPropagation()}
                             >
                                 <MoreVertical className="w-4 h-4 text-slate-400 group-hover:text-slate-900 transition-colors" />
