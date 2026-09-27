@@ -36,11 +36,19 @@ class ExpectedCashFlowObserver
      */
     protected function invalidateCache(ExpectedCashFlow $expectedCashFlow): void
     {
-        $ledgerId = $expectedCashFlow->account->ledger_id;
+        $ledgerId = $expectedCashFlow->account?->ledger_id;
         
         if ($ledgerId) {
             Cache::forget("ledger_{$ledgerId}_cash_flow_30d");
             Cache::forget("ledger_{$ledgerId}_accrual_30d");
+
+            if ($expectedCashFlow->due_date) {
+                $dueDate = \Illuminate\Support\Carbon::parse($expectedCashFlow->due_date);
+                $month = $dueDate->month;
+                $year = $dueDate->year;
+                Cache::forget("ledger_{$ledgerId}_cash_flow_m{$month}_y{$year}");
+                Cache::forget("ledger_{$ledgerId}_accrual_m{$month}_y{$year}");
+            }
         }
     }
 }

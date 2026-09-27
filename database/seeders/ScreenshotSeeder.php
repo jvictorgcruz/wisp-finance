@@ -132,8 +132,7 @@ class ScreenshotSeeder extends Seeder
             );
 
             // 6. Clear Cache to ensure Dashboard reflects new data immediately
-            \Illuminate\Support\Facades\Cache::forget("ledger_{$ledger->id}_accrual_30d");
-            \Illuminate\Support\Facades\Cache::forget("ledger_{$ledger->id}_accrual_m" . $now->month . "_y" . $now->year);
+            \Illuminate\Support\Facades\Cache::flush();
         });
     }
 
@@ -165,6 +164,14 @@ class ScreenshotSeeder extends Seeder
             'type' => 'DEBIT',
             'amount' => $amount,
             'entry_date' => $date,
+        ]);
+
+        \App\Models\ExpectedCashFlow::create([
+            'transaction_id' => $transaction->id,
+            'account_id' => $toAccount->id,
+            'amount' => $amount,
+            'due_date' => $date,
+            'status' => 'PAID',
         ]);
 
         return $transaction;
