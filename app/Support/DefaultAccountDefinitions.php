@@ -8,8 +8,6 @@ class DefaultAccountDefinitions
 {
     /**
      * Get the default chart of accounts hierarchy.
-     * Storing raw translation keys instead of localized strings.
-     * Metadata 'icon' now uses Lucide React icon names.
      */
     public static function get(): array
     {

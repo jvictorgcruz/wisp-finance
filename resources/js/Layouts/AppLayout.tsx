@@ -50,14 +50,14 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
                 {/* Top Header / Breadcrumb Bar (Editorial Style) */}
                 <header className="h-16 flex items-center justify-between px-8 bg-surface-lowest backdrop-blur-md border-b border-surface-low sticky top-0 z-30">
                     <div className="flex items-center gap-4 flex-1">
-                        <div className="relative w-full max-w-md group">
+                        {/* <div className="relative w-full max-w-md group">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 group-focus-within:text-primary transition-colors" />
                             <input 
                                 type="text"
                                 placeholder={t('home.search_placeholder')}
                                 className="w-full bg-surface border-none rounded-xl py-2 pl-10 text-sm focus:ring-2 focus:ring-primary/10 placeholder:text-slate-400 transition-all"
                             />
-                        </div>
+                        </div> */}
                     </div>
 
                     {/* Actions Area */}

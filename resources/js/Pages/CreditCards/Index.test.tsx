@@ -39,7 +39,21 @@ describe('CreditCards Index Page', () => {
                 balance: -150000,
                 parent_id: null,
                 ui_metadata: { color: '#820ad1', icon: 'CreditCard' },
-                credit_card_details: { limit: 500000, closing_day: 10, due_day: 17, invoice_control_enabled: true }
+                credit_card_details: { 
+                    limit: 500000, 
+                    closing_day: 10, 
+                    due_day: 17, 
+                    invoice_control_enabled: true,
+                    current_invoice: {
+                        id: 1,
+                        total_amount: 45000,
+                        paid_amount: 0,
+                        status: 'OPEN',
+                        reference: '2026-09',
+                        due_date: '2026-09-17T00:00:00.000Z',
+                        closing_date: '2026-09-10T00:00:00.000Z',
+                    }
+                }
             }
         ],
         root_categories: [],
@@ -48,12 +62,14 @@ describe('CreditCards Index Page', () => {
         accounts: []
     };
 
-    it('renders the cards correctly', () => {
+    it('renders the cards correctly with open invoice amount', () => {
         render(<CreditCards {...mockProps} />);
         
         expect(screen.getByText('Nubank')).toBeDefined();
         expect(screen.getByText('Dia 10')).toBeDefined();
-        // 1500 / 5000 = 30%
+        // Open invoice is R$ 450,00 (45000 cents)
+        expect(screen.getByText(/450,00/)).toBeDefined();
+        // 1500 / 5000 = 30% limit used
         expect(screen.getByText(/30%/)).toBeDefined();
     });
 
