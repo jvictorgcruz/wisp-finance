@@ -96,8 +96,8 @@ class ScreenshotSeeder extends Seeder
             $now = Carbon::now();
             $monthStart = $now->copy()->startOfMonth();
 
-            // Opening Balance - Special case using manual model to avoid misclassification
-            $this->createManualTransaction($ledger, $monthStart->copy(), 'Saldo Inicial de Maio', 1500000, TransactionType::INCOME, $equityRoot, $nubank);
+            $monthName = ucfirst($monthStart->locale('pt')->translatedFormat('F'));
+            $this->createManualTransaction($ledger, $monthStart->copy(), "Saldo Inicial de {$monthName}", 1500000, TransactionType::INCOME, $equityRoot, $nubank);
             
             // Incomes via Action
             $recordIncome->execute($salaryCat, $nubank, 925000, $monthStart->copy()->addDays(4), 'Salário Mensal - Tech Corp');

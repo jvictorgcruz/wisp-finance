@@ -94,7 +94,13 @@ export default function CreditCards({ cards, root_categories, available_colors, 
             </PageHeader>
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 pt-8">
-                    {cards.map(card => (
+                    {cards.map(card => {
+                        const currentInvoice = card.credit_card_details?.current_invoice;
+                        const openInvoiceAmount = currentInvoice 
+                            ? Math.max(0, (currentInvoice.total_amount || 0) - (currentInvoice.paid_amount || 0))
+                            : 0;
+
+                        return (
                         <div 
                             key={card.id}
                             className="bg-white p-6 rounded-3xl flex flex-col gap-6 transition-all border-editorial hover:border-slate-200"
@@ -165,7 +171,7 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                                         <div className="flex items-baseline gap-1">
                                             <span className="text-xl font-bold text-slate-900">R$</span>
                                             <span className="text-4xl font-black tracking-tighter text-slate-900">
-                                                {formatCurrency(Math.abs(card.balance)).replace('R$', '').trim()}
+                                                {formatCurrency(openInvoiceAmount).replace('R$', '').trim()}
                                             </span>
                                         </div>
                                     </div>
@@ -241,7 +247,8 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                                 </div>
                             )}
                         </div>
-                    ))}
+                    );
+                })}
 
                     {/* Add New Card Skeleton */}
                     <div 
