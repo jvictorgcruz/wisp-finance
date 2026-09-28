@@ -370,6 +370,7 @@ export default function HeroMockup() {
         <div 
             ref={containerRef}
             className="relative animate-in fade-in zoom-in-95 duration-700 select-none w-full"
+            id={`tabpanel-${activeSlide}`}
             onPointerEnter={handlePointerEnter}
             onPointerLeave={handlePointerLeave}
             onTouchStart={handleTouchStart}
@@ -379,17 +380,20 @@ export default function HeroMockup() {
             role="region"
             aria-label={t('home.hero_carousel.step_dashboard')}
         >
-            <div className="absolute -top-20 -left-20 w-96 h-96 bg-primary/25 blur-[120px] rounded-full pointer-events-none" />
-            <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-emerald-400/25 blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute -top-20 -left-20 w-96 h-96 bg-primary/25 blur-[120px] rounded-full pointer-events-none" aria-hidden="true" />
+            <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-emerald-400/25 blur-[120px] rounded-full pointer-events-none" aria-hidden="true" />
 
             <div className="relative bg-white/90 backdrop-blur-xl rounded-[2.5rem] border border-white/80 p-4 sm:p-7 md:p-8 shadow-[0_32px_64px_-16px_rgba(15,23,42,0.12)] space-y-4 sm:space-y-6 overflow-hidden transition-all hover:shadow-[0_40px_80px_-16px_rgba(15,23,42,0.16)] min-h-130 sm:min-h-145 flex flex-col">
-                <div className="flex flex-wrap justify-center sm:flex-nowrap gap-2 sm:gap-3 pb-3.5 border-b border-slate-100 relative">
+                <div className="flex flex-wrap justify-center sm:flex-nowrap gap-2 sm:gap-3 pb-3.5 border-b border-slate-100 relative" role="tablist">
                     {slides.map((slide, index) => {
                         const isActive = activeSlide === index;
                         return (
                             <button
                                 key={slide.key}
                                 onClick={() => handleTabClick(index)}
+                                role="tab"
+                                aria-selected={isActive}
+                                aria-controls={`tabpanel-${index}`}
                                 className={`flex-1 min-w-[30%] sm:min-w-0 sm:flex-1 py-1.5 sm:py-2 px-1 sm:px-1.5 rounded-xl text-xs sm:text-sm tracking-tight transition-all text-center whitespace-normal ${
                                     isActive
                                         ? 'text-slate-900 font-black scale-105'
@@ -827,7 +831,7 @@ export default function HeroMockup() {
                                             }}
                                         >
                                             <div className="bg-white text-slate-800 text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-md whitespace-nowrap flex items-center gap-1.5 border border-slate-200">
-                                                <span className="text-slate-500 font-medium">{activeChartPoint.date}:</span>
+                                                <span className="text-slate-500 font-medium" aria-hidden="true">{activeChartPoint.date}:</span>
                                                 <span className="font-bold text-emerald-600">{activeChartPoint.val}</span>
                                             </div>
                                             <div className="w-2 h-2 bg-white rotate-45 mx-auto -mt-1 border-r border-b border-slate-200" />

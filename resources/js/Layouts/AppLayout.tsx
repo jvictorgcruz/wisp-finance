@@ -63,7 +63,7 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
                     {/* Actions Area */}
                     <div className="hidden lg:flex items-center gap-4">
                         <LanguageSelector
-                            variant="minimal" 
+                            variant="full" 
                             onChange={(next) => router.post(`/language/${next}`)} 
                         />
 
