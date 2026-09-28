@@ -34,15 +34,13 @@ export default function LanguageSelector({ className, onChange, variant = 'full'
             <DropdownSelector.Trigger 
                 showChevron
                 className={cn(
-                    "pl-10 text-[10px] font-bold uppercase tracking-editorial-wide text-primary",
-                    variant === 'full' ? "w-full" : "pr-4"
+                    "text-[10px] font-bold uppercase tracking-editorial-wide text-primary h-11 flex items-center justify-center",
+                    variant === 'full' ? "w-full px-4" : "px-3"
                 )}
+                aria-label="Language Selector"
             >
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <Globe className="w-3.5 h-3.5 text-slate-400 group-hover:text-primary transition-colors" aria-hidden="true" />
-                </span>
-                <span className="flex items-center gap-1">
-                    {getFlag(locale)} <p className="text-[10px]">{variant === 'full' ? locales[locale] : locale.toUpperCase()}</p>
+                <span className="flex items-center gap-2">
+                    <span className="text-base">{getFlag(locale)}</span> <p className="text-[10px]">{variant === 'full' ? locales[locale] : locale.toUpperCase()}</p>
                 </span>
             </DropdownSelector.Trigger>
 
@@ -51,7 +49,7 @@ export default function LanguageSelector({ className, onChange, variant = 'full'
                 placement={placement}
                 className={cn(
                     "max-h-60 overflow-auto py-1 text-[10px] font-bold uppercase tracking-editorial-wide",
-                    variant === 'full' ? "w-full" : "w-48"
+                    variant === 'full' ? "" : "w-48"
                 )}
             >
                 {Object.entries(locales).map(([code, name]) => (

@@ -93,23 +93,23 @@ describe('Hero Component Suite', () => {
             expect(screen.getByText('home.hero_carousel.step_accounts')).toBeDefined();
         });
 
-        it('applies responsive layout grid and column classes for mobile, tablet, and desktop viewports', () => {
+        it('applies responsive layout flex and column classes for mobile, tablet, and desktop viewports', () => {
             const { container } = render(<HeroSection />);
 
             const section = container.querySelector('section');
             expect(section?.className).toContain('px-8');
             expect(section?.className).toContain('lg:px-20');
 
-            const gridContainer = container.querySelector('.grid');
-            expect(gridContainer?.className).toContain('lg:grid-cols-12');
-            expect(gridContainer?.className).toContain('gap-12');
-            expect(gridContainer?.className).toContain('lg:gap-16');
+            const layoutContainer = section?.querySelector('.flex.flex-col');
+            expect(layoutContainer?.className).toContain('lg:flex-row');
+            expect(layoutContainer?.className).toContain('gap-12');
+            expect(layoutContainer?.className).toContain('lg:gap-8');
 
-            const textColumn = gridContainer?.children[0];
-            expect(textColumn?.className).toContain('lg:col-span-5');
+            const textColumn = layoutContainer?.children[0];
+            expect(textColumn?.className).toContain('lg:w-[46%]');
 
-            const mockupColumn = gridContainer?.children[1];
-            expect(mockupColumn?.className).toContain('lg:col-span-7');
+            const mockupColumn = layoutContainer?.children[1];
+            expect(mockupColumn?.className).toContain('lg:w-[54%]');
         });
     });
 });

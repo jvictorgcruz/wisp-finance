@@ -102,7 +102,7 @@ export default function Sidebar() {
                     <button className="w-full h-14 px-4 rounded-2xl bg-surface-lowest border border-surface-low flex items-center justify-between group hover:border-primary/20 transition-all text-left">
                         <div className="flex flex-col">
                             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-editorial-wide">{t('home.sidebar.current_ledger')}</span>
-                            <span className="text-sm font-semibold text-primary truncate max-w-[120px]">
+                            <span className="text-sm font-semibold text-primary truncate max-w-30">
                                 {auth.ledgers?.find((l: any) => l.id === auth.current_ledger_id)?.name || t('home.sidebar.loading')}
                             </span>
                         </div>
