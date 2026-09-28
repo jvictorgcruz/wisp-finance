@@ -117,5 +117,7 @@ return [
         'acc_nubank' => 'NUBANK',
         'aria_hero_header' => 'Hero header',
         'aria_cta' => 'Call to action',
+        'play_demo' => 'Resume Animation',
+        'pause_demo' => 'Pause Animation',
     ],
 ];

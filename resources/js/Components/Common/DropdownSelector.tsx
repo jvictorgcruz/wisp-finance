@@ -158,7 +158,7 @@ DropdownSelector.Panel = function Panel({
                 anchor={anchor}
                 className={cn(
                     "z-9999 overflow-hidden divide-y divide-surface-low rounded-xl bg-surface-lowest border-editorial focus:outline-none shadow-xl shadow-slate-900/5",
-                    "w-[--anchor-width]",
+                    "w-(--button-width)",
                     className
                 )}
                 {...props}

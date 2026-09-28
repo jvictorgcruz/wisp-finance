@@ -3,7 +3,7 @@ import { useTranslation } from '@/Hooks/useTranslation';
 import { 
     TrendingUp, CreditCard, ArrowUpRight, ArrowDownRight, 
     Wallet, Building2, ShoppingCart, Tv, Calendar, TrendingDown,
-    MoreVertical, Activity
+    MoreVertical, Activity, Play, Pause
 } from 'lucide-react';
 import { useHeroMockupData } from './hooks/useHeroMockupData';
 import { useStepProgress } from './hooks/useStepProgress';
@@ -174,6 +174,7 @@ export default function HeroMockup() {
     const [isHoverPaused, setIsHoverPaused] = useState(false);
     const [isIntersectionPaused, setIsIntersectionPaused] = useState(false);
     const [chartHoverIndex, setChartHoverIndex] = useState<number | null>(null);
+    const [isUserPaused, setIsUserPaused] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
 
     const mockupData = useHeroMockupData();
@@ -240,7 +241,46 @@ export default function HeroMockup() {
         return () => observer.disconnect();
     }, []);
 
-    const isPaused = isHoverPaused || isIntersectionPaused;
+
+    // Swipe gestures
+    const touchStartX = useRef<number | null>(null);
+    const touchEndX = useRef<number | null>(null);
+
+    const handleTouchStart = (e: React.TouchEvent) => {
+        touchStartX.current = e.targetTouches[0].clientX;
+    };
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+        touchEndX.current = e.targetTouches[0].clientX;
+    };
+
+    const handleTouchEnd = () => {
+        if (!touchStartX.current || !touchEndX.current) return;
+        const diff = touchStartX.current - touchEndX.current;
+        if (Math.abs(diff) > 50) {
+            if (diff > 0) {
+                changeSlide((activeSlide + 1) % 5);
+            } else {
+                changeSlide((activeSlide - 1 + 5) % 5);
+            }
+        }
+        touchStartX.current = null;
+        touchEndX.current = null;
+    };
+
+    const handlePointerEnter = (e: React.PointerEvent) => {
+        if (e.pointerType === 'mouse' || !e.pointerType) {
+            setIsHoverPaused(true);
+        }
+    };
+
+    const handlePointerLeave = (e: React.PointerEvent) => {
+        if (e.pointerType === 'mouse' || !e.pointerType) {
+            setIsHoverPaused(false);
+        }
+    };
+
+    const isPaused = isHoverPaused || isIntersectionPaused || isUserPaused;
 
     useEffect(() => {
         if (isPaused) return;
@@ -330,8 +370,11 @@ export default function HeroMockup() {
         <div 
             ref={containerRef}
             className="relative animate-in fade-in zoom-in-95 duration-700 select-none w-full"
-            onMouseEnter={() => setIsHoverPaused(true)}
-            onMouseLeave={() => setIsHoverPaused(false)}
+            onPointerEnter={handlePointerEnter}
+            onPointerLeave={handlePointerLeave}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
             aria-roledescription="carousel"
             role="region"
             aria-label={t('home.hero_carousel.step_dashboard')}
@@ -339,15 +382,15 @@ export default function HeroMockup() {
             <div className="absolute -top-20 -left-20 w-96 h-96 bg-primary/25 blur-[120px] rounded-full pointer-events-none" />
             <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-emerald-400/25 blur-[120px] rounded-full pointer-events-none" />
 
-            <div className="relative bg-white/90 backdrop-blur-xl rounded-[2.5rem] border border-white/80 p-5 sm:p-7 md:p-8 shadow-[0_32px_64px_-16px_rgba(15,23,42,0.12)] space-y-5 sm:space-y-6 overflow-hidden transition-all hover:shadow-[0_40px_80px_-16px_rgba(15,23,42,0.16)]">
-                <div className="grid grid-cols-5 gap-1 sm:gap-3 pb-3.5 border-b border-slate-100 overflow-hidden">
+            <div className="relative bg-white/90 backdrop-blur-xl rounded-[2.5rem] border border-white/80 p-4 sm:p-7 md:p-8 shadow-[0_32px_64px_-16px_rgba(15,23,42,0.12)] space-y-4 sm:space-y-6 overflow-hidden transition-all hover:shadow-[0_40px_80px_-16px_rgba(15,23,42,0.16)] min-h-130 sm:min-h-145 flex flex-col">
+                <div className="flex flex-wrap justify-center sm:flex-nowrap gap-2 sm:gap-3 pb-3.5 border-b border-slate-100 relative">
                     {slides.map((slide, index) => {
                         const isActive = activeSlide === index;
                         return (
                             <button
                                 key={slide.key}
                                 onClick={() => handleTabClick(index)}
-                                className={`w-full py-1.5 sm:py-2 px-0.5 sm:px-1.5 rounded-xl text-[10px] sm:text-sm tracking-tight transition-all text-center truncate ${
+                                className={`flex-1 min-w-[30%] sm:min-w-0 sm:flex-1 py-1.5 sm:py-2 px-1 sm:px-1.5 rounded-xl text-xs sm:text-sm tracking-tight transition-all text-center whitespace-normal ${
                                     isActive
                                         ? 'text-slate-900 font-black scale-105'
                                         : 'text-slate-500 hover:text-slate-800 font-bold'
@@ -364,6 +407,15 @@ export default function HeroMockup() {
                         {slides[activeSlide].title}
                     </h3>
                 </div>
+
+                {/* Desktop Pause Button */}
+                <button 
+                    onClick={(e) => { e.stopPropagation(); setIsUserPaused(!isUserPaused); }}
+                    className="hidden sm:flex absolute bottom-6 right-6 bg-slate-900/10 hover:bg-slate-900/20 text-slate-700 p-2.5 rounded-full transition-all z-50 backdrop-blur-sm"
+                    aria-label={isUserPaused ? "Play animation" : "Pause animation"}
+                >
+                    {isUserPaused ? <Play className="w-5 h-5 fill-current" /> : <Pause className="w-5 h-5 fill-current" />}
+                </button>
 
                 <div className="relative h-95 sm:h-102.5 w-full flex items-stretch justify-center overflow-hidden">
                     {/* Dynamic Toast 0 */}
@@ -877,6 +929,25 @@ export default function HeroMockup() {
                             </div>
                         </div>
                     )}
+                </div>
+
+                {/* Mobile Pause Footer */}
+                <div className="flex sm:hidden w-full pt-3 mt-1 border-t border-slate-100 justify-center items-center shrink-0">
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); setIsUserPaused(!isUserPaused); }}
+                        className="flex items-center justify-center gap-2 text-slate-500 bg-slate-50 hover:bg-slate-100 px-4 py-1.5 rounded-full font-semibold text-xs transition-colors"
+                        aria-label={isUserPaused ? "Play animation" : "Pause animation"}
+                    >
+                        {isUserPaused ? (
+                            <>
+                                <Play className="w-3.5 h-3.5 fill-current" /> {t('home.hero_carousel.play_demo')}
+                            </>
+                        ) : (
+                            <>
+                                <Pause className="w-3.5 h-3.5 fill-current" /> {t('home.hero_carousel.pause_demo')}
+                            </>
+                        )}
+                    </button>
                 </div>
             </div>
         </div>

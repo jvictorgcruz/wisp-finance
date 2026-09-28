@@ -117,5 +117,7 @@ return [
         'acc_nubank' => 'NUBANK',
         'aria_hero_header' => 'Cabeçalho da Hero',
         'aria_cta' => 'Chamada para ação',
+        'play_demo' => 'Retomar Animação',
+        'pause_demo' => 'Pausar Animação',
     ],
 ];

@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Head, Link, usePage, router } from '@inertiajs/react';
 import {
     ShieldCheck, Zap,
+    Menu, X,
     CreditCard
 } from 'lucide-react';
 import Logo from '@/Components/Common/Logo';
@@ -27,15 +29,17 @@ const FeatureCard = ({ icon: Icon, title, description }: { icon: any, title: str
 export default function Home() {
     const { auth } = usePage<any>().props;
     const { t, localeRoute } = useTranslation();
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-primary/20">
+        <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-primary/20 overflow-x-hidden">
             <Head title={t('home.title') + " " + t('home.title_highlight')} />
 
             <nav className="h-24 flex items-center justify-between px-8 lg:px-20 max-w-7xl mx-auto">
                 <Logo />
 
-                <div className="flex items-center gap-6">
+                {/* Desktop Nav */}
+                <div className="hidden md:flex items-center gap-6">
                     <LanguageSelector 
                         variant="minimal"
                         className="w-auto" 
@@ -65,7 +69,79 @@ export default function Home() {
                         </>
                     )}
                 </div>
+
+                {/* Mobile Menu Button */}
+                <button 
+                    onClick={() => setIsMobileMenuOpen(true)}
+                    className="md:hidden p-2 -mr-2 text-slate-500 hover:text-slate-900 transition-colors"
+                    aria-label="Open menu"
+                >
+                    <Menu className="w-6 h-6" />
+                </button>
+
             </nav>
+
+            {/* Mobile Sidebar */}
+            {isMobileMenuOpen && (
+                <div className="fixed inset-0 z-100 md:hidden">
+                    {/* Backdrop */}
+                    <div 
+                        className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity" 
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    />
+                    
+                    {/* Sidebar */}
+                    <div className="absolute right-0 top-0 bottom-0 w-70 bg-white shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+                        <div className="flex items-center justify-between p-6 border-b border-slate-100">
+                            <Logo />
+                            <button 
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="p-2 -mr-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+                        
+                        <div className="flex-1 py-6 px-6 flex flex-col gap-6">
+                            <div>
+                                <LanguageSelector 
+                                    variant="full"
+                                    className="w-full bg-slate-50 border border-slate-100 rounded-xl" 
+                                    onChange={(next) => router.visit(window.location.pathname.replace(/^\/(en|pt)/, `/${next}`) + window.location.search)}
+                                />
+                            </div>
+                            
+                            <div className="h-px bg-slate-100" />
+
+                            <div className="flex flex-col gap-4">
+                                {auth.user ? (
+                                    <Link
+                                        href="/accounts"
+                                        className="w-full text-center bg-slate-900 text-white px-6 py-3 rounded-full font-bold text-sm hover:bg-slate-800 transition-all shadow-lg shadow-slate-200"
+                                    >
+                                        {t('home.nav.go_to_app')}
+                                    </Link>
+                                ) : (
+                                    <>
+                                        <Link 
+                                            href={localeRoute('/login')} 
+                                            className="w-full text-center bg-slate-100 text-slate-900 px-6 py-3 rounded-full font-bold text-sm hover:bg-slate-200 transition-colors"
+                                        >
+                                            {t('home.nav.login')}
+                                        </Link>
+                                        <Link 
+                                            href={localeRoute('/register')} 
+                                            className="w-full text-center bg-primary text-white px-6 py-3 rounded-full font-bold text-sm hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
+                                        >
+                                            {t('home.nav.register')}
+                                        </Link>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <main>
                 <HeroSection />

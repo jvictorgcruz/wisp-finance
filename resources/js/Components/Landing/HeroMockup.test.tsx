@@ -89,7 +89,7 @@ describe('HeroMockup Carousel Component', () => {
             expect(carouselRegion).not.toBeNull();
 
             // Hover over carousel
-            fireEvent.mouseEnter(carouselRegion!);
+            fireEvent.pointerEnter(carouselRegion!, { pointerType: 'mouse' });
 
             // Advance 5 seconds while paused
             act(() => {
@@ -100,7 +100,7 @@ describe('HeroMockup Carousel Component', () => {
             expect(screen.getByText('home.hero_carousel.step_accounts_desc')).toBeDefined();
 
             // Leave mouse
-            fireEvent.mouseLeave(carouselRegion!);
+            fireEvent.pointerLeave(carouselRegion!, { pointerType: 'mouse' });
 
             // Advance 5 seconds after resuming
             act(() => {

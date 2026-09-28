@@ -49,7 +49,7 @@ export default function LanguageSelector({ className, onChange, variant = 'full'
                 placement={placement}
                 className={cn(
                     "max-h-60 overflow-auto py-1 text-[10px] font-bold uppercase tracking-editorial-wide",
-                    variant === 'full' ? "w-full" : "w-48"
+                    variant === 'full' ? "" : "w-48"
                 )}
             >
                 {Object.entries(locales).map(([code, name]) => (
