@@ -20,7 +20,7 @@ export default function HeroCTA({ className = '' }: HeroCTAProps) {
 
     return (
         <div 
-            className={`flex flex-col sm:flex-row gap-4 pt-2 animate-in fade-in slide-in-from-bottom-12 duration-1500 delay-300 ${className}`}
+            className={`flex flex-col sm:flex-row justify-center lg:justify-start gap-4 pt-2 animate-in fade-in slide-in-from-bottom-12 duration-1500 delay-300 ${className}`}
             role="region"
             aria-label={t('home.hero_carousel.aria_cta')}
         >

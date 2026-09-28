@@ -32,38 +32,41 @@ function useAccountAnimation(isActive: boolean) {
         const fullAccountLimit = 'R$ 3.000,00';
 
         let nameIdx = 0;
-        const nameTimer = setInterval(() => {
-            nameIdx++;
-            setTypedAccountName(fullAccountName.slice(0, nameIdx));
-            if (nameIdx >= fullAccountName.length) {
-                clearInterval(nameTimer);
-                const t1 = setTimeout(() => {
-                    setActiveAccountField('limit');
-                    let limitIdx = 0;
-                    const limitTimer = setInterval(() => {
-                        limitIdx++;
-                        setTypedAccountLimit(fullAccountLimit.slice(0, limitIdx));
-                        if (limitIdx >= fullAccountLimit.length) {
-                            clearInterval(limitTimer);
-                            const t2 = setTimeout(() => {
-                                setActiveAccountField(null);
-                                const t3 = setTimeout(() => {
-                                    setIsCreateAccountBtnClicked(true);
-                                    setIsAccountToastVisible(true);
-                                    const t4 = setTimeout(() => setIsCreateAccountBtnClicked(false), 400);
-                                    timeouts.push(t4);
-                                }, 400);
-                                timeouts.push(t3);
-                            }, 300);
-                            timeouts.push(t2);
-                        }
-                    }, 50);
-                    intervals.push(limitTimer);
-                }, 550);
-                timeouts.push(t1);
-            }
-        }, 60);
-        intervals.push(nameTimer);
+        const initialDelay = setTimeout(() => {
+            const nameTimer = setInterval(() => {
+                nameIdx++;
+                setTypedAccountName(fullAccountName.slice(0, nameIdx));
+                if (nameIdx >= fullAccountName.length) {
+                    clearInterval(nameTimer);
+                    const t1 = setTimeout(() => {
+                        setActiveAccountField('limit');
+                        let limitIdx = 0;
+                        const limitTimer = setInterval(() => {
+                            limitIdx++;
+                            setTypedAccountLimit(fullAccountLimit.slice(0, limitIdx));
+                            if (limitIdx >= fullAccountLimit.length) {
+                                clearInterval(limitTimer);
+                                const t2 = setTimeout(() => {
+                                    setActiveAccountField(null);
+                                    const t3 = setTimeout(() => {
+                                        setIsCreateAccountBtnClicked(true);
+                                        setIsAccountToastVisible(true);
+                                        const t4 = setTimeout(() => setIsCreateAccountBtnClicked(false), 400);
+                                        timeouts.push(t4);
+                                    }, 400);
+                                    timeouts.push(t3);
+                                }, 300);
+                                timeouts.push(t2);
+                            }
+                        }, 50);
+                        intervals.push(limitTimer);
+                    }, 550);
+                    timeouts.push(t1);
+                }
+            }, 60);
+            intervals.push(nameTimer);
+        }, 600);
+        timeouts.push(initialDelay);
 
         return () => {
             timeouts.forEach(clearTimeout);
@@ -108,48 +111,51 @@ function useTransactionAnimation(isActive: boolean) {
         const fullTransactionAmount = 'R$ 145,50';
 
         let descIdx = 0;
-        const descTimer = setInterval(() => {
-            descIdx++;
-            setTypedTransactionDesc(fullTransactionDesc.slice(0, descIdx));
-            if (descIdx >= fullTransactionDesc.length) {
-                clearInterval(descTimer);
-                const t1 = setTimeout(() => {
-                    setActiveTransactionField('amount');
-                    let amtIdx = 0;
-                    const amtTimer = setInterval(() => {
-                        amtIdx++;
-                        setTypedTransactionAmount(fullTransactionAmount.slice(0, amtIdx));
-                        if (amtIdx >= fullTransactionAmount.length) {
-                            clearInterval(amtTimer);
-                            const t2 = setTimeout(() => {
-                                setActiveTransactionField('account');
-                                setIsTransactionAccountSelected(true);
-                                const t3 = setTimeout(() => {
-                                    setActiveTransactionField('category');
-                                    setIsTransactionCategorySelected(true);
-                                    const t4 = setTimeout(() => {
-                                        setActiveTransactionField(null);
-                                        const t5 = setTimeout(() => {
-                                            setIsSaveTransactionBtnClicked(true);
-                                            setIsTransactionToastVisible(true);
-                                            const t6 = setTimeout(() => setIsSaveTransactionBtnClicked(false), 400);
-                                            timeouts.push(t6);
-                                        }, 300);
-                                        timeouts.push(t5);
-                                    }, 400);
-                                    timeouts.push(t4);
-                                }, 550);
-                                timeouts.push(t3);
-                            }, 500);
-                            timeouts.push(t2);
-                        }
-                    }, 50);
-                    intervals.push(amtTimer);
-                }, 500);
-                timeouts.push(t1);
-            }
-        }, 55);
-        intervals.push(descTimer);
+        const initialDelayDesc = setTimeout(() => {
+            const descTimer = setInterval(() => {
+                descIdx++;
+                setTypedTransactionDesc(fullTransactionDesc.slice(0, descIdx));
+                if (descIdx >= fullTransactionDesc.length) {
+                    clearInterval(descTimer);
+                    const t1 = setTimeout(() => {
+                        setActiveTransactionField('amount');
+                        let amtIdx = 0;
+                        const amtTimer = setInterval(() => {
+                            amtIdx++;
+                            setTypedTransactionAmount(fullTransactionAmount.slice(0, amtIdx));
+                            if (amtIdx >= fullTransactionAmount.length) {
+                                clearInterval(amtTimer);
+                                const t2 = setTimeout(() => {
+                                    setActiveTransactionField('account');
+                                    setIsTransactionAccountSelected(true);
+                                    const t3 = setTimeout(() => {
+                                        setActiveTransactionField('category');
+                                        setIsTransactionCategorySelected(true);
+                                        const t4 = setTimeout(() => {
+                                            setActiveTransactionField(null);
+                                            const t5 = setTimeout(() => {
+                                                setIsSaveTransactionBtnClicked(true);
+                                                setIsTransactionToastVisible(true);
+                                                const t6 = setTimeout(() => setIsSaveTransactionBtnClicked(false), 400);
+                                                timeouts.push(t6);
+                                            }, 300);
+                                            timeouts.push(t5);
+                                        }, 400);
+                                        timeouts.push(t4);
+                                    }, 550);
+                                    timeouts.push(t3);
+                                }, 500);
+                                timeouts.push(t2);
+                            }
+                        }, 50);
+                        intervals.push(amtTimer);
+                    }, 500);
+                    timeouts.push(t1);
+                }
+            }, 55);
+            intervals.push(descTimer);
+        }, 600);
+        timeouts.push(initialDelayDesc);
 
         return () => {
             timeouts.forEach(clearTimeout);
@@ -287,8 +293,8 @@ export default function HeroMockup() {
 
         const getDuration = (slide: number) => {
             switch (slide) {
-                case 0: return 3500;
-                case 1: return 4500;
+                case 0: return 4300;
+                case 1: return 5300;
                 case 2: return 2500;
                 case 3: return 2500;
                 case 4: return 4500;
@@ -307,7 +313,7 @@ export default function HeroMockup() {
 
     // Animations using progress
     const invoiceSlideProgress = useStepProgress(activeSlide === 2, 1000);
-    const historySlideProgress = useStepProgress(activeSlide === 3, 1000);
+    const historySlideProgress = useStepProgress(activeSlide === 3, 1000, 600);
     const dashboardSlideProgress = useStepProgress(activeSlide === 4, 1500);
 
     const interpolatedInvoice = mockupData.supermarketExpense * invoiceSlideProgress;
@@ -437,7 +443,7 @@ export default function HeroMockup() {
                 </div>
 
 
-                <div className="relative h-95 sm:h-102.5 w-full overflow-hidden">
+                <div className="relative h-136 sm:h-102.5 w-full overflow-hidden">
                     <div 
                         className="flex w-full h-full transition-transform duration-500 ease-out"
                         style={{ transform: `translateX(-${activeSlide * 100}%)` }}
@@ -449,30 +455,30 @@ export default function HeroMockup() {
                                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">
                                     {t('home.hero_carousel.account_type_label')}
                                 </span>
-                                <div className="grid grid-cols-4 gap-1.5 sm:gap-2 text-center">
-                                    <div className="bg-white p-1.5 sm:p-2.5 rounded-xl border border-slate-200/60 flex flex-col items-center justify-center gap-1 hover:border-slate-300 hover:shadow-xs transition-all cursor-default min-w-0">
-                                        <div className="p-1 sm:p-1.5 bg-blue-50 rounded-lg shrink-0">
-                                            <Building2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600" />
+                                <div className="grid grid-cols-1 sm:grid-cols-4 gap-1.5 sm:gap-2 text-center">
+                                    <div className="bg-white p-2 sm:p-2.5 rounded-xl border border-slate-200/60 flex flex-row sm:flex-col items-center justify-start sm:justify-center gap-2 sm:gap-1 hover:border-slate-300 hover:shadow-xs transition-all cursor-default min-w-0">
+                                        <div className="p-1.5 bg-blue-50 rounded-lg shrink-0">
+                                            <Building2 className="w-4 h-4 text-blue-600" />
                                         </div>
-                                        <span className="text-slate-600 text-[8px] sm:text-[9px] font-bold tracking-tighter sm:tracking-normal truncate w-full block">{t('home.hero_carousel.type_bank')}</span>
+                                        <span className="text-slate-600 text-xs sm:text-[9px] font-bold tracking-normal text-left sm:text-center truncate w-full block">{t('home.hero_carousel.type_bank')}</span>
                                     </div>
-                                    <div className="bg-white p-1.5 sm:p-2.5 rounded-xl border border-slate-200/60 flex flex-col items-center justify-center gap-1 hover:border-purple-300 hover:shadow-xs transition-all cursor-default min-w-0">
-                                        <div className="p-1 sm:p-1.5 bg-purple-50 rounded-lg shrink-0">
-                                            <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600" />
+                                    <div className="bg-white p-2 sm:p-2.5 rounded-xl border border-slate-200/60 flex flex-row sm:flex-col items-center justify-start sm:justify-center gap-2 sm:gap-1 hover:border-purple-300 hover:shadow-xs transition-all cursor-default min-w-0">
+                                        <div className="p-1.5 bg-purple-50 rounded-lg shrink-0">
+                                            <TrendingUp className="w-4 h-4 text-purple-600" />
                                         </div>
-                                        <span className="text-slate-600 text-[8px] sm:text-[9px] font-bold tracking-tighter sm:tracking-normal truncate w-full block">{t('home.hero_carousel.type_investments')}</span>
+                                        <span className="text-slate-600 text-xs sm:text-[9px] font-bold tracking-normal text-left sm:text-center truncate w-full block">{t('home.hero_carousel.type_investments')}</span>
                                     </div>
-                                    <div className="bg-purple-50 p-1.5 sm:p-2.5 rounded-xl border-2 border-purple-600 flex flex-col items-center justify-center gap-1 shadow-2xs cursor-default min-w-0">
-                                        <div className="p-1 sm:p-1.5 bg-purple-600 text-white rounded-lg shrink-0">
-                                            <CreditCard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                    <div className="bg-purple-50 p-2 sm:p-2.5 rounded-xl border-2 border-purple-600 flex flex-row sm:flex-col items-center justify-start sm:justify-center gap-2 sm:gap-1 shadow-2xs cursor-default min-w-0">
+                                        <div className="p-1.5 bg-purple-600 text-white rounded-lg shrink-0">
+                                            <CreditCard className="w-4 h-4" />
                                         </div>
-                                        <span className="text-purple-700 font-black text-[8px] sm:text-[9px] tracking-tighter sm:tracking-normal truncate w-full block">{t('home.hero_carousel.type_card')}</span>
+                                        <span className="text-purple-700 font-black text-xs sm:text-[9px] tracking-normal text-left sm:text-center truncate w-full block">{t('home.hero_carousel.type_card')}</span>
                                     </div>
-                                    <div className="bg-white p-1.5 sm:p-2.5 rounded-xl border border-slate-200/60 flex flex-col items-center justify-center gap-1 hover:border-rose-300 hover:shadow-xs transition-all cursor-default min-w-0">
-                                        <div className="p-1 sm:p-1.5 bg-rose-50 rounded-lg shrink-0">
-                                            <TrendingDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-500" />
+                                    <div className="bg-white p-2 sm:p-2.5 rounded-xl border border-slate-200/60 flex flex-row sm:flex-col items-center justify-start sm:justify-center gap-2 sm:gap-1 hover:border-rose-300 hover:shadow-xs transition-all cursor-default min-w-0">
+                                        <div className="p-1.5 bg-rose-50 rounded-lg shrink-0">
+                                            <TrendingDown className="w-4 h-4 text-rose-500" />
                                         </div>
-                                        <span className="text-slate-600 text-[8px] sm:text-[9px] font-bold tracking-tighter sm:tracking-normal truncate w-full block">{t('home.hero_carousel.type_debts')}</span>
+                                        <span className="text-slate-600 text-xs sm:text-[9px] font-bold tracking-normal text-left sm:text-center truncate w-full block">{t('home.hero_carousel.type_debts')}</span>
                                     </div>
                                 </div>
                             </div>
@@ -518,19 +524,22 @@ export default function HeroMockup() {
                             <div className="w-full h-full bg-slate-50/90 rounded-3xl p-5 sm:p-6 border border-slate-200/80 flex flex-col justify-between space-y-3 sm:space-y-4 shadow-xs">
                             <div className="flex justify-center items-center pb-2.5 border-b border-slate-200/60 w-full">
                                 <div className="grid grid-cols-3 gap-1.5 bg-slate-100 p-1.5 rounded-xl text-xs font-bold w-full text-center">
-                                    <span className="py-2 bg-rose-500 text-white rounded-lg shadow-xs block font-extrabold text-center cursor-default">
-                                        {t('home.hero_carousel.expense')}
+                                    <span className="py-2 px-1 bg-rose-500 text-white rounded-lg shadow-xs block font-extrabold text-center truncate cursor-default">
+                                        <span className="max-[360px]:inline hidden">{String(t('home.hero_carousel.expense'))[0]?.toUpperCase() || 'D'}</span>
+                                        <span className="max-[360px]:hidden inline">{t('home.hero_carousel.expense')}</span>
                                     </span>
-                                    <span className="py-2 text-slate-500 block text-center font-bold hover:text-slate-700 hover:bg-slate-200/80 rounded-lg transition-all cursor-default">
-                                        {t('home.hero_carousel.income')}
+                                    <span className="py-2 px-1 text-slate-500 block text-center font-bold hover:text-slate-700 hover:bg-slate-200/80 rounded-lg truncate transition-all cursor-default">
+                                        <span className="max-[360px]:inline hidden">{String(t('home.hero_carousel.income'))[0]?.toUpperCase() || 'R'}</span>
+                                        <span className="max-[360px]:hidden inline">{t('home.hero_carousel.income')}</span>
                                     </span>
-                                    <span className="py-2 text-slate-500 block text-center font-bold hover:text-slate-700 hover:bg-slate-200/80 rounded-lg transition-all cursor-default">
-                                        {t('home.hero_carousel.transfer')}
+                                    <span className="py-2 px-1 text-slate-500 block text-center font-bold hover:text-slate-700 hover:bg-slate-200/80 rounded-lg truncate transition-all cursor-default">
+                                        <span className="max-[360px]:inline hidden">{String(t('home.hero_carousel.transfer'))[0]?.toUpperCase() || 'T'}</span>
+                                        <span className="max-[360px]:hidden inline">{t('home.hero_carousel.transfer')}</span>
                                     </span>
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-3 text-xs sm:text-sm">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
                                 <div>
                                     <span className="text-xs font-bold text-slate-400 uppercase block mb-1">
                                         {t('home.hero_carousel.date')}
@@ -567,7 +576,7 @@ export default function HeroMockup() {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-3 text-xs sm:text-sm">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
                                 <div>
                                     <span className="text-xs font-bold text-slate-400 uppercase block mb-1">
                                         {t('home.hero_carousel.pay_with')}
@@ -608,16 +617,17 @@ export default function HeroMockup() {
                                 </div>
                             </div>
 
-                            <div className="flex items-center justify-end gap-3 pt-2">
-                                <button className="px-5 py-2.5 text-slate-400 hover:text-slate-600 text-xs sm:text-sm font-bold transition-colors cursor-default">
+                            <div className="flex items-center justify-end gap-2 sm:gap-3 pt-2">
+                                <button className="px-3 sm:px-5 py-2 sm:py-2.5 text-slate-400 hover:text-slate-600 text-xs sm:text-sm font-bold transition-colors cursor-default">
                                     {t('home.hero_carousel.cancel')}
                                 </button>
-                                <button className={`text-white font-bold px-6 py-2.5 rounded-xl text-xs sm:text-sm transition-all cursor-default ${
+                                <button className={`text-white font-bold px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm transition-all cursor-default whitespace-nowrap ${
                                     isSaveTransactionBtnClicked
                                         ? 'bg-rose-600 scale-95 ring-4 ring-rose-400/40 shadow-inner'
                                         : 'bg-rose-500 hover:bg-rose-600 shadow-xs'
                                 }`}>
-                                    {t('home.hero_carousel.save_transaction')}
+                                    <span className="sm:hidden">{t('common.save')}</span>
+                                    <span className="hidden sm:inline">{t('home.hero_carousel.save_transaction')}</span>
                                 </button>
                             </div>
                             </div>
@@ -631,13 +641,9 @@ export default function HeroMockup() {
                                         <CreditCard className="w-6 h-6" />
                                     </div>
                                     <div>
-                                        <p className="font-black text-base text-slate-900 leading-tight">Nubank Ultravioleta</p>
-                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                                            {t('home.hero_mockup.active_card')}
-                                        </p>
+                                        <p className="font-black text-base text-slate-900 leading-tight">Nubank</p>
                                     </div>
                                 </div>
-                                <MoreVertical className="w-5 h-5 text-slate-400 shrink-0" />
                             </div>
 
                             <div className="text-left">
@@ -647,7 +653,7 @@ export default function HeroMockup() {
                                 <span className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight block mt-1">{mockupData.formatCurrency(interpolatedInvoice)}</span>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-3 text-center text-xs sm:text-sm">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-center text-xs sm:text-sm">
                                 <div className="bg-white p-3 rounded-xl border border-slate-200/60">
                                     <span className="text-xs font-bold text-slate-400 block uppercase">
                                         {t('home.hero_carousel.closing')}
@@ -662,7 +668,7 @@ export default function HeroMockup() {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <button className="w-full bg-primary text-white font-bold py-3 rounded-xl text-xs sm:text-sm shadow-xs hover:bg-primary/90 transition-colors">
                                     {t('home.hero_carousel.pay_invoice')}
                                 </button>
@@ -672,9 +678,12 @@ export default function HeroMockup() {
                             </div>
 
                             <div className="space-y-1.5">
-                                <div className="flex justify-between text-xs font-bold text-slate-500">
+                                <div className="hidden sm:flex justify-between text-xs font-bold text-slate-500">
                                     <span>{mockupData.formatCurrency(interpolatedInvoice)} {t('home.hero_carousel.limit_used_label')}</span>
                                     <span>{Math.round((interpolatedInvoice / 300000) * 100)}% de {mockupData.formatCurrency(300000)}</span>
+                                </div>
+                                <div className="sm:hidden text-left text-[11px] font-bold text-slate-500 leading-tight">
+                                    {mockupData.formatCurrency(interpolatedInvoice)} / {mockupData.formatCurrency(300000)} ({Math.round((interpolatedInvoice / 300000) * 100)}%) {t('home.hero_carousel.limit_used_label')}
                                 </div>
                                 <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
                                     <div className="bg-purple-600 h-full rounded-full" style={{ width: `${Math.min(100, (interpolatedInvoice / 300000) * 100)}%` }} />
@@ -685,19 +694,19 @@ export default function HeroMockup() {
 
                         <div className="w-full h-full shrink-0">
                             <div className="w-full h-full bg-slate-50/90 rounded-3xl p-4 sm:p-5 border border-slate-200/80 flex flex-col justify-between space-y-3 shadow-xs overflow-hidden">
-                            <div className="space-y-2 flex-1 flex flex-col justify-between">
+                            <div className="space-y-2 flex-1 flex flex-col justify-start">
                                 {/* Date: Day 15 (Newest) */}
                                 <div style={{ 
                                     opacity: historySlideProgress, 
                                     transform: `translateX(${(1 - historySlideProgress) * 30}px)`,
-                                    maxHeight: `${historySlideProgress * 100}px`,
+                                    maxHeight: `${historySlideProgress * 150}px`,
                                     overflow: 'hidden'
                                 }}>
                                     <div className="text-xs font-black uppercase text-slate-400 tracking-wider pb-1 border-b border-slate-200/60 mb-1.5">
                                         <span>{getDynamicDateHeader(15)}</span>
                                     </div>
-                                    <div className="flex items-center justify-between p-2.5 sm:p-3 bg-white rounded-2xl border border-slate-100 shadow-2xs hover:border-slate-200 hover:shadow-xs hover:scale-[1.01] transition-all duration-200 cursor-default">
-                                        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                                    <div className="flex flex-col min-[400px]:flex-row items-start min-[400px]:items-center justify-between gap-2 min-[400px]:gap-0 p-2.5 sm:p-3 bg-white rounded-2xl border border-slate-100 shadow-2xs hover:border-slate-200 hover:shadow-xs hover:scale-[1.01] transition-all duration-200 cursor-default">
+                                        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 w-full">
                                             <div className="p-2 bg-rose-100 text-rose-500 rounded-xl shrink-0">
                                                 <ShoppingCart className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                                             </div>
@@ -706,7 +715,7 @@ export default function HeroMockup() {
                                                 <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate">{t('home.hero_carousel.cat_groceries')}</p>
                                             </div>
                                         </div>
-                                        <div className="text-right shrink-0">
+                                        <div className="text-left min-[400px]:text-right shrink-0 pl-[2.6rem] min-[400px]:pl-0 w-full min-[400px]:w-auto">
                                             <span className="text-xs sm:text-sm font-black text-rose-500 block">- {mockupData.formatCurrency(mockupData.supermarketExpense)}</span>
                                             <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">{t('home.hero_carousel.acc_nubank')}</span>
                                         </div>
@@ -719,8 +728,8 @@ export default function HeroMockup() {
                                         <span>{getDynamicDateHeader(10)}</span>
                                     </div>
                                     <div className="space-y-1.5">
-                                        <div className="flex items-center justify-between p-2.5 sm:p-3 bg-white rounded-2xl border border-slate-100 shadow-2xs hover:border-slate-200 hover:shadow-xs hover:scale-[1.01] transition-all duration-200 cursor-default">
-                                            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                                        <div className="flex flex-col min-[400px]:flex-row items-start min-[400px]:items-center justify-between gap-2 min-[400px]:gap-0 p-2.5 sm:p-3 bg-white rounded-2xl border border-slate-100 shadow-2xs hover:border-slate-200 hover:shadow-xs hover:scale-[1.01] transition-all duration-200 cursor-default">
+                                            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 w-full">
                                                 <div className="p-2 bg-rose-100 text-rose-500 rounded-xl shrink-0">
                                                     <Tv className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                                                 </div>
@@ -729,14 +738,14 @@ export default function HeroMockup() {
                                                     <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate">{t('home.hero_carousel.cat_fixed')}</p>
                                                 </div>
                                             </div>
-                                            <div className="text-right shrink-0">
+                                            <div className="text-left min-[400px]:text-right shrink-0 pl-[2.6rem] min-[400px]:pl-0 w-full min-[400px]:w-auto">
                                                 <span className="text-xs sm:text-sm font-black text-rose-500 block">- {mockupData.formatCurrency(12000)}</span>
                                                 <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">{t('home.hero_carousel.acc_itau')}</span>
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center justify-between p-2.5 sm:p-3 bg-white rounded-2xl border border-slate-100 shadow-2xs hover:border-slate-200 hover:shadow-xs hover:scale-[1.01] transition-all duration-200 cursor-default">
-                                            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                                        <div className="flex flex-col min-[400px]:flex-row items-start min-[400px]:items-center justify-between gap-2 min-[400px]:gap-0 p-2.5 sm:p-3 bg-white rounded-2xl border border-slate-100 shadow-2xs hover:border-slate-200 hover:shadow-xs hover:scale-[1.01] transition-all duration-200 cursor-default">
+                                            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 w-full">
                                                 <div className="p-2 bg-rose-100 text-rose-500 rounded-xl shrink-0">
                                                     <ShoppingCart className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                                                 </div>
@@ -745,7 +754,7 @@ export default function HeroMockup() {
                                                     <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate">{t('home.hero_carousel.cat_food')}</p>
                                                 </div>
                                             </div>
-                                            <div className="text-right shrink-0">
+                                            <div className="text-left min-[400px]:text-right shrink-0 pl-[2.6rem] min-[400px]:pl-0 w-full min-[400px]:w-auto">
                                                 <span className="text-xs sm:text-sm font-black text-rose-500 block">- {mockupData.formatCurrency(2450)}</span>
                                                 <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">{t('home.hero_carousel.acc_cash')}</span>
                                             </div>
@@ -758,8 +767,8 @@ export default function HeroMockup() {
                                     <div className="text-xs font-black uppercase text-slate-400 tracking-wider pb-1 border-b border-slate-200/60 mb-1.5">
                                         <span>{getDynamicDateHeader(5)}</span>
                                     </div>
-                                    <div className="flex items-center justify-between p-2.5 sm:p-3 bg-white rounded-2xl border border-slate-100 shadow-2xs hover:border-slate-200 hover:shadow-xs hover:scale-[1.01] transition-all duration-200 cursor-default">
-                                        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                                    <div className="flex flex-col min-[400px]:flex-row items-start min-[400px]:items-center justify-between gap-2 min-[400px]:gap-0 p-2.5 sm:p-3 bg-white rounded-2xl border border-slate-100 shadow-2xs hover:border-slate-200 hover:shadow-xs hover:scale-[1.01] transition-all duration-200 cursor-default">
+                                        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 w-full">
                                             <div className="p-2 bg-emerald-100 text-emerald-600 rounded-xl shrink-0">
                                                 <ArrowUpRight className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                                             </div>
@@ -768,7 +777,7 @@ export default function HeroMockup() {
                                                 <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate">{t('home.hero_carousel.cat_salary')}</p>
                                             </div>
                                         </div>
-                                        <div className="text-right shrink-0">
+                                        <div className="text-left min-[400px]:text-right shrink-0 pl-[2.6rem] min-[400px]:pl-0 w-full min-[400px]:w-auto">
                                             <span className="text-xs sm:text-sm font-black text-emerald-600 block">+ {mockupData.formatCurrency(mockupData.income)}</span>
                                             <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">{t('home.hero_carousel.acc_itau')}</span>
                                         </div>
@@ -780,7 +789,7 @@ export default function HeroMockup() {
 
                         <div className="w-full h-full shrink-0">
                             <div className="w-full h-full bg-slate-50/80 rounded-3xl p-4 sm:p-5 border border-slate-100 flex flex-col justify-between space-y-3 shadow-xs">
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div className="bg-white p-3 sm:p-3.5 rounded-2xl border border-slate-100 shadow-2xs min-w-0 hover:border-emerald-200 hover:shadow-xs transition-all cursor-default">
                                     <div className="flex items-center justify-between mb-1">
                                         <span className="text-xs font-black uppercase tracking-wider text-emerald-600 truncate">
