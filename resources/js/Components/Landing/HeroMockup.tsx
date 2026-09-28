@@ -778,28 +778,26 @@ export default function HeroMockup() {
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="bg-white p-3 sm:p-3.5 rounded-2xl border border-slate-100 shadow-2xs min-w-0 hover:border-emerald-200 hover:shadow-xs transition-all cursor-default">
                                     <div className="flex items-center justify-between mb-1">
-                                        <span className="text-xs font-black uppercase tracking-wider text-slate-400 truncate">
+                                        <span className="text-xs font-black uppercase tracking-wider text-emerald-600 truncate">
                                             {t('home.hero_carousel.income_label')}
                                         </span>
                                         <div className="w-4 h-4 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
                                             <ArrowUpRight className="w-3 h-3" />
                                         </div>
                                     </div>
-                                    <span className="text-sm sm:text-base font-black text-slate-900 block truncate">+{mockupData.formatCurrency(mockupData.income)}</span>
-                                    <span className="text-xs font-bold text-emerald-600 block">+100.0%</span>
+                                    <span className="text-sm sm:text-base font-black text-slate-900 block truncate">{mockupData.formatCurrency(mockupData.income)}</span>
                                 </div>
 
                                 <div className="bg-white p-3 sm:p-3.5 rounded-2xl border border-slate-100 shadow-2xs min-w-0 hover:border-rose-200 hover:shadow-xs transition-all cursor-default">
                                     <div className="flex items-center justify-between mb-1">
-                                        <span className="text-xs font-black uppercase tracking-wider text-slate-400 truncate">
+                                        <span className="text-xs font-black uppercase tracking-wider text-rose-500 truncate">
                                             {t('home.hero_carousel.expense_label')}
                                         </span>
                                         <div className="w-4 h-4 rounded-full bg-rose-100 flex items-center justify-center text-rose-500 shrink-0">
                                             <ArrowDownRight className="w-3 h-3" />
                                         </div>
                                     </div>
-                                    <span className="text-sm sm:text-base font-black text-slate-900 block truncate">-{mockupData.formatCurrency(interpolatedExpense)}</span>
-                                    <span className="text-xs font-bold text-rose-500 block">+2.5%</span>
+                                    <span className="text-sm sm:text-base font-black text-slate-900 block truncate">{mockupData.formatCurrency(interpolatedExpense)}</span>
                                 </div>
                             </div>
 
@@ -809,7 +807,7 @@ export default function HeroMockup() {
                                 </div>
 
                                 <div 
-                                    className="relative h-28 sm:h-32 w-full cursor-crosshair group"
+                                    className="relative h-28 sm:h-32 w-full cursor-crosshair group pb-4"
                                     onMouseMove={handleChartMouseMove}
                                     onMouseLeave={handleChartMouseLeave}
                                 >
