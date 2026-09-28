@@ -1,10 +1,10 @@
 import { Head, Link, usePage, router } from '@inertiajs/react';
 import {
-    ArrowRight, Maximize2, Zap,
+    Maximize2, Zap,
     Target
 } from 'lucide-react';
 import Logo from '@/Components/Common/Logo';
-import HeroMockup from '@/Components/Landing/HeroMockup';
+import HeroSection from '@/Components/Landing/HeroSection';
 import { useTranslation } from '@/Hooks/useTranslation';
 import LanguageSelector from '@/Components/Navigation/LanguageSelector';
 import { clsx, type ClassValue } from 'clsx';
@@ -66,35 +66,8 @@ export default function Home() {
                 </div>
             </nav>
 
-            <main className="px-8 lg:px-20 max-w-7xl mx-auto pt-16 lg:pt-24 pb-20 overflow-hidden">
-                <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-                    <div className="space-y-8 relative z-10 lg:col-span-5">
-                        <h1 className="text-4xl lg:text-6xl font-black tracking-tighter leading-[0.95] animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                            {t('home.title')} <br />
-                            <span className="bg-linear-to-r from-primary via-blue-600 to-emerald-500 bg-clip-text text-transparent">
-                                {t('home.title_highlight')}
-                            </span>
-                        </h1>
-
-                        <p className="text-lg lg:text-xl text-slate-500 max-w-md leading-relaxed font-medium animate-in fade-in slide-in-from-bottom-12 duration-1200 delay-150">
-                            {t('home.subtitle')}
-                        </p>
-
-                        <div className="flex flex-col sm:flex-row gap-4 pt-2 animate-in fade-in slide-in-from-bottom-12 duration-1500 delay-300">
-                            <Link 
-                                href={localeRoute('/register')} 
-                                className="h-16 px-10 bg-slate-900 text-white rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-slate-800 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-slate-200 group"
-                            >
-                                {t('home.cta')}
-                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </Link>
-                        </div>
-                    </div>
-
-                    <div className="lg:col-span-7 w-full">
-                        <HeroMockup />
-                    </div>
-                </div>
+            <main>
+                <HeroSection />
             </main>
 
             <section className="bg-white py-32 px-8 lg:px-20 border-t border-slate-100">
