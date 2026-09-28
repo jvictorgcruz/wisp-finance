@@ -41,7 +41,7 @@ export default function Home() {
                 {/* Desktop Nav */}
                 <div className="hidden md:flex items-center gap-6">
                     <LanguageSelector 
-                        variant="minimal"
+                        variant="full"
                         className="w-auto" 
                         onChange={(next) => router.visit(window.location.pathname.replace(/^\/(en|pt)/, `/${next}`) + window.location.search)}
                     />

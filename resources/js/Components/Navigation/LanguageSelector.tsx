@@ -1,9 +1,10 @@
 import React from 'react';
 import { usePage } from '@inertiajs/react';
-import { Globe, Check } from 'lucide-react';
+import { Globe } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import DropdownSelector from '@/Components/Common/DropdownSelector';
+import { US, BR } from 'country-flag-icons/react/3x2';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -23,9 +24,9 @@ export default function LanguageSelector({ className, onChange, variant = 'full'
 
     const getFlag = (code: string) => {
         switch (code.toLowerCase()) {
-            case 'en': return '🇺🇸';
-            case 'pt': return '🇧🇷';
-            default: return '';
+            case 'en': return <US title={locales[code.toLowerCase()]} className="w-4 h-4 shrink-0 rounded-sm overflow-hidden shadow-sm" />;
+            case 'pt': return <BR title={locales[code.toLowerCase()]} className="w-4 h-4 shrink-0 rounded-sm overflow-hidden shadow-sm" />;
+            default: return <Globe className="w-4 h-4" />;
         }
     };
 
@@ -57,22 +58,17 @@ export default function LanguageSelector({ className, onChange, variant = 'full'
                         key={code}
                         className={({ active }: { active: boolean }) =>
                             cn(
-                                "relative cursor-pointer select-none py-2.5 pl-10 pr-4 transition-colors",
+                                "relative cursor-pointer select-none py-2.5 px-4 transition-colors",
                                 active ? "bg-primary/5 text-primary" : "text-slate-600"
                             )
                         }
                         value={code}
                     >
                         {({ selected }: { selected: boolean }) => (
-                            <div className="flex items-center">
-                                <span className={cn("block truncate", selected ? "font-black" : "font-bold")}>
+                            <div className="flex items-center gap-2">
+                                <span className={cn("flex gap-2", selected ? "font-black" : "font-bold")}>
                                     {getFlag(code)} {name}
                                 </span>
-                                {selected ? (
-                                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-primary">
-                                        <Check className="h-3 w-3" aria-hidden="true" />
-                                    </span>
-                                ) : null}
                             </div>
                         )}
                     </DropdownSelector.Option>
