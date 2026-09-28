@@ -3,7 +3,7 @@ import { useTranslation } from '@/Hooks/useTranslation';
 import { 
     TrendingUp, CreditCard, ArrowUpRight, ArrowDownRight, 
     Wallet, Building2, ShoppingCart, Tv, Calendar, TrendingDown,
-    MoreVertical, Activity, Play, Pause
+    MoreVertical, Activity, Play, Pause, Hamburger
 } from 'lucide-react';
 import { useHeroMockupData } from './hooks/useHeroMockupData';
 import { useStepProgress } from './hooks/useStepProgress';
@@ -107,7 +107,7 @@ function useTransactionAnimation(isActive: boolean) {
         const timeouts: NodeJS.Timeout[] = [];
         const intervals: NodeJS.Timeout[] = [];
         
-        const fullTransactionDesc = 'Supermercado';
+        const fullTransactionDesc = 'Pizza';
         const fullTransactionAmount = 'R$ 145,50';
 
         let descIdx = 0;
@@ -193,7 +193,7 @@ export default function HeroMockup() {
         activeAccountField,
         isCreateAccountBtnClicked,
         isAccountToastVisible
-    } = useAccountAnimation(activeSlide === 0);
+    } = useAccountAnimation(activeSlide === 0 && !isUserPaused);
 
     const {
         typedTransactionDesc,
@@ -203,7 +203,7 @@ export default function HeroMockup() {
         activeTransactionField,
         isSaveTransactionBtnClicked,
         isTransactionToastVisible
-    } = useTransactionAnimation(activeSlide === 1);
+    } = useTransactionAnimation(activeSlide === 1 && !isUserPaused);
 
     const changeSlide = (nextIndex: number) => {
         setActiveSlide(nextIndex);
@@ -312,9 +312,9 @@ export default function HeroMockup() {
     }, [activeSlide, isPaused]);
 
     // Animations using progress
-    const invoiceSlideProgress = useStepProgress(activeSlide === 2, 1000);
-    const historySlideProgress = useStepProgress(activeSlide === 3, 1000, 600);
-    const dashboardSlideProgress = useStepProgress(activeSlide === 4, 1500);
+    const invoiceSlideProgress = useStepProgress(activeSlide === 2 && !isUserPaused, 1000, 500);
+    const historySlideProgress = useStepProgress(activeSlide === 3 && !isUserPaused, 1000, 600);
+    const dashboardSlideProgress = useStepProgress(activeSlide === 4 && !isUserPaused, 1500, 500);
 
     const interpolatedInvoice = mockupData.supermarketExpense * invoiceSlideProgress;
     const interpolatedExpense = mockupData.totalExpenseBefore + (mockupData.supermarketExpense * dashboardSlideProgress);
@@ -558,7 +558,7 @@ export default function HeroMockup() {
                                             ? 'ring-2 ring-rose-500/50 border-rose-500 bg-rose-50/10 shadow-xs' 
                                             : 'border-slate-200/60 hover:border-slate-300 hover:bg-slate-50/50'
                                     }`}>
-                                        <span className="font-bold text-slate-800">{typedTransactionDesc || (activeSlide === 1 ? '\u00A0' : 'Supermercado')}</span>
+                                        <span className="font-bold text-slate-800">{typedTransactionDesc || (activeSlide === 1 ? '\u00A0' : 'Pizza')}</span>
                                     </div>
                                 </div>
                             </div>
@@ -607,8 +607,8 @@ export default function HeroMockup() {
                                     }`}>
                                         {isTransactionCategorySelected ? (
                                             <>
-                                                <ShoppingCart className="w-4 h-4 text-rose-500 shrink-0" />
-                                                <span className="font-bold text-slate-800 truncate">{t('home.hero_carousel.item_supermarket')}</span>
+                                                <Hamburger className="w-4 h-4 text-rose-500 shrink-0" />
+                                                <span className="font-bold text-slate-800 truncate">Lanches</span>
                                             </>
                                         ) : (
                                             <span className="font-normal text-slate-400 text-xs sm:text-sm truncate">{t('home.hero_carousel.select_category')}</span>
@@ -708,11 +708,11 @@ export default function HeroMockup() {
                                     <div className="flex flex-col min-[400px]:flex-row items-start min-[400px]:items-center justify-between gap-2 min-[400px]:gap-0 p-2.5 sm:p-3 bg-white rounded-2xl border border-slate-100 shadow-2xs hover:border-slate-200 hover:shadow-xs hover:scale-[1.01] transition-all duration-200 cursor-default">
                                         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 w-full">
                                             <div className="p-2 bg-rose-100 text-rose-500 rounded-xl shrink-0">
-                                                <ShoppingCart className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+                                                <Hamburger className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                                             </div>
                                             <div className="min-w-0">
-                                                <p className="text-xs sm:text-sm font-bold text-slate-900 leading-tight truncate">{t('home.hero_carousel.item_supermarket')}</p>
-                                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate">{t('home.hero_carousel.cat_groceries')}</p>
+                                                <p className="text-xs sm:text-sm font-bold text-slate-900 leading-tight truncate">Pizza</p>
+                                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate">Lanches</p>
                                             </div>
                                         </div>
                                         <div className="text-left min-[400px]:text-right shrink-0 pl-[2.6rem] min-[400px]:pl-0 w-full min-[400px]:w-auto">
