@@ -15,16 +15,16 @@ interface HeroSectionProps {
 export default function HeroSection({ className = '' }: HeroSectionProps) {
     return (
         <section 
-            className={`px-8 lg:px-20 max-w-7xl mx-auto pt-16 lg:pt-24 pb-20 overflow-hidden ${className}`}
+            className={`px-8 lg:px-20 max-w-7xl mx-auto pt-16 lg:pt-24 pb-20 ${className}`}
             aria-label="Hero"
         >
-            <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-                <div className="space-y-8 lg:col-span-5">
+            <div className="flex flex-col lg:flex-row gap-12 lg:gap-8 items-center">
+                <div className="space-y-8 w-full lg:w-[46%] shrink-0">
                     <HeroHeader />
                     <HeroCTA />
                 </div>
 
-                <div className="lg:col-span-7 w-full">
+                <div className="w-full lg:w-[54%] relative">
                     <HeroMockup />
                 </div>
             </div>

@@ -267,8 +267,8 @@ export default function HeroMockup() {
             role="region"
             aria-label={t('home.hero_carousel.step_dashboard')}
         >
-            <div className="absolute -top-12 -left-12 w-72 h-72 bg-primary/20 blur-[100px] rounded-full pointer-events-none" />
-            <div className="absolute -bottom-12 -right-12 w-72 h-72 bg-emerald-400/20 blur-[100px] rounded-full pointer-events-none" />
+            <div className="absolute -top-20 -left-20 w-96 h-96 bg-primary/25 blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-emerald-400/25 blur-[120px] rounded-full pointer-events-none" />
 
             <div className="relative bg-white/90 backdrop-blur-xl rounded-[2.5rem] border border-white/80 p-5 sm:p-7 md:p-8 shadow-[0_32px_64px_-16px_rgba(15,23,42,0.12)] space-y-5 sm:space-y-6 overflow-hidden transition-all hover:shadow-[0_40px_80px_-16px_rgba(15,23,42,0.16)]">
                 <div className="grid grid-cols-5 gap-1 sm:gap-3 pb-3.5 border-b border-slate-100 overflow-hidden">
@@ -281,7 +281,7 @@ export default function HeroMockup() {
                                 className={`w-full py-1.5 sm:py-2 px-0.5 sm:px-1.5 rounded-xl text-[10px] sm:text-sm tracking-tight transition-all text-center truncate ${
                                     isActive
                                         ? 'text-slate-900 font-black scale-105'
-                                        : 'text-slate-400 hover:text-slate-700 font-medium'
+                                        : 'text-slate-500 hover:text-slate-800 font-bold'
                                 }`}
                             >
                                 {slide.tabLabel}

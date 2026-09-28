@@ -1,7 +1,7 @@
 import { Head, Link, usePage, router } from '@inertiajs/react';
 import {
-    Maximize2, Zap,
-    Target
+    ShieldCheck, Zap,
+    CreditCard
 } from 'lucide-react';
 import Logo from '@/Components/Common/Logo';
 import HeroSection from '@/Components/Landing/HeroSection';
@@ -16,8 +16,8 @@ function cn(...inputs: ClassValue[]) {
 
 const FeatureCard = ({ icon: Icon, title, description }: { icon: any, title: string, description: string }) => (
     <div className="bg-white p-8 rounded-4xl border border-slate-100 hover:shadow-xl hover:shadow-slate-200/40 transition-all duration-300 group hover:-translate-y-1">
-        <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors">
-            <Icon className="w-6 h-6 text-slate-400 group-hover:text-primary transition-colors" />
+        <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 transition-colors">
+            <Icon className="w-6 h-6 text-primary transition-colors" />
         </div>
         <h3 className="text-lg font-bold text-slate-900 mb-2 truncate">{title}</h3>
         <p className="text-sm text-slate-500 leading-relaxed font-medium">{description}</p>
@@ -58,7 +58,7 @@ export default function Home() {
                             </Link>
                             <Link 
                                 href={localeRoute('/register')} 
-                                className="bg-primary text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-primary/90 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/20"
+                                className="bg-primary text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-primary/90 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                             >
                                 {t('home.nav.register')}
                             </Link>
@@ -71,26 +71,26 @@ export default function Home() {
                 <HeroSection />
             </main>
 
-            <section className="bg-white py-32 px-8 lg:px-20 border-t border-slate-100">
+            <section id="recursos" className="bg-white py-32 px-8 lg:px-20 border-t border-slate-100">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center space-y-4 mb-20">
                         <h2 className="text-3xl lg:text-5xl font-black tracking-tight text-slate-900">{t('home.features_title')}</h2>
-                        <p className="text-slate-500 font-medium max-w-lg mx-auto">{t('home.features_subtitle')}</p>
+                        <p className="text-slate-500 font-medium max-w-lg mx-auto text-balance">{t('home.features_subtitle')}</p>
                     </div>
 
                     <div className="grid md:grid-cols-3 gap-8">
                         <FeatureCard 
-                            icon={Target}
+                            icon={Zap}
                             title={t('home.feature_1_title')}
                             description={t('home.feature_1_desc')}
                         />
                         <FeatureCard 
-                            icon={Zap}
+                            icon={CreditCard}
                             title={t('home.feature_2_title')}
                             description={t('home.feature_2_desc')}
                         />
                         <FeatureCard 
-                            icon={Maximize2}
+                            icon={ShieldCheck}
                             title={t('home.feature_3_title')}
                             description={t('home.feature_3_desc')}
                         />
