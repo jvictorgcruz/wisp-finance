@@ -118,7 +118,7 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                                 <DropdownSelector>
                                     <DropdownSelector.Trigger 
                                         showChevron={false}
-                                        className="text-slate-400 hover:bg-slate-50 rounded-full p-2 transition-colors border-transparent shadow-none! h-9 w-9 min-w-[36px]"
+                                        className="text-slate-400 hover:bg-slate-50 rounded-full p-2 transition-colors border-transparent shadow-none! h-9 w-9 min-w-9"
                                     >
                                         <LucideIcon name="MoreVertical" className="w-5 h-5" />
                                     </DropdownSelector.Trigger>
@@ -218,7 +218,7 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                                     </div>
                                 </div>
                             ) : (
-                                <div className="bg-slate-50 p-4 rounded-2xl border border-dashed border-slate-200 flex flex-col items-center justify-center flex-1 min-h-[220px]">
+                                <div className="bg-slate-50 p-4 rounded-2xl border border-dashed border-slate-200 flex flex-col items-center justify-center flex-1 min-h-55">
                                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 text-center">
                                         {t('accounts.page.invoice_control_disabled')}
                                     </p>    
@@ -253,7 +253,7 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                     {/* Add New Card Skeleton */}
                     <div 
                         onClick={openCreate}
-                        className="border-2 border-dashed border-slate-200 p-6 rounded-3xl flex flex-col items-center justify-center gap-4 text-slate-400 hover:text-primary hover:border-primary/30 transition-all cursor-pointer hover:bg-slate-50/50 group min-h-[340px]"
+                        className="border-2 border-dashed border-slate-200 p-6 rounded-3xl flex flex-col items-center justify-center gap-4 text-slate-400 hover:text-primary hover:border-primary/30 transition-all cursor-pointer hover:bg-slate-50/50 group min-h-85"
                     >
                         <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center group-hover:scale-110 transition-transform border border-slate-100">
                             <Plus className="w-6 h-6" />
