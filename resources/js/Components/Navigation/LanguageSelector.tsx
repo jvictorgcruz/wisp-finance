@@ -14,7 +14,7 @@ interface Props {
     onChange?: (locale: string) => void;
     variant?: 'full' | 'minimal';
     align?: 'left' | 'right';
-    placement?: 'bottom' | 'top';
+    placement?: 'top' | 'bottom';
 }
 
 export default function LanguageSelector({ className, onChange, variant = 'full', align = 'right', placement = 'bottom' }: Props) {

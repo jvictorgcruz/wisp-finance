@@ -308,25 +308,25 @@ export default function HeroMockup() {
                                         <div className="p-1 sm:p-1.5 bg-blue-50 rounded-lg shrink-0">
                                             <Building2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600" />
                                         </div>
-                                        <span className="text-slate-600 text-[8px] sm:text-[9px] font-bold tracking-tighter sm:tracking-normal truncate w-full block">BANCO</span>
+                                        <span className="text-slate-600 text-[8px] sm:text-[9px] font-bold tracking-tighter sm:tracking-normal truncate w-full block">{t('home.hero_carousel.type_bank')}</span>
                                     </div>
                                     <div className="bg-white p-1.5 sm:p-2.5 rounded-xl border border-slate-200/60 flex flex-col items-center justify-center gap-1 hover:border-purple-300 hover:shadow-xs transition-all cursor-default min-w-0">
                                         <div className="p-1 sm:p-1.5 bg-purple-50 rounded-lg shrink-0">
                                             <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600" />
                                         </div>
-                                        <span className="text-slate-600 text-[8px] sm:text-[9px] font-bold tracking-tighter sm:tracking-normal truncate w-full block">INVESTIMENTOS</span>
+                                        <span className="text-slate-600 text-[8px] sm:text-[9px] font-bold tracking-tighter sm:tracking-normal truncate w-full block">{t('home.hero_carousel.type_investments')}</span>
                                     </div>
                                     <div className="bg-purple-50 p-1.5 sm:p-2.5 rounded-xl border-2 border-purple-600 flex flex-col items-center justify-center gap-1 shadow-2xs cursor-default min-w-0">
                                         <div className="p-1 sm:p-1.5 bg-purple-600 text-white rounded-lg shrink-0">
                                             <CreditCard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                         </div>
-                                        <span className="text-purple-700 font-black text-[8px] sm:text-[9px] tracking-tighter sm:tracking-normal truncate w-full block">CARTÃO</span>
+                                        <span className="text-purple-700 font-black text-[8px] sm:text-[9px] tracking-tighter sm:tracking-normal truncate w-full block">{t('home.hero_carousel.type_card')}</span>
                                     </div>
                                     <div className="bg-white p-1.5 sm:p-2.5 rounded-xl border border-slate-200/60 flex flex-col items-center justify-center gap-1 hover:border-rose-300 hover:shadow-xs transition-all cursor-default min-w-0">
                                         <div className="p-1 sm:p-1.5 bg-rose-50 rounded-lg shrink-0">
                                             <TrendingDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-500" />
                                         </div>
-                                        <span className="text-slate-600 text-[8px] sm:text-[9px] font-bold tracking-tighter sm:tracking-normal truncate w-full block">DÍVIDAS</span>
+                                        <span className="text-slate-600 text-[8px] sm:text-[9px] font-bold tracking-tighter sm:tracking-normal truncate w-full block">{t('home.hero_carousel.type_debts')}</span>
                                     </div>
                                 </div>
                             </div>
@@ -437,7 +437,7 @@ export default function HeroMockup() {
                                                 <span className="font-bold text-purple-700 truncate">Nubank</span>
                                             </>
                                         ) : (
-                                            <span className="font-normal text-slate-400 text-xs sm:text-sm truncate">Selecione a conta</span>
+                                            <span className="font-normal text-slate-400 text-xs sm:text-sm truncate">{t('home.hero_carousel.select_account')}</span>
                                         )}
                                     </div>
                                 </div>
@@ -453,10 +453,10 @@ export default function HeroMockup() {
                                         {selectedCategory1 ? (
                                             <>
                                                 <ShoppingCart className="w-4 h-4 text-rose-500 shrink-0" />
-                                                <span className="font-bold text-slate-800 truncate">Mercado</span>
+                                                <span className="font-bold text-slate-800 truncate">{t('home.hero_carousel.item_supermarket')}</span>
                                             </>
                                         ) : (
-                                            <span className="font-normal text-slate-400 text-xs sm:text-sm truncate">Selecione...</span>
+                                            <span className="font-normal text-slate-400 text-xs sm:text-sm truncate">{t('home.hero_carousel.select_category')}</span>
                                         )}
                                     </div>
                                 </div>
@@ -464,7 +464,7 @@ export default function HeroMockup() {
 
                             <div className="flex items-center justify-end gap-3 pt-2">
                                 <button className="px-5 py-2.5 text-slate-400 hover:text-slate-600 text-xs sm:text-sm font-bold transition-colors cursor-default">
-                                    Cancelar
+                                    {t('home.hero_carousel.cancel')}
                                 </button>
                                 <button className={`text-white font-bold px-6 py-2.5 rounded-xl text-xs sm:text-sm transition-all cursor-default ${
                                     isBtnClicked1
@@ -506,22 +506,22 @@ export default function HeroMockup() {
                                     <span className="text-xs font-bold text-slate-400 block uppercase">
                                         {t('home.hero_carousel.closing')}
                                     </span>
-                                    <span className="font-bold text-slate-800 text-sm">Dia 5</span>
+                                    <span className="font-bold text-slate-800 text-sm">{t('home.hero_carousel.day_format', { day: 5 })}</span>
                                 </div>
                                 <div className="bg-white p-3 rounded-xl border border-slate-200/60">
                                     <span className="text-xs font-bold text-slate-400 block uppercase">
                                         {t('home.hero_carousel.due_date')}
                                     </span>
-                                    <span className="font-bold text-rose-600 text-sm">Dia 12</span>
+                                    <span className="font-bold text-rose-600 text-sm">{t('home.hero_carousel.day_format', { day: 12 })}</span>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-3">
                                 <button className="w-full bg-primary text-white font-bold py-3 rounded-xl text-xs sm:text-sm shadow-xs hover:bg-primary/90 transition-colors">
-                                    Pagar Fatura
+                                    {t('home.hero_carousel.pay_invoice')}
                                 </button>
                                 <button className="w-full bg-white border border-slate-200/80 text-slate-700 font-bold py-3 rounded-xl text-xs sm:text-sm hover:bg-slate-50 transition-colors">
-                                    Ver Fatura
+                                    {t('home.hero_carousel.view_invoice')}
                                 </button>
                             </div>
 
@@ -552,13 +552,13 @@ export default function HeroMockup() {
                                                     <Tv className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                                                 </div>
                                                 <div className="min-w-0">
-                                                    <p className="text-xs sm:text-sm font-bold text-slate-900 leading-tight truncate">Luz & Internet</p>
-                                                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate">CONTAS FIXAS</p>
+                                                    <p className="text-xs sm:text-sm font-bold text-slate-900 leading-tight truncate">{t('home.hero_carousel.item_utility')}</p>
+                                                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate">{t('home.hero_carousel.cat_fixed')}</p>
                                                 </div>
                                             </div>
                                             <div className="text-right shrink-0">
                                                 <span className="text-xs sm:text-sm font-black text-rose-500 block">- R$ 120,00</span>
-                                                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">ITAÚ CORRENTE</span>
+                                                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">{t('home.hero_carousel.acc_itau')}</span>
                                             </div>
                                         </div>
 
@@ -568,13 +568,13 @@ export default function HeroMockup() {
                                                     <ShoppingCart className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                                                 </div>
                                                 <div className="min-w-0">
-                                                    <p className="text-xs sm:text-sm font-bold text-slate-900 leading-tight truncate">Padaria</p>
-                                                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate">ALIMENTAÇÃO</p>
+                                                    <p className="text-xs sm:text-sm font-bold text-slate-900 leading-tight truncate">{t('home.hero_carousel.item_bakery')}</p>
+                                                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate">{t('home.hero_carousel.cat_food')}</p>
                                                 </div>
                                             </div>
                                             <div className="text-right shrink-0">
                                                 <span className="text-xs sm:text-sm font-black text-rose-500 block">- R$ 24,50</span>
-                                                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">DINHEIRO</span>
+                                                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">{t('home.hero_carousel.acc_cash')}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -591,13 +591,13 @@ export default function HeroMockup() {
                                                 <ShoppingCart className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                                             </div>
                                             <div className="min-w-0">
-                                                <p className="text-xs sm:text-sm font-bold text-slate-900 leading-tight truncate">Supermercado</p>
-                                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate">MERCADO</p>
+                                                <p className="text-xs sm:text-sm font-bold text-slate-900 leading-tight truncate">{t('home.hero_carousel.item_supermarket')}</p>
+                                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate">{t('home.hero_carousel.cat_groceries')}</p>
                                             </div>
                                         </div>
                                         <div className="text-right shrink-0">
                                             <span className="text-xs sm:text-sm font-black text-rose-500 block">- R$ 145,50</span>
-                                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">NUBANK</span>
+                                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">{t('home.hero_carousel.acc_nubank')}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -613,13 +613,13 @@ export default function HeroMockup() {
                                                 <ArrowUpRight className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                                             </div>
                                             <div className="min-w-0">
-                                                <p className="text-xs sm:text-sm font-bold text-slate-900 leading-tight truncate">Salário Mensal</p>
-                                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate">SALÁRIO BASE</p>
+                                                <p className="text-xs sm:text-sm font-bold text-slate-900 leading-tight truncate">{t('home.hero_carousel.item_salary')}</p>
+                                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate">{t('home.hero_carousel.cat_salary')}</p>
                                             </div>
                                         </div>
                                         <div className="text-right shrink-0">
                                             <span className="text-xs sm:text-sm font-black text-emerald-600 block">+ R$ 3.500,00</span>
-                                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">ITAÚ CORRENTE</span>
+                                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">{t('home.hero_carousel.acc_itau')}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -659,7 +659,7 @@ export default function HeroMockup() {
 
                             <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-100 shadow-2xs flex-1 flex flex-col justify-between gap-2 relative">
                                 <div className="flex items-center justify-between">
-                                    <p className="text-xs sm:text-sm font-black text-slate-900">Evolução Patrimonial</p>
+                                    <p className="text-xs sm:text-sm font-black text-slate-900">{t('home.hero_carousel.net_worth_evolution')}</p>
                                 </div>
 
                                 <div 

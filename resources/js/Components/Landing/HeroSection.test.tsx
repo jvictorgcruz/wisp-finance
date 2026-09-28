@@ -39,7 +39,7 @@ describe('Hero Component Suite', () => {
         it('renders heading, gradient highlight, and subtitle with correct semantic structure', () => {
             render(<HeroHeader />);
 
-            const header = screen.getByRole('banner', { name: /hero header/i });
+            const header = screen.getByRole('banner', { name: /aria_hero_header/i });
             expect(header).toBeDefined();
 
             expect(screen.getByText('home.title')).toBeDefined();
@@ -56,7 +56,7 @@ describe('Hero Component Suite', () => {
 
             render(<HeroCTA />);
 
-            const ctaRegion = screen.getByRole('region', { name: /call to action/i });
+            const ctaRegion = screen.getByRole('region', { name: /aria_cta/i });
             expect(ctaRegion).toBeDefined();
 
             const ctaLink = screen.getByRole('link', { name: 'home.cta' });

@@ -37,7 +37,8 @@ export default function Home() {
 
                 <div className="flex items-center gap-6">
                     <LanguageSelector 
-                        className="w-48 hidden md:block" 
+                        variant="minimal"
+                        className="w-auto" 
                         onChange={(next) => router.visit(window.location.pathname.replace(/^\/(en|pt)/, `/${next}`) + window.location.search)}
                     />
                     {auth.user ? (

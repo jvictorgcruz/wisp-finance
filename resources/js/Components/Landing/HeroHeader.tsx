@@ -13,7 +13,7 @@ export default function HeroHeader({ className = '' }: HeroHeaderProps) {
     const { t } = useTranslation();
 
     return (
-        <header className={`space-y-8 relative z-10 ${className}`} aria-label="Hero header">
+        <header className={`space-y-8 relative z-10 ${className}`} aria-label={t('home.hero_carousel.aria_hero_header')}>
             <h1 className="text-4xl lg:text-6xl font-black tracking-tighter leading-[0.95] animate-in fade-in slide-in-from-bottom-8 duration-1000">
                 {t('home.title')} <br />
                 <span className="bg-linear-to-r from-primary via-blue-600 to-emerald-500 bg-clip-text text-transparent">
