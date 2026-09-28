@@ -5,14 +5,19 @@ const easeOutCubic = (x: number): number => {
     return 1 - Math.pow(1 - x, 3);
 };
 
-export function useStepProgress(isActive: boolean, durationMs: number = 1000) {
+export function useStepProgress(isActive: boolean, durationMs: number = 1000, delayMs: number = 0) {
     const [progress, setProgress] = useState(0);
     const frameRef = useRef<number | null>(null);
     const startRef = useRef<number | null>(null);
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         if (!isActive) {
             setProgress(0);
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+                timeoutRef.current = null;
+            }
             if (frameRef.current !== null) {
                 cancelAnimationFrame(frameRef.current);
                 frameRef.current = null;
@@ -43,14 +48,23 @@ export function useStepProgress(isActive: boolean, durationMs: number = 1000) {
             }
         };
 
-        frameRef.current = requestAnimationFrame(animate);
+        if (delayMs > 0) {
+            timeoutRef.current = setTimeout(() => {
+                frameRef.current = requestAnimationFrame(animate);
+            }, delayMs);
+        } else {
+            frameRef.current = requestAnimationFrame(animate);
+        }
 
         return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
             if (frameRef.current !== null) {
                 cancelAnimationFrame(frameRef.current);
             }
         };
-    }, [isActive, durationMs]);
+    }, [isActive, durationMs, delayMs]);
 
     return progress;
 }

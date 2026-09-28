@@ -23,11 +23,21 @@ export default function LanguageSelector({ className, onChange, variant = 'full'
     const { locale, locales } = props as { locale: string, locales: Record<string, string> };
 
     const getFlag = (code: string) => {
-        switch (code.toLowerCase()) {
-            case 'en': return <US title={locales[code.toLowerCase()]} className="w-4 h-4 shrink-0 rounded-sm overflow-hidden shadow-sm" />;
-            case 'pt': return <BR title={locales[code.toLowerCase()]} className="w-4 h-4 shrink-0 rounded-sm overflow-hidden shadow-sm" />;
-            default: return <Globe className="w-4 h-4" />;
+        const langCode = code.toLowerCase();
+        let FlagComponent;
+        
+        switch (langCode) {
+            case 'en': FlagComponent = US; break;
+            case 'pt': FlagComponent = BR; break;
+            default: FlagComponent = Globe; break;
         }
+
+        return (
+            <FlagComponent 
+                title={locales[langCode] || langCode} 
+                className="w-4 h-4 shrink-0 rounded-sm overflow-hidden" 
+            />
+        );
     };
 
     return (
