@@ -1,6 +1,33 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import HeroMockup from './HeroMockup';
+
+beforeAll(() => {
+    class IntersectionObserverMock {
+        observe = vi.fn();
+        disconnect = vi.fn();
+        unobserve = vi.fn();
+    }
+    Object.defineProperty(window, 'IntersectionObserver', {
+        writable: true,
+        configurable: true,
+        value: IntersectionObserverMock,
+    });
+    
+    Object.defineProperty(window, 'matchMedia', {
+        writable: true,
+        value: vi.fn().mockImplementation(query => ({
+            matches: false,
+            media: query,
+            onchange: null,
+            addListener: vi.fn(),
+            removeListener: vi.fn(),
+            addEventListener: vi.fn(),
+            removeEventListener: vi.fn(),
+            dispatchEvent: vi.fn(),
+        })),
+    });
+});
 
 vi.mock('@/Hooks/useTranslation', () => ({
     useTranslation: () => ({
@@ -44,7 +71,7 @@ describe('HeroMockup Carousel Component', () => {
             expect(screen.getByText('home.hero_carousel.step_accounts_desc')).toBeDefined();
 
             act(() => {
-                vi.advanceTimersByTime(4000);
+                vi.advanceTimersByTime(6000);
             });
 
             expect(screen.getByText('home.hero_carousel.step_transaction_desc')).toBeDefined();
@@ -64,9 +91,9 @@ describe('HeroMockup Carousel Component', () => {
             // Hover over carousel
             fireEvent.mouseEnter(carouselRegion!);
 
-            // Advance 4 seconds while paused
+            // Advance 5 seconds while paused
             act(() => {
-                vi.advanceTimersByTime(4000);
+                vi.advanceTimersByTime(5000);
             });
 
             // Should remain on slide 0
@@ -75,9 +102,9 @@ describe('HeroMockup Carousel Component', () => {
             // Leave mouse
             fireEvent.mouseLeave(carouselRegion!);
 
-            // Advance 4 seconds after resuming
+            // Advance 5 seconds after resuming
             act(() => {
-                vi.advanceTimersByTime(4000);
+                vi.advanceTimersByTime(5000);
             });
 
             // Should advance to slide 1

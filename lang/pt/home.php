@@ -49,7 +49,7 @@ return [
     'feature_2_title' => 'Cartão de verdade',
     'feature_2_desc' => 'Fatura com fechamento, vencimento e limite, e compras parceladas caindo na fatura certa.',
     'feature_3_title' => 'Números que fecham',
-    'feature_3_desc' => 'Cada valor é registrado com precisão, então saldos, fatura e patrimônio ficam sempre alinhados — sem planilha para conferir.',
+    'feature_3_desc' => 'Cada valor é registrado com precisão, então saldos, fatura e patrimônio ficam sempre alinhados, sem planilha para conferir.',
     'hero_carousel' => [
         'step_accounts' => 'Contas',
         'step_accounts_desc' => 'Adicione suas contas',
@@ -61,6 +61,8 @@ return [
         'step_history_desc' => 'Veja seu histórico',
         'step_dashboard' => 'Dashboard',
         'step_dashboard_desc' => 'Acompanhe suas finanças',
+        'toast_card_created' => 'Cartão adicionado!',
+        'toast_expense_added' => 'Despesa registrada!',
         'total_assets' => 'Ativos Totais',
         'total_liabilities' => 'Passivos Totais',
         'new_transaction' => 'Nova Transação',

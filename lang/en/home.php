@@ -49,7 +49,7 @@ return [
     'feature_2_title' => 'A real card experience',
     'feature_2_desc' => 'Statements with closing date, due date and limit, and installment purchases landing on the right statement.',
     'feature_3_title' => 'Numbers that add up',
-    'feature_3_desc' => 'Every amount is recorded with precision, so balances, statements and net worth always stay in sync — no spreadsheet to double-check.',
+    'feature_3_desc' => 'Every amount is recorded with precision, so balances, statements and net worth always stay in sync, no spreadsheet to double-check.',
     'hero_carousel' => [
         'step_accounts' => 'Accounts',
         'step_accounts_desc' => 'Add your accounts',
@@ -61,6 +61,8 @@ return [
         'step_history_desc' => 'View your statement',
         'step_dashboard' => 'Dashboard',
         'step_dashboard_desc' => 'Track your finances',
+        'toast_card_created' => 'Credit card added!',
+        'toast_expense_added' => 'Supermarket expense added!',
         'total_assets' => 'Total Assets',
         'total_liabilities' => 'Total Liabilities',
         'new_transaction' => 'New Transaction',

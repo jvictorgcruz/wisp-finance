@@ -43,13 +43,6 @@ export default function HeroCTA({ className = '' }: HeroCTAProps) {
                         {t('home.cta')}
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </Link>
-                    <a 
-                        href="#recursos" 
-                        className="h-16 px-8 text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 rounded-2xl font-bold flex items-center justify-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2"
-                        aria-label={t('home.cta_secondary')}
-                    >
-                        {t('home.cta_secondary')}
-                    </a>
                 </>
             )}
         </div>
