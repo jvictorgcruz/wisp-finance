@@ -90,8 +90,26 @@ describe('Hero Component Suite', () => {
 
             expect(screen.getByText('home.title')).toBeDefined();
             expect(screen.getByRole('link', { name: 'home.cta' })).toBeDefined();
-            // HeroMockup elements check
             expect(screen.getByText('home.hero_carousel.step_accounts')).toBeDefined();
+        });
+
+        it('applies responsive layout grid and column classes for mobile, tablet, and desktop viewports', () => {
+            const { container } = render(<HeroSection />);
+
+            const section = container.querySelector('section');
+            expect(section?.className).toContain('px-8');
+            expect(section?.className).toContain('lg:px-20');
+
+            const gridContainer = container.querySelector('.grid');
+            expect(gridContainer?.className).toContain('lg:grid-cols-12');
+            expect(gridContainer?.className).toContain('gap-12');
+            expect(gridContainer?.className).toContain('lg:gap-16');
+
+            const textColumn = gridContainer?.children[0];
+            expect(textColumn?.className).toContain('lg:col-span-5');
+
+            const mockupColumn = gridContainer?.children[1];
+            expect(mockupColumn?.className).toContain('lg:col-span-7');
         });
     });
 });
