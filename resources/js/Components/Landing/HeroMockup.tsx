@@ -406,16 +406,13 @@ export default function HeroMockup() {
                     })}
                 </div>
 
-                <div className="space-y-2 px-1">
-                    <h3 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight">
+                <div className="space-y-2 px-1 relative flex justify-between items-center min-h-12">
+                    <h3 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight pr-4">
                         {slides[activeSlide].title}
                     </h3>
-                </div>
-
-
-                <div className="relative h-95 sm:h-102.5 w-full flex items-stretch justify-center overflow-hidden">
+                    
                     {/* Dynamic Toast 0 */}
-                    <div className={`absolute top-3 right-3 sm:top-4 sm:right-4 bg-white text-slate-700 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl sm:rounded-2xl text-[10px] sm:text-sm font-bold shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 flex items-center gap-2 sm:gap-3 transition-all duration-500 z-50 ${
+                    <div className={`absolute right-1 top-1/2 -translate-y-1/2 bg-white text-slate-700 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl sm:rounded-2xl text-[10px] sm:text-sm font-bold shadow-lg border border-slate-100 flex items-center gap-2 sm:gap-3 transition-all duration-500 z-50 ${
                         activeSlide === 0 && isAccountToastVisible
                             ? 'opacity-100 translate-x-0 scale-100' 
                             : 'opacity-0 translate-x-8 scale-95 pointer-events-none'
@@ -423,11 +420,11 @@ export default function HeroMockup() {
                         <div className="w-4 h-4 sm:w-6 sm:h-6 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center shrink-0">
                             <svg className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                         </div>
-                        {t('home.hero_carousel.toast_card_created')}
+                        <span className="whitespace-nowrap">{t('home.hero_carousel.toast_card_created')}</span>
                     </div>
 
                     {/* Dynamic Toast 1 */}
-                    <div className={`absolute top-3 right-3 sm:top-4 sm:right-4 bg-white text-slate-700 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl sm:rounded-2xl text-[10px] sm:text-sm font-bold shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 flex items-center gap-2 sm:gap-3 transition-all duration-500 z-50 ${
+                    <div className={`absolute right-1 top-1/2 -translate-y-1/2 bg-white text-slate-700 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl sm:rounded-2xl text-[10px] sm:text-sm font-bold shadow-lg border border-slate-100 flex items-center gap-2 sm:gap-3 transition-all duration-500 z-50 ${
                         activeSlide === 1 && isTransactionToastVisible
                             ? 'opacity-100 translate-x-0 scale-100' 
                             : 'opacity-0 translate-x-8 scale-95 pointer-events-none'
@@ -435,11 +432,19 @@ export default function HeroMockup() {
                         <div className="w-4 h-4 sm:w-6 sm:h-6 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center shrink-0">
                             <svg className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                         </div>
-                        {t('home.hero_carousel.toast_expense_added')}
+                        <span className="whitespace-nowrap">{t('home.hero_carousel.toast_expense_added')}</span>
                     </div>
+                </div>
 
-                    {activeSlide === 0 && (
-                        <div className="w-full h-full bg-slate-50/90 rounded-3xl p-4 sm:p-6 border border-slate-200/80 flex flex-col justify-between space-y-3 sm:space-y-4 shadow-xs animate-in fade-in slide-in-from-right-8 zoom-in-95 duration-500 ease-out">
+
+                <div className="relative h-95 sm:h-102.5 w-full overflow-hidden">
+                    <div 
+                        className="flex w-full h-full transition-transform duration-500 ease-out"
+                        style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+                    >
+
+                        <div className="w-full h-full shrink-0">
+                            <div className="w-full h-full bg-slate-50/90 rounded-3xl p-4 sm:p-6 border border-slate-200/80 flex flex-col justify-between space-y-3 sm:space-y-4 shadow-xs">
                             <div>
                                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">
                                     {t('home.hero_carousel.account_type_label')}
@@ -506,13 +511,13 @@ export default function HeroMockup() {
                             }`}>
                                 {t('home.hero_carousel.create_card_btn')}
                             </button>
+                            </div>
                         </div>
-                    )}
 
-                    {activeSlide === 1 && (
-                        <div className="w-full h-full bg-slate-50/90 rounded-3xl p-5 sm:p-6 border border-slate-200/80 flex flex-col justify-between space-y-3 sm:space-y-4 shadow-xs animate-in fade-in slide-in-from-right-8 zoom-in-95 duration-500 ease-out">
+                        <div className="w-full h-full shrink-0">
+                            <div className="w-full h-full bg-slate-50/90 rounded-3xl p-5 sm:p-6 border border-slate-200/80 flex flex-col justify-between space-y-3 sm:space-y-4 shadow-xs">
                             <div className="flex justify-center items-center pb-2.5 border-b border-slate-200/60 w-full">
-                                <div className="grid grid-cols-3 gap-1.5 bg-slate-200/60 p-1.5 rounded-xl text-xs font-bold w-full text-center">
+                                <div className="grid grid-cols-3 gap-1.5 bg-slate-100 p-1.5 rounded-xl text-xs font-bold w-full text-center">
                                     <span className="py-2 bg-rose-500 text-white rounded-lg shadow-xs block font-extrabold text-center cursor-default">
                                         {t('home.hero_carousel.expense')}
                                     </span>
@@ -615,11 +620,11 @@ export default function HeroMockup() {
                                     {t('home.hero_carousel.save_transaction')}
                                 </button>
                             </div>
+                            </div>
                         </div>
-                    )}
 
-                    {activeSlide === 2 && (
-                        <div className="w-full h-full bg-slate-50/90 rounded-3xl p-5 sm:p-6 border border-slate-200/80 flex flex-col justify-between space-y-4 shadow-xs animate-in fade-in slide-in-from-right-8 zoom-in-95 duration-500 ease-out">
+                        <div className="w-full h-full shrink-0">
+                            <div className="w-full h-full bg-slate-50/90 rounded-3xl p-5 sm:p-6 border border-slate-200/80 flex flex-col justify-between space-y-4 shadow-xs">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <div className="p-2.5 bg-purple-100 text-purple-600 rounded-2xl shrink-0">
@@ -675,11 +680,11 @@ export default function HeroMockup() {
                                     <div className="bg-purple-600 h-full rounded-full" style={{ width: `${Math.min(100, (interpolatedInvoice / 300000) * 100)}%` }} />
                                 </div>
                             </div>
+                            </div>
                         </div>
-                    )}
 
-                    {activeSlide === 3 && (
-                        <div className="w-full h-full bg-slate-50/90 rounded-3xl p-4 sm:p-5 border border-slate-200/80 flex flex-col justify-between space-y-3 shadow-xs animate-in fade-in slide-in-from-right-8 zoom-in-95 duration-500 ease-out overflow-hidden">
+                        <div className="w-full h-full shrink-0">
+                            <div className="w-full h-full bg-slate-50/90 rounded-3xl p-4 sm:p-5 border border-slate-200/80 flex flex-col justify-between space-y-3 shadow-xs overflow-hidden">
                             <div className="space-y-2 flex-1 flex flex-col justify-between">
                                 {/* Date: Day 15 (Newest) */}
                                 <div style={{ 
@@ -770,11 +775,11 @@ export default function HeroMockup() {
                                     </div>
                                 </div>
                             </div>
+                            </div>
                         </div>
-                    )}
 
-                    {activeSlide === 4 && (
-                        <div className="w-full h-full bg-slate-50/80 rounded-3xl p-4 sm:p-5 border border-slate-100 flex flex-col justify-between space-y-3 shadow-xs animate-in fade-in slide-in-from-right-8 zoom-in-95 duration-500 ease-out">
+                        <div className="w-full h-full shrink-0">
+                            <div className="w-full h-full bg-slate-50/80 rounded-3xl p-4 sm:p-5 border border-slate-100 flex flex-col justify-between space-y-3 shadow-xs">
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="bg-white p-3 sm:p-3.5 rounded-2xl border border-slate-100 shadow-2xs min-w-0 hover:border-emerald-200 hover:shadow-xs transition-all cursor-default">
                                     <div className="flex items-center justify-between mb-1">
@@ -922,8 +927,9 @@ export default function HeroMockup() {
                                 </div>
                             </div>
                         </div>
-                    )}
+                    </div>
                 </div>
+            </div>
 
                 {/* Play/Pause Footer */}
                 <div className="flex w-full pt-3 mt-1 border-t border-slate-100 justify-center items-center shrink-0">
