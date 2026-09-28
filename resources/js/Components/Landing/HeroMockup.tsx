@@ -369,7 +369,7 @@ export default function HeroMockup() {
         return (
         <div 
             ref={containerRef}
-            className="relative animate-in fade-in zoom-in-95 duration-700 select-none w-full"
+            className="relative animate-in fade-in zoom-in-95 duration-700 motion-reduce:animate-none motion-reduce:transition-none select-none w-full"
             id={`tabpanel-${activeSlide}`}
             onPointerEnter={handlePointerEnter}
             onPointerLeave={handlePointerLeave}
@@ -394,7 +394,7 @@ export default function HeroMockup() {
                                 role="tab"
                                 aria-selected={isActive}
                                 aria-controls={`tabpanel-${index}`}
-                                className={`flex-1 min-w-[30%] sm:min-w-0 sm:flex-1 py-1.5 sm:py-2 px-1 sm:px-1.5 rounded-xl text-xs sm:text-sm tracking-tight transition-all text-center whitespace-normal ${
+                                className={`flex-1 min-w-[30%] sm:min-w-0 sm:flex-1 py-1.5 sm:py-2 px-1 sm:px-1.5 rounded-xl text-xs sm:text-sm tracking-tight transition-all motion-reduce:transition-none text-center whitespace-normal ${
                                     isActive
                                         ? 'text-slate-900 font-black scale-105'
                                         : 'text-slate-500 hover:text-slate-800 font-bold'
@@ -412,14 +412,6 @@ export default function HeroMockup() {
                     </h3>
                 </div>
 
-                {/* Desktop Pause Button */}
-                <button 
-                    onClick={(e) => { e.stopPropagation(); setIsUserPaused(!isUserPaused); }}
-                    className="hidden sm:flex absolute bottom-6 right-6 bg-slate-900/10 hover:bg-slate-900/20 text-slate-700 p-2.5 rounded-full transition-all z-50 backdrop-blur-sm"
-                    aria-label={isUserPaused ? "Play animation" : "Pause animation"}
-                >
-                    {isUserPaused ? <Play className="w-5 h-5 fill-current" /> : <Pause className="w-5 h-5 fill-current" />}
-                </button>
 
                 <div className="relative h-95 sm:h-102.5 w-full flex items-stretch justify-center overflow-hidden">
                     {/* Dynamic Toast 0 */}
@@ -823,7 +815,7 @@ export default function HeroMockup() {
                                 >
                                     {activeChartPoint && (
                                         <div 
-                                            className="absolute z-20 pointer-events-none transition-all duration-150 ease-out"
+                                            className="absolute z-20 pointer-events-none transition-all duration-150 ease-out motion-reduce:transition-none"
                                             style={{
                                                 left: `${(activeChartPoint.x / 300) * 100}%`,
                                                 top: `${(activeChartPoint.y / 70) * 100}%`,
@@ -935,8 +927,8 @@ export default function HeroMockup() {
                     )}
                 </div>
 
-                {/* Mobile Pause Footer */}
-                <div className="flex sm:hidden w-full pt-3 mt-1 border-t border-slate-100 justify-center items-center shrink-0">
+                {/* Play/Pause Footer */}
+                <div className="flex w-full pt-3 mt-1 border-t border-slate-100 justify-center items-center shrink-0">
                     <button 
                         onClick={(e) => { e.stopPropagation(); setIsUserPaused(!isUserPaused); }}
                         className="flex items-center justify-center gap-2 text-slate-500 bg-slate-50 hover:bg-slate-100 px-4 py-1.5 rounded-full font-semibold text-xs transition-colors"
