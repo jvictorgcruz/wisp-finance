@@ -1,9 +1,10 @@
 import { Head, Link, usePage, router } from '@inertiajs/react';
 import {
-    ArrowRight, Maximize2, Zap,
+    Maximize2, Zap,
     Target
 } from 'lucide-react';
 import Logo from '@/Components/Common/Logo';
+import HeroSection from '@/Components/Landing/HeroSection';
 import { useTranslation } from '@/Hooks/useTranslation';
 import LanguageSelector from '@/Components/Navigation/LanguageSelector';
 import { clsx, type ClassValue } from 'clsx';
@@ -31,13 +32,13 @@ export default function Home() {
         <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-primary/20">
             <Head title={t('home.title') + " " + t('home.title_highlight')} />
 
-            {/* Navigation Header */}
             <nav className="h-24 flex items-center justify-between px-8 lg:px-20 max-w-7xl mx-auto">
                 <Logo />
 
                 <div className="flex items-center gap-6">
                     <LanguageSelector 
-                        className="w-48 hidden md:block" 
+                        variant="minimal"
+                        className="w-auto" 
                         onChange={(next) => router.visit(window.location.pathname.replace(/^\/(en|pt)/, `/${next}`) + window.location.search)}
                     />
                     {auth.user ? (
@@ -66,52 +67,10 @@ export default function Home() {
                 </div>
             </nav>
 
-            {/* Hero Section */}
-            <main className="px-8 lg:px-20 max-w-7xl mx-auto pt-20 lg:pt-32 pb-20 overflow-hidden">
-                <div className="grid lg:grid-cols-2 gap-20 items-center">
-                    <div className="space-y-10 relative z-10">
-                        <h1 className="text-4xl lg:text-6xl font-black tracking-tighter leading-[0.9] animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                            {t('home.title')} <br />
-                            <span className="text-primary">{t('home.title_highlight')}</span>
-                        </h1>
-
-                        <p className="text-lg lg:text-xl text-slate-500 max-w-md leading-relaxed font-medium animate-in fade-in slide-in-from-bottom-12 duration-1200 delay-150">
-                            {t('home.subtitle')}
-                        </p>
-
-                        <div className="flex flex-col sm:flex-row gap-4 pt-4 animate-in fade-in slide-in-from-bottom-12 duration-1500 delay-300">
-                            <Link 
-                                href={localeRoute('/register')} 
-                                className="h-16 px-10 bg-slate-900 text-white rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-slate-800 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-slate-200 group"
-                            >
-                                {t('home.cta')}
-                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </Link>
-                        </div>
-                    </div>
-
-                    {/* Hero Visual Placeholder */}
-                    <div className="relative animate-in fade-in zoom-in duration-1500">
-                        <div className="absolute inset-0 bg-primary/20 blur-[120px] rounded-full scale-110" />
-                        <div className="relative bg-white aspect-4/3 rounded-[3rem] border border-white p-4 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] overflow-hidden">
-                            <div className="w-full h-full bg-slate-50 rounded-4xl border border-slate-100 flex flex-col p-8 space-y-6">
-                                <div className="h-3 w-1/3 bg-slate-200 rounded-full" />
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="h-32 bg-white rounded-3xl border border-slate-100 shadow-sm" />
-                                    <div className="h-32 bg-white rounded-3xl border border-slate-100 shadow-sm" />
-                                </div>
-                                <div className="space-y-3">
-                                    <div className="h-2 w-full bg-slate-100 rounded-full" />
-                                    <div className="h-2 w-5/6 bg-slate-100 rounded-full" />
-                                    <div className="h-2 w-4/6 bg-slate-100 rounded-full" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <main>
+                <HeroSection />
             </main>
 
-            {/* Features Section */}
             <section className="bg-white py-32 px-8 lg:px-20 border-t border-slate-100">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center space-y-4 mb-20">
@@ -139,7 +98,6 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Footer */}
             <footer className="py-20 px-8 lg:px-20 text-center space-y-6">
                 <div className="flex justify-center">
                     <Logo imageSize={5} textSize="text-lg" />
