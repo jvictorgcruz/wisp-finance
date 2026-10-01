@@ -531,9 +531,9 @@ export default function HeroMockup() {
                 </div>
 
                 <div className="px-1 relative flex justify-between items-center min-h-8 sm:min-h-12 py-0.5 sm:py-0">
-                    <h3 className="text-base sm:text-2xl font-black text-slate-900 tracking-tight pr-4">
+                    <h2 className="text-base sm:text-2xl font-black text-slate-900 tracking-tight pr-4">
                         {slides[activeSlide].title}
-                    </h3>
+                    </h2>
                     
                     {/* Dynamic Toast 0 */}
                     <div className={`absolute right-1 top-1/2 -translate-y-1/2 bg-white text-slate-700 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl sm:rounded-2xl text-[10px] sm:text-sm font-bold shadow-lg border border-slate-100 flex items-center gap-2 sm:gap-3 transition-all duration-500 z-50 ${
@@ -650,7 +650,7 @@ export default function HeroMockup() {
                                 }`}>
                                     <div className="space-y-2.5">
                                         <div className="animate-input-stagger-1">
-                                            <span className="text-xs font-bold text-slate-400 uppercase block mb-1">
+                                            <span className="text-xs font-bold text-slate-500 uppercase block mb-1">
                                                 {t('home.hero_carousel.card_name_label')}
                                             </span>
                                             <div className={`font-bold text-slate-800 bg-white p-2.5 rounded-xl border text-xs sm:text-sm truncate transition-all cursor-default select-none ${
@@ -662,7 +662,7 @@ export default function HeroMockup() {
                                             </div>
                                         </div>
                                         <div className="animate-input-stagger-2">
-                                            <span className="text-xs font-bold text-slate-400 uppercase block mb-1">
+                                            <span className="text-xs font-bold text-slate-500 uppercase block mb-1">
                                                 {t('home.hero_carousel.credit_limit_label')}
                                             </span>
                                             <div className={`font-bold text-purple-700 bg-white p-2.5 rounded-xl border text-xs sm:text-sm truncate transition-all cursor-default select-none ${
@@ -756,7 +756,7 @@ export default function HeroMockup() {
                                             </div>
                                         </div>
                                         <div>
-                                            <span className="text-xs font-bold text-slate-400 uppercase block mb-1">
+                                            <span className="text-xs font-bold text-slate-500 uppercase block mb-1">
                                                 {t('home.hero_carousel.description')}
                                             </span>
                                             <div className={`bg-white p-2.5 sm:p-3 rounded-xl border truncate transition-all cursor-default select-none ${
@@ -770,7 +770,7 @@ export default function HeroMockup() {
                                     </div>
 
                                     <div className="animate-input-stagger-2">
-                                        <span className="text-xs font-bold text-slate-400 uppercase block mb-1">
+                                        <span className="text-xs font-bold text-slate-500 uppercase block mb-1">
                                             {t('home.hero_carousel.amount')}
                                         </span>
                                         <div className={`bg-white p-2.5 sm:p-3 rounded-xl border transition-all cursor-default select-none ${
@@ -784,7 +784,7 @@ export default function HeroMockup() {
 
                                     <div className="grid grid-cols-2 gap-2 sm:gap-3 text-xs sm:text-sm animate-input-stagger-3">
                                         <div>
-                                            <span className="text-xs font-bold text-slate-400 uppercase block mb-1">
+                                            <span className="text-xs font-bold text-slate-500 uppercase block mb-1">
                                                 {t('home.hero_carousel.pay_with')}
                                             </span>
                                             <div className={`flex items-center gap-2 bg-white p-2.5 sm:p-3 rounded-xl border truncate transition-all cursor-default select-none ${
@@ -868,7 +868,7 @@ export default function HeroMockup() {
                             </div>
 
                             <div className="text-left">
-                                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
+                                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
                                     {t('home.hero_carousel.current_invoice')}
                                 </span>
                                 <span className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight block mt-1 tabular-nums">{mockupData.formatCurrency(interpolatedInvoice)}</span>
@@ -876,13 +876,13 @@ export default function HeroMockup() {
 
                             <div className="grid grid-cols-2 gap-2 sm:gap-3 text-center text-xs sm:text-sm">
                                 <div className="bg-white p-3 rounded-xl border border-slate-200/60">
-                                    <span className="text-xs font-bold text-slate-400 block uppercase">
+                                    <span className="text-xs font-bold text-slate-500 block uppercase">
                                         {t('home.hero_carousel.closing')}
                                     </span>
                                     <span className="font-bold text-slate-800 text-sm">{t('home.hero_carousel.day_format', { day: 5 })}</span>
                                 </div>
                                 <div className="bg-white p-3 rounded-xl border border-slate-200/60">
-                                    <span className="text-xs font-bold text-slate-400 block uppercase">
+                                    <span className="text-xs font-bold text-slate-500 block uppercase">
                                         {t('home.hero_carousel.due_date')}
                                     </span>
                                     <span className="font-bold text-rose-600 text-sm">{t('home.hero_carousel.day_format', { day: 12 })}</span>
@@ -902,10 +902,10 @@ export default function HeroMockup() {
                                 <div className="flex justify-between items-center text-[11px] sm:text-xs font-bold text-slate-500 tabular-nums">
                                     <span className="whitespace-nowrap">
                                         <span className="font-extrabold text-slate-700">{mockupData.formatCurrency(interpolatedInvoice)}</span>
-                                        <span className="text-slate-400 font-medium hidden sm:inline"> {t('home.hero_carousel.limit_used_label')}</span>
+                                        <span className="text-slate-500 font-medium hidden sm:inline"> {t('home.hero_carousel.limit_used_label')}</span>
                                     </span>
                                     <span className="whitespace-nowrap shrink-0 text-slate-500">
-                                        {Math.round((interpolatedInvoice / 300000) * 100)}% <span className="text-slate-400 font-medium">de {mockupData.formatCurrency(300000)}</span>
+                                        {Math.round((interpolatedInvoice / 300000) * 100)}% <span className="text-slate-500 font-medium">de {mockupData.formatCurrency(300000)}</span>
                                     </span>
                                 </div>
                                 <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
@@ -925,7 +925,7 @@ export default function HeroMockup() {
                                     maxHeight: `${historySlideProgress * 150}px`,
                                     overflow: 'hidden'
                                 }}>
-                                    <div className="text-xs font-black uppercase text-slate-400 tracking-wider pb-1 border-b border-slate-200/60 mb-1.5">
+                                    <div className="text-xs font-black uppercase text-slate-500 tracking-wider pb-1 border-b border-slate-200/60 mb-1.5">
                                         <span>{getDynamicDateHeader(15)}</span>
                                     </div>
                                     <div className="flex flex-col min-[400px]:flex-row items-start min-[400px]:items-center justify-between gap-2 min-[400px]:gap-0 p-2.5 sm:p-3 bg-white rounded-2xl border border-slate-100 shadow-2xs hover:border-slate-200 hover:shadow-xs hover:scale-[1.01] transition-all duration-200 cursor-default">
@@ -940,14 +940,14 @@ export default function HeroMockup() {
                                         </div>
                                         <div className="text-left min-[400px]:text-right shrink-0 pl-[2.6rem] min-[400px]:pl-0 w-full min-[400px]:w-auto">
                                             <span className="text-xs sm:text-sm font-black text-rose-500 block">- {mockupData.formatCurrency(mockupData.supermarketExpense)}</span>
-                                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">{t('home.hero_carousel.acc_nubank')}</span>
+                                            <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block">{t('home.hero_carousel.acc_nubank')}</span>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Date: Day 10 */}
                                 <div>
-                                    <div className="text-xs font-black uppercase text-slate-400 tracking-wider pb-1 border-b border-slate-200/60 mb-1.5">
+                                    <div className="text-xs font-black uppercase text-slate-500 tracking-wider pb-1 border-b border-slate-200/60 mb-1.5">
                                         <span>{getDynamicDateHeader(10)}</span>
                                     </div>
                                     <div className="space-y-1.5">
@@ -958,12 +958,12 @@ export default function HeroMockup() {
                                                 </div>
                                                 <div className="min-w-0">
                                                     <p className="text-xs sm:text-sm font-bold text-slate-900 leading-tight truncate">{t('home.hero_carousel.item_utility')}</p>
-                                                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate">{t('home.hero_carousel.cat_fixed')}</p>
+                                                    <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wider truncate">{t('home.hero_carousel.cat_fixed')}</p>
                                                 </div>
                                             </div>
                                             <div className="text-left min-[400px]:text-right shrink-0 pl-[2.6rem] min-[400px]:pl-0 w-full min-[400px]:w-auto">
                                                 <span className="text-xs sm:text-sm font-black text-rose-500 block">- {mockupData.formatCurrency(12000)}</span>
-                                                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">{t('home.hero_carousel.acc_itau')}</span>
+                                                <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block">{t('home.hero_carousel.acc_itau')}</span>
                                             </div>
                                         </div>
 
@@ -974,12 +974,12 @@ export default function HeroMockup() {
                                                 </div>
                                                 <div className="min-w-0">
                                                     <p className="text-xs sm:text-sm font-bold text-slate-900 leading-tight truncate">{t('home.hero_carousel.item_bakery')}</p>
-                                                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate">{t('home.hero_carousel.cat_food')}</p>
+                                                    <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wider truncate">{t('home.hero_carousel.cat_food')}</p>
                                                 </div>
                                             </div>
                                             <div className="text-left min-[400px]:text-right shrink-0 pl-[2.6rem] min-[400px]:pl-0 w-full min-[400px]:w-auto">
                                                 <span className="text-xs sm:text-sm font-black text-rose-500 block">- {mockupData.formatCurrency(2450)}</span>
-                                                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">{t('home.hero_carousel.acc_cash')}</span>
+                                                <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block">{t('home.hero_carousel.acc_cash')}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -987,7 +987,7 @@ export default function HeroMockup() {
 
                                 {/* Date: Day 5 (Salary) */}
                                 <div>
-                                    <div className="text-xs font-black uppercase text-slate-400 tracking-wider pb-1 border-b border-slate-200/60 mb-1.5">
+                                    <div className="text-xs font-black uppercase text-slate-500 tracking-wider pb-1 border-b border-slate-200/60 mb-1.5">
                                         <span>{getDynamicDateHeader(5)}</span>
                                     </div>
                                     <div className="flex flex-col min-[400px]:flex-row items-start min-[400px]:items-center justify-between gap-2 min-[400px]:gap-0 p-2.5 sm:p-3 bg-white rounded-2xl border border-slate-100 shadow-2xs hover:border-slate-200 hover:shadow-xs hover:scale-[1.01] transition-all duration-200 cursor-default">
@@ -997,12 +997,12 @@ export default function HeroMockup() {
                                             </div>
                                             <div className="min-w-0">
                                                 <p className="text-xs sm:text-sm font-bold text-slate-900 leading-tight truncate">{t('home.hero_carousel.item_salary')}</p>
-                                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate">{t('home.hero_carousel.cat_salary')}</p>
+                                                <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wider truncate">{t('home.hero_carousel.cat_salary')}</p>
                                             </div>
                                         </div>
                                         <div className="text-left min-[400px]:text-right shrink-0 pl-[2.6rem] min-[400px]:pl-0 w-full min-[400px]:w-auto">
                                             <span className="text-xs sm:text-sm font-black text-emerald-600 block">+ {mockupData.formatCurrency(mockupData.income)}</span>
-                                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">{t('home.hero_carousel.acc_itau')}</span>
+                                            <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block">{t('home.hero_carousel.acc_itau')}</span>
                                         </div>
                                     </div>
                                 </div>

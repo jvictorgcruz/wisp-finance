@@ -4,6 +4,7 @@ return [
     'title' => 'Lance um gasto.',
     'title_highlight' => 'O resto se organiza.',
     'subtitle' => 'Registre receitas, despesas e transferências em segundos e acompanhe a fatura do cartão, inclusive compras parceladas.',
+    'meta_description' => 'O Wisp Finance é seu assistente financeiro pessoal. Controle contas, faturas de cartão de crédito e despesas com total clareza e controle.',
     'cta' => 'Criar minha conta',
     'cta_secondary' => 'Ver como funciona',
     'hero_mockup' => [

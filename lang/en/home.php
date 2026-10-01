@@ -4,6 +4,7 @@ return [
     'title' => 'Log an expense.',
     'title_highlight' => 'The rest sorts itself out.',
     'subtitle' => 'Log income, expenses and transfers in seconds and track your card statement, including installment purchases.',
+    'meta_description' => 'Wisp Finance is your personal finance companion. Track accounts, credit card invoices, and daily expenses with complete clarity and control.',
     'cta' => 'Create my account',
     'cta_secondary' => 'See how it works',
     'hero_mockup' => [
