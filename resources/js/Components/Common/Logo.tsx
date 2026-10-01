@@ -21,8 +21,12 @@ export default function Logo({
     return (
         <div className={cn("flex items-center gap-2 group cursor-pointer", className)}>
             <img 
-                src="/logo.png" 
+                src="/logo.webp" 
                 alt="Wisp Logo" 
+                width={imageSize * 4}
+                height={imageSize * 4}
+                loading="eager"
+                decoding="async"
                 className={cn("object-contain group-hover:scale-110 transition-transform", `w-${imageSize} h-${imageSize}`)} 
             />
             {showText && (

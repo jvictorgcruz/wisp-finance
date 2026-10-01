@@ -34,7 +34,9 @@ export default function Home() {
 
     return (
         <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-primary/20 overflow-x-hidden">
-            <Head title={DEFAULT_APP_TITLE} />
+            <Head title={DEFAULT_APP_TITLE}>
+                <meta name="description" content={t('home.meta_description')} />
+            </Head>
 
             <nav className="h-24 flex items-center justify-between px-8 lg:px-20 max-w-7xl mx-auto">
                 <Logo />
@@ -179,7 +181,7 @@ export default function Home() {
                 <div className="flex justify-center">
                     <Logo imageSize={5} textSize="text-lg" />
                 </div>
-                <p className="text-xs text-slate-400 font-medium">
+                <p className="text-xs text-slate-500 font-medium">
                     &copy; {new Date().getFullYear()} Wisp Finance. {t('common.rights')}
                 </p>
             </footer>
