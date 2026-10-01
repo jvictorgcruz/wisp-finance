@@ -80,7 +80,7 @@ describe('HeroMockup Carousel Component', () => {
         }
     });
 
-    it('pauses auto-play when mouse enters and resumes when mouse leaves', () => {
+    it('does not pause auto-play when mouse hovers over the mockup', () => {
         vi.useFakeTimers();
         try {
             const { container } = render(<HeroMockup />);
@@ -91,23 +91,47 @@ describe('HeroMockup Carousel Component', () => {
             // Hover over carousel
             fireEvent.pointerEnter(carouselRegion!, { pointerType: 'mouse' });
 
-            // Advance 5 seconds while paused
+            // Advance 6 seconds - should advance even when mouse is hovering
             act(() => {
-                vi.advanceTimersByTime(5000);
+                vi.advanceTimersByTime(6000);
+            });
+
+            // Should have advanced to slide 1
+            expect(screen.getByText('home.hero_carousel.step_transaction_desc')).toBeDefined();
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    it('pauses and resumes auto-play only when clicking the play/pause button', () => {
+        vi.useFakeTimers();
+        try {
+            render(<HeroMockup />);
+
+            expect(screen.getByText('home.hero_carousel.step_accounts_desc')).toBeDefined();
+
+            // Click pause button
+            const pauseBtn = screen.getByRole('button', { name: /pause animation/i });
+            fireEvent.click(pauseBtn);
+
+            // Advance 6 seconds while paused
+            act(() => {
+                vi.advanceTimersByTime(6000);
             });
 
             // Should remain on slide 0
             expect(screen.getByText('home.hero_carousel.step_accounts_desc')).toBeDefined();
 
-            // Leave mouse
-            fireEvent.pointerLeave(carouselRegion!, { pointerType: 'mouse' });
+            // Click play button to resume
+            const playBtn = screen.getByRole('button', { name: /play animation/i });
+            fireEvent.click(playBtn);
 
-            // Advance 5 seconds after resuming
+            // Advance 6 seconds after resuming
             act(() => {
-                vi.advanceTimersByTime(5000);
+                vi.advanceTimersByTime(6000);
             });
 
-            // Should advance to slide 1
+            // Should have advanced to slide 1
             expect(screen.getByText('home.hero_carousel.step_transaction_desc')).toBeDefined();
         } finally {
             vi.useRealTimers();

@@ -177,7 +177,6 @@ function useTransactionAnimation(isActive: boolean) {
 export default function HeroMockup() {
     const { t, locale } = useTranslation();
     const [activeSlide, setActiveSlide] = useState(0);
-    const [isHoverPaused, setIsHoverPaused] = useState(false);
     const [isIntersectionPaused, setIsIntersectionPaused] = useState(false);
     const [chartHoverIndex, setChartHoverIndex] = useState<number | null>(null);
     const [isUserPaused, setIsUserPaused] = useState(false);
@@ -274,19 +273,7 @@ export default function HeroMockup() {
         touchEndX.current = null;
     };
 
-    const handlePointerEnter = (e: React.PointerEvent) => {
-        if (e.pointerType === 'mouse' || !e.pointerType) {
-            setIsHoverPaused(true);
-        }
-    };
-
-    const handlePointerLeave = (e: React.PointerEvent) => {
-        if (e.pointerType === 'mouse' || !e.pointerType) {
-            setIsHoverPaused(false);
-        }
-    };
-
-    const isPaused = isHoverPaused || isIntersectionPaused || isUserPaused;
+    const isPaused = isIntersectionPaused || isUserPaused;
 
     useEffect(() => {
         if (isPaused) return;
@@ -377,8 +364,6 @@ export default function HeroMockup() {
             ref={containerRef}
             className="relative animate-in fade-in zoom-in-95 duration-700 motion-reduce:animate-none motion-reduce:transition-none select-none w-full"
             id={`tabpanel-${activeSlide}`}
-            onPointerEnter={handlePointerEnter}
-            onPointerLeave={handlePointerLeave}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}

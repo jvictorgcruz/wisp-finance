@@ -9,6 +9,7 @@ import Logo from '@/Components/Common/Logo';
 import HeroSection from '@/Components/Landing/HeroSection';
 import { useTranslation } from '@/Hooks/useTranslation';
 import LanguageSelector from '@/Components/Navigation/LanguageSelector';
+import { DEFAULT_APP_TITLE } from '@/constants';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -33,7 +34,7 @@ export default function Home() {
 
     return (
         <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-primary/20 overflow-x-hidden">
-            <Head title={t('home.title') + " " + t('home.title_highlight')} />
+            <Head title={DEFAULT_APP_TITLE} />
 
             <nav className="h-24 flex items-center justify-between px-8 lg:px-20 max-w-7xl mx-auto">
                 <Logo />
@@ -178,8 +179,8 @@ export default function Home() {
                 <div className="flex justify-center">
                     <Logo imageSize={5} textSize="text-lg" />
                 </div>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.3em]">
-                    Wisp Finance &bull; {new Date().getFullYear()}
+                <p className="text-xs text-slate-400 font-medium">
+                    &copy; {new Date().getFullYear()} Wisp Finance. {t('common.rights')}
                 </p>
             </footer>
         </div>

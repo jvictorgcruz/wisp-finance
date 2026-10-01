@@ -7,4 +7,5 @@ return [
     'delete' => 'Delete',
     'edit' => 'Edit',
     'actions' => 'Actions',
+    'rights' => 'All rights reserved.',
 ];

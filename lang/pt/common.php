@@ -7,4 +7,5 @@ return [
     'delete' => 'Excluir',
     'edit' => 'Editar',
     'actions' => 'Ações',
+    'rights' => 'Todos os direitos reservados.',
 ];

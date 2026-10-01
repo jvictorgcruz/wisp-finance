@@ -54,9 +54,9 @@ export default function Maintenance() {
 
             {/* Footer */}
             <footer className="flex justify-center mt-auto py-12 w-full max-w-5xl">
-                <span className="text-xs font-bold text-slate-400 font-sans">
-                    &copy; {new Date().getFullYear()} Wisp Finance. {t('maintenance.rights')}
-                </span>
+                <p className="text-xs text-slate-400 font-medium">
+                    &copy; {new Date().getFullYear()} Wisp Finance. {t('common.rights') || t('maintenance.rights')}
+                </p>
             </footer>
         </div>
     );
