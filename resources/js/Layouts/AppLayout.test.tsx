@@ -3,7 +3,6 @@ import { vi, describe, it, expect } from 'vitest';
 import AppLayout from './AppLayout';
 import React from 'react';
 
-// Mock do Inertia usePage
 vi.mock('@inertiajs/react', () => ({
     Head: ({ title }: { title: string }) => {
         if (typeof document !== 'undefined') document.title = title;

@@ -213,16 +213,16 @@ export default function TransactionModal({ show, onClose, initialType, transacti
                                 reset('source_account_id', 'destination_account_id');
                             }}
                             className={cn(
-                                "flex-1 py-2 text-xs font-black uppercase tracking-widest rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-primary/20",
+                                "flex-1 py-2 text-xs font-black uppercase tracking-widest rounded-xl transition-all duration-200 active:scale-95 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20",
                                 activeTab === type 
                                     ? cn(
-                                        "bg-white shadow-sm",
+                                        "bg-white shadow-sm scale-100",
                                         type === 'EXPENSE' ? "text-rose-500" : 
                                         type === 'INCOME' ? "text-emerald-500" : 
                                         "text-primary"
                                       )
-                                    : "text-slate-400 hover:text-slate-600",
-                                !!transaction && "cursor-not-allowed opacity-50"
+                                    : "text-slate-400 hover:text-slate-600 hover:bg-slate-200/50",
+                                !!transaction && "cursor-not-allowed opacity-50 active:scale-100"
                             )}
                         >
                             {t(`transactions.modal.tabs.${type.toLowerCase()}`)}

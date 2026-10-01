@@ -4,7 +4,15 @@ import HeroMockup from './HeroMockup';
 
 beforeAll(() => {
     class IntersectionObserverMock {
-        observe = vi.fn();
+        callback: any;
+        constructor(callback: any) {
+            this.callback = callback;
+        }
+        observe = vi.fn((el) => {
+            if (this.callback) {
+                this.callback([{ isIntersecting: true, target: el }]);
+            }
+        });
         disconnect = vi.fn();
         unobserve = vi.fn();
     }
@@ -37,7 +45,7 @@ vi.mock('@/Hooks/useTranslation', () => ({
 }));
 
 describe('HeroMockup Carousel Component', () => {
-    it('renders step tabs and initial Create Account slide correctly', () => {
+    it('renders step tabs and initial Create Account slide without sub-fields until selected', () => {
         render(<HeroMockup />);
         
         expect(screen.getByText('home.hero_carousel.step_accounts')).toBeDefined();
@@ -48,19 +56,52 @@ describe('HeroMockup Carousel Component', () => {
 
         expect(screen.getByText('home.hero_carousel.step_accounts_desc')).toBeDefined();
         expect(screen.getByText('home.hero_carousel.account_type_label')).toBeDefined();
-        expect(screen.getByText('home.hero_carousel.card_name_label')).toBeDefined();
+        // Fields below are hidden initially
+        expect(screen.queryByText('home.hero_carousel.card_name_label')).toBeNull();
     });
 
-    it('navigates to specific slide when tab is clicked', () => {
-        render(<HeroMockup />);
+    it('reveals account fields after animation selects Card type', () => {
+        vi.useFakeTimers();
+        try {
+            render(<HeroMockup />);
+            expect(screen.queryByText('home.hero_carousel.card_name_label')).toBeNull();
 
-        // Click on "Transação" tab
-        const transactionTab = screen.getByText('home.hero_carousel.step_transaction');
-        fireEvent.click(transactionTab);
+            // Advance 600ms for Card type selection to occur
+            act(() => {
+                vi.advanceTimersByTime(600);
+            });
 
-        expect(screen.getByText('home.hero_carousel.step_transaction_desc')).toBeDefined();
-        expect(screen.getByText('home.hero_carousel.expense')).toBeDefined();
-        expect(screen.getByText('home.hero_carousel.save_transaction')).toBeDefined();
+            expect(screen.getByText('home.hero_carousel.card_name_label')).toBeDefined();
+            expect(screen.getByText('home.hero_carousel.create_card_btn')).toBeDefined();
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    it('navigates to specific slide when tab is clicked and reveals transaction fields after type selection', () => {
+        vi.useFakeTimers();
+        try {
+            render(<HeroMockup />);
+
+            // Click on transaction tab
+            const transactionTab = screen.getByText('home.hero_carousel.step_transaction');
+            fireEvent.click(transactionTab);
+
+            expect(screen.getByText('home.hero_carousel.step_transaction_desc')).toBeDefined();
+            expect(screen.getByText('home.hero_carousel.expense')).toBeDefined();
+
+            // Before type selection, form fields are hidden
+            expect(screen.queryByText('home.hero_carousel.save_transaction')).toBeNull();
+
+            // Advance 600ms for Expense type selection to occur
+            act(() => {
+                vi.advanceTimersByTime(600);
+            });
+
+            expect(screen.getByText('home.hero_carousel.save_transaction')).toBeDefined();
+        } finally {
+            vi.useRealTimers();
+        }
     });
 
     it('advances automatically every 3000ms', () => {
@@ -135,6 +176,41 @@ describe('HeroMockup Carousel Component', () => {
             expect(screen.getByText('home.hero_carousel.step_transaction_desc')).toBeDefined();
         } finally {
             vi.useRealTimers();
+        }
+    });
+
+    it('does not advance auto-play when mockup is not in view', () => {
+        const originalIO = window.IntersectionObserver;
+        class NonIntersectingMock {
+            callback: any;
+            constructor(callback: any) {
+                this.callback = callback;
+            }
+            observe = vi.fn((el) => {
+                if (this.callback) {
+                    this.callback([{ isIntersecting: false, target: el }]);
+                }
+            });
+            disconnect = vi.fn();
+            unobserve = vi.fn();
+        }
+        window.IntersectionObserver = NonIntersectingMock as any;
+
+        vi.useFakeTimers();
+        try {
+            render(<HeroMockup />);
+            expect(screen.getByText('home.hero_carousel.step_accounts_desc')).toBeDefined();
+
+            // Advance 10 seconds - should not advance because not in view
+            act(() => {
+                vi.advanceTimersByTime(10000);
+            });
+
+            expect(screen.getByText('home.hero_carousel.step_accounts_desc')).toBeDefined();
+            expect(screen.queryByText('home.hero_carousel.step_transaction_desc')).toBeNull();
+        } finally {
+            vi.useRealTimers();
+            window.IntersectionObserver = originalIO;
         }
     });
 });
