@@ -68,6 +68,17 @@
     }
 }
 
+@keyframes formInputsExit {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.98);
+    }
+}
+
 @keyframes inputStaggerItem {
     0% {
         opacity: 0;
@@ -93,6 +104,10 @@
 
 @utility animate-form-inputs {
     animation: formInputsEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@utility animate-form-inputs-exit {
+    animation: formInputsExit 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @utility animate-input-stagger-1 {
