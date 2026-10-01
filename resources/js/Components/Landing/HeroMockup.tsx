@@ -871,7 +871,7 @@ export default function HeroMockup() {
                                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
                                     {t('home.hero_carousel.current_invoice')}
                                 </span>
-                                <span className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight block mt-1">{mockupData.formatCurrency(interpolatedInvoice)}</span>
+                                <span className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight block mt-1 tabular-nums">{mockupData.formatCurrency(interpolatedInvoice)}</span>
                             </div>
 
                             <div className="grid grid-cols-2 gap-2 sm:gap-3 text-center text-xs sm:text-sm">
@@ -899,15 +899,17 @@ export default function HeroMockup() {
                             </div>
 
                             <div className="space-y-1.5">
-                                <div className="hidden sm:flex justify-between text-xs font-bold text-slate-500">
-                                    <span>{mockupData.formatCurrency(interpolatedInvoice)} {t('home.hero_carousel.limit_used_label')}</span>
-                                    <span>{Math.round((interpolatedInvoice / 300000) * 100)}% de {mockupData.formatCurrency(300000)}</span>
-                                </div>
-                                <div className="sm:hidden text-left text-[11px] font-bold text-slate-500 leading-tight">
-                                    {mockupData.formatCurrency(interpolatedInvoice)} / {mockupData.formatCurrency(300000)} ({Math.round((interpolatedInvoice / 300000) * 100)}%) {t('home.hero_carousel.limit_used_label')}
+                                <div className="flex justify-between items-center text-[11px] sm:text-xs font-bold text-slate-500 tabular-nums">
+                                    <span className="whitespace-nowrap">
+                                        <span className="font-extrabold text-slate-700">{mockupData.formatCurrency(interpolatedInvoice)}</span>
+                                        <span className="text-slate-400 font-medium hidden sm:inline"> {t('home.hero_carousel.limit_used_label')}</span>
+                                    </span>
+                                    <span className="whitespace-nowrap shrink-0 text-slate-500">
+                                        {Math.round((interpolatedInvoice / 300000) * 100)}% <span className="text-slate-400 font-medium">de {mockupData.formatCurrency(300000)}</span>
+                                    </span>
                                 </div>
                                 <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-                                    <div className="bg-purple-600 h-full rounded-full" style={{ width: `${Math.min(100, (interpolatedInvoice / 300000) * 100)}%` }} />
+                                    <div className="bg-purple-600 h-full rounded-full transition-all duration-75" style={{ width: `${Math.min(100, (interpolatedInvoice / 300000) * 100)}%` }} />
                                 </div>
                             </div>
                             </div>
@@ -1032,7 +1034,7 @@ export default function HeroMockup() {
                                             <ArrowDownRight className="w-3 h-3" />
                                         </div>
                                     </div>
-                                    <span className="text-sm sm:text-base font-black text-slate-900 block truncate">{mockupData.formatCurrency(interpolatedExpense)}</span>
+                                    <span className="text-sm sm:text-base font-black text-slate-900 block truncate tabular-nums">{mockupData.formatCurrency(interpolatedExpense)}</span>
                                 </div>
                             </div>
 
