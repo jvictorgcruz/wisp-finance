@@ -38,25 +38,13 @@ export default function Maintenance() {
                         {t('maintenance.subtitle')}
                     </p>
                 </div>
-
-                {/* Actions */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-sm">
-                    {/* <Link href="#" className="bg-slate-900 text-white font-bold py-4 px-8 rounded-2xl transition-all hover:bg-slate-800 hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-200/40 active:scale-95 flex items-center justify-center gap-2 group">
-                        <Headset className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" strokeWidth={2} />
-                        {t('maintenance.support')}
-                    </Link>
-                    <Link href="#" className="bg-white border border-slate-100 text-slate-900 font-bold py-4 px-8 rounded-2xl transition-all hover:border-slate-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-200/40 active:scale-95 flex items-center justify-center gap-2 group">
-                        <Share2 className="w-5 h-5 text-slate-400 group-hover:text-primary transition-colors" strokeWidth={2} />
-                        {t('maintenance.social_media')}
-                    </Link> */}
-                </div>
             </main>
 
             {/* Footer */}
             <footer className="flex justify-center mt-auto py-12 w-full max-w-5xl">
-                <span className="text-xs font-bold text-slate-400 font-sans">
-                    &copy; {new Date().getFullYear()} Wisp Finance. {t('maintenance.rights')}
-                </span>
+                <p className="text-xs text-slate-400 font-medium">
+                    &copy; {new Date().getFullYear()} Wisp Finance. {t('common.rights') || t('maintenance.rights')}
+                </p>
             </footer>
         </div>
     );

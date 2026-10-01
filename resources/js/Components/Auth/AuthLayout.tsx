@@ -55,8 +55,8 @@ export default function AuthLayout({ title, subtitle, children }: PropsWithChild
             </div>
             
             <div className="mt-8 text-center sm:max-w-md w-full">
-                <p className="text-sm text-slate-400 font-medium">
-                    &copy; {new Date().getFullYear()} Wisp Finance.
+                <p className="text-xs text-slate-400 font-medium">
+                    &copy; {new Date().getFullYear()} Wisp Finance. {t('common.rights')}
                 </p>
             </div>
         </div>

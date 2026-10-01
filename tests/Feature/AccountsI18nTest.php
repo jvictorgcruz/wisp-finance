@@ -16,7 +16,6 @@ test('i18n is correctly applied to accounts page for authenticated users', funct
             ->component('Accounts/Index')
             ->where('locale', 'pt')
             ->where('translations.home.nav.accounts', 'Contas')
-            // Estas chaves devem falhar se não existirem no lang/pt.json
             ->has('translations.accounts.page.title')
             ->has('translations.accounts.page.empty_title')
         );
@@ -47,7 +46,6 @@ test('sidebar specific keys are correctly shared', function () {
     $this->actingAs($user)
         ->get('/accounts')
         ->assertInertia(fn ($page) => $page
-            // Verificando a hierarquia que identifiquei como problemática (home.sidebar vs sidebar)
             ->has('translations.home.sidebar.current_ledger')
         );
 });

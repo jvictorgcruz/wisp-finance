@@ -210,7 +210,7 @@ export default function AccountModal({
                         {data.ui_metadata.icon ? <LucideIcon name={data.ui_metadata.icon} className="w-8 h-8" /> : initials}
                     </div>
                     <div>
-                        <h4 className="text-sm font-black text-slate-900 truncate max-w-[200px]">
+                        <h4 className="text-sm font-black text-slate-900 truncate max-w-50">
                             {data.name || t('accounts.modal.preview_name_placeholder')}
                         </h4>
                         {(data.parent_Key) && (
@@ -237,11 +237,11 @@ export default function AccountModal({
                                         disabled={cat.disabled}
                                         onClick={() => handleCategorySelect(cat)}
                                         className={cn(
-                                            "flex flex-col items-center justify-center p-4 rounded-3xl border-2 transition-all group relative overflow-hidden",
+                                            "flex flex-col items-center justify-center p-4 rounded-3xl border-2 transition-all duration-200 group relative overflow-hidden active:scale-95 cursor-pointer",
                                             isActive 
                                                 ? "border-primary bg-primary/5 shadow-lg shadow-primary/5" 
-                                                : "border-slate-50 hover:border-slate-200 hover:bg-slate-50",
-                                            cat.disabled && "opacity-40 cursor-not-allowed grayscale"
+                                                : "border-slate-50 hover:border-slate-200 hover:bg-slate-50 hover:scale-[1.02]",
+                                            cat.disabled && "opacity-40 cursor-not-allowed grayscale active:scale-100"
                                         )}
                                     >
                                         <div 
@@ -300,7 +300,7 @@ export default function AccountModal({
                                         {data.ui_metadata.icon ? <LucideIcon name={data.ui_metadata.icon} className="w-4 h-4" /> : <span className="text-[10px] font-black">---</span>}
                                     </div>
                                 </DropdownSelector.Trigger>
-                                <DropdownSelector.Panel align="left" placement="top" className="w-[240px] p-3 grid grid-cols-5 gap-2 max-h-[250px] overflow-y-auto">
+                                <DropdownSelector.Panel align="left" placement="top" className="w-60 p-3 grid grid-cols-5 gap-2 max-h-62.5 overflow-y-auto">
                                     <DropdownSelector.Option 
                                         value={''}
                                         className={({ selected }) => cn(
@@ -342,7 +342,7 @@ export default function AccountModal({
                                         style={{ backgroundColor: data.ui_metadata.color }}
                                     />
                                 </DropdownSelector.Trigger>
-                                <DropdownSelector.Panel align="right" placement="top" className="w-[200px] p-3 grid grid-cols-5 gap-2">
+                                <DropdownSelector.Panel align="right" placement="top" className="w-50 p-3 grid grid-cols-5 gap-2">
                                     {availableColors.map((color: string) => (
                                         <DropdownSelector.Option 
                                             key={color} 
@@ -363,7 +363,7 @@ export default function AccountModal({
 
                     {/* Credit Card Details */}
                     {data.parent_Key === 'credit_card' && (
-                        <div className="space-y-6 animate-in fade-in slide-in-from-top-2 duration-300">
+                        <div className="space-y-6 animate-form-inputs">
                             <CurrencyInput
                                 variant="normal"
                                 label={t('accounts.modal.limit_label')}
@@ -383,7 +383,7 @@ export default function AccountModal({
                                             credit_card_details: { ...d.credit_card_details, invoice_control_enabled: e.target.checked }
                                         }))}
                                     />
-                                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                                 </label>
                                 <div className="flex flex-col">
                                     <span className="text-xs font-black uppercase tracking-widest text-slate-700">

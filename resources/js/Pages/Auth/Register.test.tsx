@@ -77,12 +77,11 @@ describe('Register Page', () => {
         const postMock = vi.fn();
         const resetMock = vi.fn();
         
-        // Estado local para simular o comportamento do hook useForm
         const formData = { 
             name: '', 
-                email: '', 
-                password: '', 
-                password_confirmation: '' 
+            email: '', 
+            password: '', 
+            password_confirmation: '' 
         };
 
         const setDataMock = vi.fn((key, value) => {
@@ -102,23 +101,19 @@ describe('Register Page', () => {
 
         render(<Register />);
         
-        // Simular preenchimento
         fireEvent.input(screen.getByTestId('input-name'), { target: { value: 'João Silva' } });
         fireEvent.input(screen.getByTestId('input-email'), { target: { value: 'joao@example.com' } });
         fireEvent.input(screen.getByTestId('input-password'), { target: { value: 'password123' } });
         fireEvent.input(screen.getByTestId('input-password_confirmation'), { target: { value: 'password123' } });
         
-        // Verificação de Estado (O formulário capturou tudo?)
         expect(formData.name).toBe('João Silva');
         expect(formData.email).toBe('joao@example.com');
         expect(formData.password).toBe('password123');
         expect(formData.password_confirmation).toBe('password123');
 
-        // Simular envio
         const form = screen.getByTestId('submit-button').closest('form');
         fireEvent.submit(form!);
 
-        // Validação do Post
         expect(postMock).toHaveBeenCalledWith('/register', expect.any(Object));
     });
 });

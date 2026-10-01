@@ -121,7 +121,6 @@ export default function Dashboard({ summary, transactions, currentFilters }: Pro
         <AppLayout title={t('transactions.dashboard.title')}>
             <Head title={t('transactions.dashboard.title')} />
 
-            {/* Use standardized PageHeader for consistency */}
             <PageHeader>
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
@@ -141,9 +140,7 @@ export default function Dashboard({ summary, transactions, currentFilters }: Pro
                 </div>
             </PageHeader>
 
-            {/* Standardized Padding and Spacing */}
             <div className="space-y-12 pb-10">
-                {/* 1. Patrimonio Grid (3 columns) */}
                 <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <SummaryCard 
                         title={t('transactions.dashboard.assets')}
@@ -171,7 +168,6 @@ export default function Dashboard({ summary, transactions, currentFilters }: Pro
                     />
                 </section>
 
-                {/* 2. Evolution Section (Full Width Chart) */}
                 <section className="bg-surface-lowest p-8 rounded-xl shadow-sm border border-transparent">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
                         <div>
@@ -225,7 +221,6 @@ export default function Dashboard({ summary, transactions, currentFilters }: Pro
                     </div>
                 </div>
 
-                {/* 4. Bottom Breakdowns */}
                 <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div className="bg-surface-lowest p-8 rounded-xl shadow-sm border border-transparent">
                         <h3 className="text-xl font-bold tracking-tight text-slate-900 mb-8">
