@@ -561,7 +561,7 @@ export default function HeroMockup() {
                 </div>
 
 
-                <div className="relative h-112 sm:h-102.5 w-full overflow-hidden">
+                <div className="relative h-120 sm:h-102.5 w-full overflow-hidden">
                     <div 
                         className="flex w-full h-full transition-transform duration-500 ease-out"
                         style={{ transform: `translateX(-${activeSlide * 100}%)` }}
@@ -745,7 +745,7 @@ export default function HeroMockup() {
                                 <div key={currentTransactionType} className={`space-y-3 sm:space-y-4 flex-1 flex flex-col justify-between ${
                                     isTransactionExiting ? 'animate-form-inputs-exit' : 'animate-form-inputs'
                                 }`}>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm animate-input-stagger-1">
+                                    <div className="grid grid-cols-2 gap-2 sm:gap-3 text-xs sm:text-sm animate-input-stagger-1">
                                         <div>
                                             <span className="text-xs font-bold text-slate-400 uppercase block mb-1">
                                                 {t('home.hero_carousel.date')}
@@ -782,7 +782,7 @@ export default function HeroMockup() {
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm animate-input-stagger-3">
+                                    <div className="grid grid-cols-2 gap-2 sm:gap-3 text-xs sm:text-sm animate-input-stagger-3">
                                         <div>
                                             <span className="text-xs font-bold text-slate-400 uppercase block mb-1">
                                                 {t('home.hero_carousel.pay_with')}
@@ -855,7 +855,7 @@ export default function HeroMockup() {
                         </div>
 
                         <div className="w-full h-full shrink-0">
-                            <div className="w-full h-full bg-slate-50/90 rounded-3xl p-5 sm:p-6 border border-slate-200/80 flex flex-col justify-between space-y-4 shadow-xs">
+                            <div className="w-full h-full bg-slate-50/90 rounded-3xl p-4 sm:p-6 border border-slate-200/80 flex flex-col justify-between space-y-3 sm:space-y-4 shadow-xs">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <div className="p-2.5 bg-purple-100 text-purple-600 rounded-2xl shrink-0">
@@ -874,7 +874,7 @@ export default function HeroMockup() {
                                 <span className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight block mt-1">{mockupData.formatCurrency(interpolatedInvoice)}</span>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-center text-xs sm:text-sm">
+                            <div className="grid grid-cols-2 gap-2 sm:gap-3 text-center text-xs sm:text-sm">
                                 <div className="bg-white p-3 rounded-xl border border-slate-200/60">
                                     <span className="text-xs font-bold text-slate-400 block uppercase">
                                         {t('home.hero_carousel.closing')}
@@ -889,11 +889,11 @@ export default function HeroMockup() {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <button className="w-full bg-primary text-white font-bold py-3 rounded-xl text-xs sm:text-sm shadow-xs hover:bg-primary/90 transition-colors">
+                            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                                <button className="w-full bg-primary text-white font-bold py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm shadow-xs hover:bg-primary/90 transition-colors">
                                     {t('home.hero_carousel.pay_invoice')}
                                 </button>
-                                <button className="w-full bg-white border border-slate-200/80 text-slate-700 font-bold py-3 rounded-xl text-xs sm:text-sm hover:bg-slate-50 transition-colors">
+                                <button className="w-full bg-white border border-slate-200/80 text-slate-700 font-bold py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm hover:bg-slate-50 transition-colors">
                                     {t('home.hero_carousel.view_invoice')}
                                 </button>
                             </div>
