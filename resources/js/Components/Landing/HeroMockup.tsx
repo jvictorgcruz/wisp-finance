@@ -16,18 +16,45 @@ function useAccountAnimation(isActive: boolean) {
     const [activeAccountField, setActiveAccountField] = useState<'name' | 'limit' | null>(null);
     const [isCreateAccountBtnClicked, setIsCreateAccountBtnClicked] = useState(false);
     const [isAccountToastVisible, setIsAccountToastVisible] = useState(false);
+    const [isAccountExiting, setIsAccountExiting] = useState(false);
+
+    const wasActiveRef = useRef(false);
+    const exitTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         if (!isActive) {
-            setSelectedAccountType(null);
-            setClickingAccountType(null);
-            setTypedAccountName('');
-            setTypedAccountLimit('');
-            setActiveAccountField(null);
-            setIsCreateAccountBtnClicked(false);
-            setIsAccountToastVisible(false);
+            if (wasActiveRef.current) {
+                wasActiveRef.current = false;
+                setIsAccountExiting(true);
+                exitTimerRef.current = setTimeout(() => {
+                    setSelectedAccountType(null);
+                    setClickingAccountType(null);
+                    setTypedAccountName('');
+                    setTypedAccountLimit('');
+                    setActiveAccountField(null);
+                    setIsCreateAccountBtnClicked(false);
+                    setIsAccountToastVisible(false);
+                    setIsAccountExiting(false);
+                }, 280);
+            } else {
+                setSelectedAccountType(null);
+                setClickingAccountType(null);
+                setTypedAccountName('');
+                setTypedAccountLimit('');
+                setActiveAccountField(null);
+                setIsCreateAccountBtnClicked(false);
+                setIsAccountToastVisible(false);
+                setIsAccountExiting(false);
+            }
             return;
         }
+
+        if (exitTimerRef.current) {
+            clearTimeout(exitTimerRef.current);
+            exitTimerRef.current = null;
+        }
+        setIsAccountExiting(false);
+        wasActiveRef.current = true;
 
         const timeouts: NodeJS.Timeout[] = [];
         const intervals: NodeJS.Timeout[] = [];
@@ -90,6 +117,9 @@ function useAccountAnimation(isActive: boolean) {
         return () => {
             timeouts.forEach(clearTimeout);
             intervals.forEach(clearInterval);
+            if (exitTimerRef.current) {
+                clearTimeout(exitTimerRef.current);
+            }
         };
     }, [isActive]);
 
@@ -101,7 +131,8 @@ function useAccountAnimation(isActive: boolean) {
         typedAccountLimit,
         activeAccountField,
         isCreateAccountBtnClicked,
-        isAccountToastVisible
+        isAccountToastVisible,
+        isAccountExiting
     };
 }
 
@@ -115,20 +146,49 @@ function useTransactionAnimation(isActive: boolean) {
     const [activeTransactionField, setActiveTransactionField] = useState<'desc' | 'amount' | 'account' | 'category' | null>(null);
     const [isSaveTransactionBtnClicked, setIsSaveTransactionBtnClicked] = useState(false);
     const [isTransactionToastVisible, setIsTransactionToastVisible] = useState(false);
+    const [isTransactionExiting, setIsTransactionExiting] = useState(false);
+
+    const wasActiveRef = useRef(false);
+    const exitTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         if (!isActive) {
-            setSelectedTransactionType(null);
-            setClickingTransactionType(null);
-            setTypedTransactionDesc('');
-            setTypedTransactionAmount('');
-            setIsTransactionAccountSelected(false);
-            setIsTransactionCategorySelected(false);
-            setActiveTransactionField(null);
-            setIsSaveTransactionBtnClicked(false);
-            setIsTransactionToastVisible(false);
+            if (wasActiveRef.current) {
+                wasActiveRef.current = false;
+                setIsTransactionExiting(true);
+                exitTimerRef.current = setTimeout(() => {
+                    setSelectedTransactionType(null);
+                    setClickingTransactionType(null);
+                    setTypedTransactionDesc('');
+                    setTypedTransactionAmount('');
+                    setIsTransactionAccountSelected(false);
+                    setIsTransactionCategorySelected(false);
+                    setActiveTransactionField(null);
+                    setIsSaveTransactionBtnClicked(false);
+                    setIsTransactionToastVisible(false);
+                    setIsTransactionExiting(false);
+                }, 280);
+            } else {
+                setSelectedTransactionType(null);
+                setClickingTransactionType(null);
+                setTypedTransactionDesc('');
+                setTypedTransactionAmount('');
+                setIsTransactionAccountSelected(false);
+                setIsTransactionCategorySelected(false);
+                setActiveTransactionField(null);
+                setIsSaveTransactionBtnClicked(false);
+                setIsTransactionToastVisible(false);
+                setIsTransactionExiting(false);
+            }
             return;
         }
+
+        if (exitTimerRef.current) {
+            clearTimeout(exitTimerRef.current);
+            exitTimerRef.current = null;
+        }
+        setIsTransactionExiting(false);
+        wasActiveRef.current = true;
 
         const timeouts: NodeJS.Timeout[] = [];
         const intervals: NodeJS.Timeout[] = [];
@@ -201,6 +261,9 @@ function useTransactionAnimation(isActive: boolean) {
         return () => {
             timeouts.forEach(clearTimeout);
             intervals.forEach(clearInterval);
+            if (exitTimerRef.current) {
+                clearTimeout(exitTimerRef.current);
+            }
         };
     }, [isActive]);
 
@@ -214,7 +277,8 @@ function useTransactionAnimation(isActive: boolean) {
         isTransactionCategorySelected,
         activeTransactionField,
         isSaveTransactionBtnClicked,
-        isTransactionToastVisible
+        isTransactionToastVisible,
+        isTransactionExiting
     };
 }
 
@@ -261,7 +325,8 @@ export default function HeroMockup() {
         typedAccountLimit,
         activeAccountField,
         isCreateAccountBtnClicked,
-        isAccountToastVisible
+        isAccountToastVisible,
+        isAccountExiting
     } = useAccountAnimation(activeSlide === 0 && isAnimationActive);
 
     const {
@@ -274,7 +339,8 @@ export default function HeroMockup() {
         isTransactionCategorySelected,
         activeTransactionField,
         isSaveTransactionBtnClicked,
-        isTransactionToastVisible
+        isTransactionToastVisible,
+        isTransactionExiting
     } = useTransactionAnimation(activeSlide === 1 && isAnimationActive);
 
     const currentAccountType = selectedAccountType;
@@ -282,6 +348,15 @@ export default function HeroMockup() {
 
     const isAccountFormReady = Boolean(typedAccountLimit);
     const isTransactionFormReady = Boolean(isTransactionCategorySelected);
+
+    const isBankActive = currentAccountType === 'bank' && !isAccountExiting;
+    const isInvestmentActive = currentAccountType === 'investment' && !isAccountExiting;
+    const isCardActive = currentAccountType === 'card' && !isAccountExiting;
+    const isDebtActive = currentAccountType === 'debt' && !isAccountExiting;
+
+    const isExpenseActive = currentTransactionType === 'expense' && !isTransactionExiting;
+    const isIncomeActive = currentTransactionType === 'income' && !isTransactionExiting;
+    const isTransferActive = currentTransactionType === 'transfer' && !isTransactionExiting;
 
     const changeSlide = (nextIndex: number) => {
         setActiveSlide(nextIndex);
@@ -432,8 +507,8 @@ export default function HeroMockup() {
             <div className="absolute -top-20 -left-20 w-96 h-96 bg-primary/25 blur-[120px] rounded-full pointer-events-none" aria-hidden="true" />
             <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-emerald-400/25 blur-[120px] rounded-full pointer-events-none" aria-hidden="true" />
 
-            <div className="relative bg-white/90 backdrop-blur-xl rounded-[2.5rem] border border-white/80 p-4 sm:p-7 md:p-8 shadow-[0_32px_64px_-16px_rgba(15,23,42,0.12)] space-y-4 sm:space-y-6 overflow-hidden transition-all hover:shadow-[0_40px_80px_-16px_rgba(15,23,42,0.16)] min-h-130 sm:min-h-145 flex flex-col">
-                <div className="flex flex-wrap justify-center sm:flex-nowrap gap-2 sm:gap-3 pb-3.5 border-b border-slate-100 relative" role="tablist">
+            <div className="relative bg-white/90 backdrop-blur-xl rounded-[2.5rem] border border-white/80 p-4 sm:p-7 md:p-8 shadow-[0_32px_64px_-16px_rgba(15,23,42,0.12)] space-y-2.5 sm:space-y-6 overflow-hidden transition-all hover:shadow-[0_40px_80px_-16px_rgba(15,23,42,0.16)] min-h-0 sm:min-h-145 flex flex-col">
+                <div className="flex flex-wrap justify-center sm:flex-nowrap gap-2 sm:gap-3 pb-2 sm:pb-3.5 border-b border-slate-100 relative" role="tablist">
                     {slides.map((slide, index) => {
                         const isActive = activeSlide === index;
                         return (
@@ -455,14 +530,14 @@ export default function HeroMockup() {
                     })}
                 </div>
 
-                <div className="space-y-2 px-1 relative flex justify-between items-center min-h-12">
-                    <h3 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight pr-4">
+                <div className="px-1 relative flex justify-between items-center min-h-8 sm:min-h-12 py-0.5 sm:py-0">
+                    <h3 className="text-base sm:text-2xl font-black text-slate-900 tracking-tight pr-4">
                         {slides[activeSlide].title}
                     </h3>
                     
                     {/* Dynamic Toast 0 */}
                     <div className={`absolute right-1 top-1/2 -translate-y-1/2 bg-white text-slate-700 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl sm:rounded-2xl text-[10px] sm:text-sm font-bold shadow-lg border border-slate-100 flex items-center gap-2 sm:gap-3 transition-all duration-500 z-50 ${
-                        activeSlide === 0 && isAccountToastVisible
+                        activeSlide === 0 && isAccountToastVisible && !isAccountExiting
                             ? 'opacity-100 translate-x-0 scale-100' 
                             : 'opacity-0 translate-x-8 scale-95 pointer-events-none'
                     }`}>
@@ -474,7 +549,7 @@ export default function HeroMockup() {
 
                     {/* Dynamic Toast 1 */}
                     <div className={`absolute right-1 top-1/2 -translate-y-1/2 bg-white text-slate-700 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl sm:rounded-2xl text-[10px] sm:text-sm font-bold shadow-lg border border-slate-100 flex items-center gap-2 sm:gap-3 transition-all duration-500 z-50 ${
-                        activeSlide === 1 && isTransactionToastVisible
+                        activeSlide === 1 && isTransactionToastVisible && !isTransactionExiting
                             ? 'opacity-100 translate-x-0 scale-100' 
                             : 'opacity-0 translate-x-8 scale-95 pointer-events-none'
                     }`}>
@@ -486,83 +561,83 @@ export default function HeroMockup() {
                 </div>
 
 
-                <div className="relative h-136 sm:h-102.5 w-full overflow-hidden">
+                <div className="relative h-112 sm:h-102.5 w-full overflow-hidden">
                     <div 
                         className="flex w-full h-full transition-transform duration-500 ease-out"
                         style={{ transform: `translateX(-${activeSlide * 100}%)` }}
                     >
                         <div className="w-full h-full shrink-0">
                             <div className="w-full h-full bg-slate-50/90 rounded-3xl p-4 sm:p-6 border border-slate-200/80 flex flex-col justify-start space-y-3 sm:space-y-4 shadow-xs">
-                            <div>
+                            <div className="w-full">
                                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">
                                     {t('home.hero_carousel.account_type_label')}
                                 </span>
-                                <div className="grid grid-cols-1 sm:grid-cols-4 gap-1.5 sm:gap-2 text-center">
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 text-center w-full">
                                     <div 
                                         onClick={() => setSelectedAccountType('bank')}
-                                        className={`p-2 sm:p-2.5 rounded-xl border transition-all duration-200 cursor-pointer min-w-0 flex flex-row sm:flex-col items-center justify-start sm:justify-center gap-2 sm:gap-1 active:scale-90 ${
+                                        className={`p-2 sm:p-2.5 rounded-xl border-2 transition-all duration-200 cursor-pointer min-w-0 flex flex-row sm:flex-col items-center justify-start sm:justify-center gap-2 sm:gap-1 active:scale-90 ${
                                             clickingAccountType === 'bank'
                                                 ? 'scale-90 bg-blue-100 border-blue-400 shadow-inner'
-                                                : currentAccountType === 'bank'
-                                                    ? 'bg-blue-50 border-2 border-blue-600 shadow-2xs animate-type-pop'
+                                                : isBankActive
+                                                    ? 'bg-blue-50 border-blue-600 shadow-2xs animate-type-pop'
                                                     : 'bg-white border-slate-200/60 hover:border-slate-300 hover:shadow-xs'
                                         }`}
                                     >
-                                        <div className={`p-1.5 rounded-lg shrink-0 transition-transform ${currentAccountType === 'bank' ? 'bg-blue-600 text-white scale-105' : 'bg-blue-50 text-blue-600'}`}>
+                                        <div className={`p-1.5 rounded-lg shrink-0 transition-transform ${isBankActive ? 'bg-blue-600 text-white scale-105' : 'bg-blue-50 text-blue-600'}`}>
                                             <Building2 className="w-4 h-4" />
                                         </div>
-                                        <span className={`text-xs sm:text-[9px] tracking-normal text-left sm:text-center truncate w-full block ${currentAccountType === 'bank' ? 'text-blue-700 font-black' : 'text-slate-600 font-bold'}`}>
+                                        <span className={`text-xs sm:text-[9px] tracking-normal text-left sm:text-center truncate w-full block ${isBankActive ? 'text-blue-700 font-black' : 'text-slate-600 font-bold'}`}>
                                             {t('home.hero_carousel.type_bank')}
                                         </span>
                                     </div>
                                     <div 
                                         onClick={() => setSelectedAccountType('investment')}
-                                        className={`p-2 sm:p-2.5 rounded-xl border transition-all duration-200 cursor-pointer min-w-0 flex flex-row sm:flex-col items-center justify-start sm:justify-center gap-2 sm:gap-1 active:scale-90 ${
+                                        className={`p-2 sm:p-2.5 rounded-xl border-2 transition-all duration-200 cursor-pointer min-w-0 flex flex-row sm:flex-col items-center justify-start sm:justify-center gap-2 sm:gap-1 active:scale-90 ${
                                             clickingAccountType === 'investment'
                                                 ? 'scale-90 bg-purple-100 border-purple-400 shadow-inner'
-                                                : currentAccountType === 'investment'
-                                                    ? 'bg-purple-50 border-2 border-purple-600 shadow-2xs animate-type-pop'
+                                                : isInvestmentActive
+                                                    ? 'bg-purple-50 border-purple-600 shadow-2xs animate-type-pop'
                                                     : 'bg-white border-slate-200/60 hover:border-purple-300 hover:shadow-xs'
                                         }`}
                                     >
-                                        <div className={`p-1.5 rounded-lg shrink-0 transition-transform ${currentAccountType === 'investment' ? 'bg-purple-600 text-white scale-105' : 'bg-purple-50 text-purple-600'}`}>
+                                        <div className={`p-1.5 rounded-lg shrink-0 transition-transform ${isInvestmentActive ? 'bg-purple-600 text-white scale-105' : 'bg-purple-50 text-purple-600'}`}>
                                             <TrendingUp className="w-4 h-4" />
                                         </div>
-                                        <span className={`text-xs sm:text-[9px] tracking-normal text-left sm:text-center truncate w-full block ${currentAccountType === 'investment' ? 'text-purple-700 font-black' : 'text-slate-600 font-bold'}`}>
+                                        <span className={`text-xs sm:text-[9px] tracking-normal text-left sm:text-center truncate w-full block ${isInvestmentActive ? 'text-purple-700 font-black' : 'text-slate-600 font-bold'}`}>
                                             {t('home.hero_carousel.type_investments')}
                                         </span>
                                     </div>
                                     <div 
                                         onClick={() => setSelectedAccountType('card')}
-                                        className={`p-2 sm:p-2.5 rounded-xl border transition-all duration-200 cursor-pointer min-w-0 flex flex-row sm:flex-col items-center justify-start sm:justify-center gap-2 sm:gap-1 active:scale-90 ${
+                                        className={`p-2 sm:p-2.5 rounded-xl border-2 transition-all duration-200 cursor-pointer min-w-0 flex flex-row sm:flex-col items-center justify-start sm:justify-center gap-2 sm:gap-1 active:scale-90 ${
                                             clickingAccountType === 'card'
                                                 ? 'scale-90 bg-purple-100 border-purple-400 ring-2 ring-purple-400/40 shadow-inner'
-                                                : currentAccountType === 'card'
-                                                    ? 'bg-purple-50 border-2 border-purple-600 shadow-2xs animate-type-pop'
+                                                : isCardActive
+                                                    ? 'bg-purple-50 border-purple-600 shadow-2xs animate-type-pop'
                                                     : 'bg-white border-slate-200/60 hover:border-purple-300 hover:shadow-xs'
                                         }`}
                                     >
-                                        <div className={`p-1.5 rounded-lg shrink-0 transition-transform ${currentAccountType === 'card' ? 'bg-purple-600 text-white scale-105' : 'bg-purple-50 text-purple-600'}`}>
+                                        <div className={`p-1.5 rounded-lg shrink-0 transition-transform ${isCardActive ? 'bg-purple-600 text-white scale-105' : 'bg-purple-50 text-purple-600'}`}>
                                             <CreditCard className="w-4 h-4" />
                                         </div>
-                                        <span className={`text-xs sm:text-[9px] tracking-normal text-left sm:text-center truncate w-full block ${currentAccountType === 'card' ? 'text-purple-700 font-black' : 'text-slate-600 font-bold'}`}>
+                                        <span className={`text-xs sm:text-[9px] tracking-normal text-left sm:text-center truncate w-full block ${isCardActive ? 'text-purple-700 font-black' : 'text-slate-600 font-bold'}`}>
                                             {t('home.hero_carousel.type_card')}
                                         </span>
                                     </div>
                                     <div 
                                         onClick={() => setSelectedAccountType('debt')}
-                                        className={`p-2 sm:p-2.5 rounded-xl border transition-all duration-200 cursor-pointer min-w-0 flex flex-row sm:flex-col items-center justify-start sm:justify-center gap-2 sm:gap-1 active:scale-90 ${
+                                        className={`p-2 sm:p-2.5 rounded-xl border-2 transition-all duration-200 cursor-pointer min-w-0 flex flex-row sm:flex-col items-center justify-start sm:justify-center gap-2 sm:gap-1 active:scale-90 ${
                                             clickingAccountType === 'debt'
                                                 ? 'scale-90 bg-rose-100 border-rose-400 shadow-inner'
-                                                : currentAccountType === 'debt'
-                                                    ? 'bg-rose-50 border-2 border-rose-600 shadow-2xs animate-type-pop'
+                                                : isDebtActive
+                                                    ? 'bg-rose-50 border-rose-600 shadow-2xs animate-type-pop'
                                                     : 'bg-white border-slate-200/60 hover:border-rose-300 hover:shadow-xs'
                                         }`}
                                     >
-                                        <div className={`p-1.5 rounded-lg shrink-0 transition-transform ${currentAccountType === 'debt' ? 'bg-rose-600 text-white scale-105' : 'bg-rose-50 text-rose-500'}`}>
+                                        <div className={`p-1.5 rounded-lg shrink-0 transition-transform ${isDebtActive ? 'bg-rose-600 text-white scale-105' : 'bg-rose-50 text-rose-500'}`}>
                                             <TrendingDown className="w-4 h-4" />
                                         </div>
-                                        <span className={`text-xs sm:text-[9px] tracking-normal text-left sm:text-center truncate w-full block ${currentAccountType === 'debt' ? 'text-rose-600 font-black' : 'text-slate-600 font-bold'}`}>
+                                        <span className={`text-xs sm:text-[9px] tracking-normal text-left sm:text-center truncate w-full block ${isDebtActive ? 'text-rose-600 font-black' : 'text-slate-600 font-bold'}`}>
                                             {t('home.hero_carousel.type_debts')}
                                         </span>
                                     </div>
@@ -570,7 +645,9 @@ export default function HeroMockup() {
                             </div>
 
                             {currentAccountType && (
-                                <div key={currentAccountType} className="space-y-3 sm:space-y-4 animate-form-inputs flex-1 flex flex-col justify-between">
+                                <div key={currentAccountType} className={`space-y-3 sm:space-y-4 flex-1 flex flex-col justify-between ${
+                                    isAccountExiting ? 'animate-form-inputs-exit' : 'animate-form-inputs'
+                                }`}>
                                     <div className="space-y-2.5">
                                         <div className="animate-input-stagger-1">
                                             <span className="text-xs font-bold text-slate-400 uppercase block mb-1">
@@ -616,7 +693,7 @@ export default function HeroMockup() {
                         </div>
 
                         <div className="w-full h-full shrink-0">
-                            <div className="w-full h-full bg-slate-50/90 rounded-3xl p-5 sm:p-6 border border-slate-200/80 flex flex-col justify-start space-y-3 sm:space-y-4 shadow-xs">
+                            <div className="w-full h-full bg-slate-50/90 rounded-3xl p-4 sm:p-6 border border-slate-200/80 flex flex-col justify-start space-y-3 sm:space-y-4 shadow-xs">
                             <div className="flex justify-center items-center pb-2.5 border-b border-slate-200/60 w-full">
                                 <div className="grid grid-cols-3 gap-1.5 bg-slate-100 p-1.5 rounded-xl text-xs font-bold w-full text-center">
                                     <button 
@@ -625,7 +702,7 @@ export default function HeroMockup() {
                                         className={`py-2 px-1 rounded-lg truncate transition-all duration-200 cursor-pointer block text-center active:scale-90 ${
                                             clickingTransactionType === 'expense'
                                                 ? 'scale-90 bg-rose-200 shadow-inner'
-                                                : currentTransactionType === 'expense'
+                                                : isExpenseActive
                                                     ? 'bg-rose-500 text-white shadow-xs font-extrabold animate-type-pop'
                                                     : 'text-slate-500 font-bold hover:text-slate-700 hover:bg-slate-200/80'
                                         }`}
@@ -639,7 +716,7 @@ export default function HeroMockup() {
                                         className={`py-2 px-1 rounded-lg truncate transition-all duration-200 cursor-pointer block text-center active:scale-90 ${
                                             clickingTransactionType === 'income'
                                                 ? 'scale-90 bg-emerald-200 shadow-inner'
-                                                : currentTransactionType === 'income'
+                                                : isIncomeActive
                                                     ? 'bg-emerald-500 text-white shadow-xs font-extrabold animate-type-pop'
                                                     : 'text-slate-500 font-bold hover:text-slate-700 hover:bg-slate-200/80'
                                         }`}
@@ -653,7 +730,7 @@ export default function HeroMockup() {
                                         className={`py-2 px-1 rounded-lg truncate transition-all duration-200 cursor-pointer block text-center active:scale-90 ${
                                             clickingTransactionType === 'transfer'
                                                 ? 'scale-90 bg-blue-200 shadow-inner'
-                                                : currentTransactionType === 'transfer'
+                                                : isTransferActive
                                                     ? 'bg-blue-500 text-white shadow-xs font-extrabold animate-type-pop'
                                                     : 'text-slate-500 font-bold hover:text-slate-700 hover:bg-slate-200/80'
                                         }`}
@@ -665,7 +742,9 @@ export default function HeroMockup() {
                             </div>
 
                             {currentTransactionType && (
-                                <div key={currentTransactionType} className="space-y-3 sm:space-y-4 animate-form-inputs flex-1 flex flex-col justify-between">
+                                <div key={currentTransactionType} className={`space-y-3 sm:space-y-4 flex-1 flex flex-col justify-between ${
+                                    isTransactionExiting ? 'animate-form-inputs-exit' : 'animate-form-inputs'
+                                }`}>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm animate-input-stagger-1">
                                         <div>
                                             <span className="text-xs font-bold text-slate-400 uppercase block mb-1">
