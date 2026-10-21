@@ -33,11 +33,11 @@ class ExpectedCashFlow extends Model
         static::addGlobalScope(new \App\Models\Scopes\ExpectedCashFlowLedgerScope());
 
         static::addGlobalScope('active_transactions', function ($query) {
-            $query->whereHas('transaction', function ($q) {
-                // Transaction model has a default global scope 'active' that already handles this,
-                // but we are explicit here for safety.
-                $q->whereNull('reversed_by_id')->whereNull('reverses_id');
-            })->orWhereNull('transaction_id');
+            $query->where(function ($q) {
+                $q->whereHas('transaction', function ($sub) {
+                    $sub->whereNull('transactions.reversed_by_id')->whereNull('transactions.reverses_id');
+                })->orWhereNull('expected_cash_flows.transaction_id');
+            });
         });
     }
 

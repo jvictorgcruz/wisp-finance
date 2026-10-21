@@ -45,6 +45,18 @@ vi.mock('recharts', async (importOriginal) => {
     };
 });
 
+// Mock axios
+vi.mock('axios', () => ({
+    default: {
+        get: vi.fn(() => Promise.resolve({
+            data: {
+                timeline: { '2023-10-01': 1000 },
+                categories: []
+            }
+        }))
+    }
+}));
+
 describe('Dashboard Page', () => {
     const summary = {
         total_assets: 100000,
@@ -59,6 +71,26 @@ describe('Dashboard Page', () => {
             revenue: '15',
             expense: '8',
             monthly_balance: '12',
+        },
+        accrual: {
+            revenue: 5000,
+            expense: 3000,
+            balance: 2000,
+            trends: {
+                revenue: '15',
+                expense: '8',
+                monthly_balance: '12',
+            },
+        },
+        cash: {
+            revenue: 6000,
+            expense: 1500,
+            balance: 4500,
+            trends: {
+                revenue: '20',
+                expense: '-5',
+                monthly_balance: '25',
+            },
         },
     };
 

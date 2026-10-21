@@ -81,7 +81,8 @@ test('it calculates daily cash flow for the last 30 days', function () {
         'status' => 'PAID',
     ]);
 
-    $timeline = $this->action->execute();
+    $result = $this->action->execute();
+    $timeline = $result['timeline'];
     
     // Cumulative calculation:
     // Day -2: -1500
@@ -103,7 +104,7 @@ test('it caches the results and invalidates when data changes', function () {
     expect(Cache::has($cacheKey))->toBeTrue();
 
     $cachedData = Cache::get($cacheKey);
-    expect($cachedData[Carbon::today()->toDateString()])->toBe(0);
+    expect($cachedData['timeline'][Carbon::today()->toDateString()])->toBe(0);
 
     // Create new data - should trigger invalidation via Observer
     ExpectedCashFlow::factory()->create([
@@ -116,6 +117,6 @@ test('it caches the results and invalidates when data changes', function () {
     expect(Cache::has($cacheKey))->toBeFalse();
 
     // Re-execute
-    $newTimeline = $this->action->execute();
-    expect($newTimeline[Carbon::today()->toDateString()])->toBe(777);
+    $newResult = $this->action->execute();
+    expect($newResult['timeline'][Carbon::today()->toDateString()])->toBe(777);
 });

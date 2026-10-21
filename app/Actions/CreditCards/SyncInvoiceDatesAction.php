@@ -21,11 +21,18 @@ class SyncInvoiceDatesAction
         foreach ($invoices as $invoice) {
             // reference_year_month is 'Y-m'
             $reference = Carbon::parse($invoice->reference_year_month . '-01');
+            $newDueDate = $reference->copy()->day($card->due_day);
+            $newClosingDate = $reference->copy()->day($card->closing_day);
             
             $invoice->update([
-                'closing_date' => $reference->copy()->day($card->closing_day),
-                'due_date' => $reference->copy()->day($card->due_day),
+                'closing_date' => $newClosingDate,
+                'due_date' => $newDueDate,
             ]);
+
+            // Sync pending expected cash flows linked to this invoice
+            $invoice->expectedCashFlows()
+                ->where('status', 'PENDING')
+                ->update(['due_date' => $newDueDate]);
         }
     }
 }

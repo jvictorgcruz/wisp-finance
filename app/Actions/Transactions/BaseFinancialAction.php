@@ -90,18 +90,25 @@ abstract class BaseFinancialAction
 
                 $installmentDate = $date->copy()->addMonths($i);
                 $invoiceId = $forceInvoiceId;
+                $resolvedInvoice = null;
                 
                 if (!$invoiceId) {
-                    $invoice = \App\Models\CreditCardInvoice::resolveForCardAndDate($card, $installmentDate);
-                    $invoiceId = $invoice->id;
+                    $resolvedInvoice = \App\Models\CreditCardInvoice::resolveForCardAndDate($card, $installmentDate);
+                    $invoiceId = $resolvedInvoice->id;
+                } else {
+                    $resolvedInvoice = \App\Models\CreditCardInvoice::find($invoiceId);
                 }
+
+                $dueDate = $forcePaid 
+                    ? $date 
+                    : ($resolvedInvoice?->due_date ?? $installmentDate);
 
                 ExpectedCashFlow::create([
                     'transaction_id' => $transaction->id,
                     'account_id' => $account->id,
                     'credit_card_invoice_id' => $invoiceId,
                     'amount' => $currentInstallmentAmount,
-                    'due_date' => $forcePaid ? $date : $installmentDate,
+                    'due_date' => $dueDate,
                     'installment_number' => $installments > 1 ? ($i + 1) : null,
                     'installment_total' => $installments > 1 ? $installments : null,
                     'status' => $forcePaid ? 'PAID' : 'PENDING',

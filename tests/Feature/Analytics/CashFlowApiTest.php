@@ -34,10 +34,13 @@ test('authenticated user can access cash flow analytics', function () {
 
     $response->assertStatus(200)
         ->assertJsonStructure([
-            Carbon::today()->toDateString(),
+            'timeline' => [
+                Carbon::today()->toDateString(),
+            ],
+            'categories',
         ]);
         
-    expect($response->json(Carbon::today()->toDateString()))->toBe(5000);
+    expect($response->json('timeline.' . Carbon::today()->toDateString()))->toBe(5000);
 });
 
 test('guest cannot access analytics', function () {
