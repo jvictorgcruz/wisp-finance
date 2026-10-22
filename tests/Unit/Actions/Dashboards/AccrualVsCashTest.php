@@ -218,8 +218,8 @@ test('it handles credit card invoice prepayment in cash flow dashboard and build
     ]);
 
     app(RecordIncomeAction::class)->execute(
-        $bankAccount,
         $revenueCategory,
+        $bankAccount,
         100000, // R$ 1.000,00
         $octStart,
         'Salário Outubro'
