@@ -49,11 +49,11 @@ class GetDashboardSummaryAction
             
         $monthStart = $selectedDate->copy()->startOfMonth();
         $monthEnd = $selectedDate->copy()->endOfMonth();
-        $balanceDate = $monthEnd->copy()->addDay();
+        $balanceDate = $monthEnd->copy();
         
         $prevMonthStart = $monthStart->copy()->subMonth();
         $prevMonthEnd = $monthStart->copy()->subMonth()->endOfMonth();
-        $prevBalanceDate = $prevMonthEnd->copy()->addDay();
+        $prevBalanceDate = $prevMonthEnd->copy();
 
         // Fetch all asset and liability accounts for this ledger
         $accounts = Account::where('ledger_id', $ledgerId)

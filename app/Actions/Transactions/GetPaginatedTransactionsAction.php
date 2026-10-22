@@ -61,6 +61,8 @@ class GetPaginatedTransactionsAction
                     ->join('transactions', 'transactions.id', '=', 'journal_entries.transaction_id')
                     ->where('account_id', $accountId)
                     ->where('transactions.ledger_id', \App\Support\LedgerContext::currentId())
+                    ->whereNull('transactions.reversed_by_id')
+                    ->whereNull('transactions.reverses_id')
                     ->where(function($q) use ($oldestItem) {
                         $q->where('transactions.date', '<', $oldestItem->date)
                           ->orWhere(function($q) use ($oldestItem) {

@@ -325,3 +325,79 @@ test('it handles credit card invoice prepayment in cash flow dashboard and build
 
     Carbon::setTestNow();
 });
+
+test('editing a transaction from next month to current month updates both monthly balance and net worth to 1545', function () {
+    $now = Carbon::create(2026, 10, 22);
+    Carbon::setTestNow($now);
+
+    $checkingAccount = Account::factory()->create([
+        'ledger_id' => $this->ledger->id,
+        'type' => AccountType::ASSET,
+    ]);
+    $walletAccount = Account::factory()->create([
+        'ledger_id' => $this->ledger->id,
+        'type' => AccountType::ASSET,
+    ]);
+    $revenueCategory = Account::factory()->create([
+        'ledger_id' => $this->ledger->id,
+        'type' => AccountType::REVENUE,
+    ]);
+
+    $incomeAction = app(RecordIncomeAction::class);
+    $transferAction = app(\App\Actions\Transactions\RecordTransferAction::class);
+    $voidAction = app(\App\Actions\Transactions\VoidTransactionAction::class);
+    $summaryAction = app(\App\Actions\Dashboards\GetDashboardSummaryAction::class);
+
+    // 1. Salary R$ 3.000,00
+    $incomeAction->execute($revenueCategory, $checkingAccount, 300000, $now, 'Salário');
+
+    // 2. Market R$ 150,00
+    $this->recordExpense->execute($checkingAccount, $this->expenseCategory, 15000, $now, 'Mercado');
+
+    // 3. Transfer R$ 200,00 Checking -> Wallet
+    $transferAction->execute($checkingAccount, $walletAccount, 20000, $now, 'Transferência Carteira');
+
+    // 4 & 5. Cellphone R$ 1.200,00 in 3x on Credit Card (closing day 5, due day 15)
+    $this->recordExpense->execute($this->cardAccount, $this->expenseCategory, 120000, $now, 'Celular', [], 3);
+
+    // 6 (Task 7): Restaurant R$ 90,00 mistakenly registered in NEXT month (Nov 10)
+    $wrongRestaurantTx = $this->recordExpense->execute(
+        $this->cardAccount,
+        $this->expenseCategory,
+        9000,
+        Carbon::create(2026, 11, 10),
+        'Restaurante'
+    );
+
+    // 7 & 8: Bakery R$ 50,00 edited to R$ 15,00
+    $bakeryTx = $this->recordExpense->execute($checkingAccount, $this->expenseCategory, 5000, $now, 'Padaria');
+    $voidAction->execute($bakeryTx);
+    $this->recordExpense->execute($checkingAccount, $this->expenseCategory, 1500, $now, 'Padaria');
+
+    // Before editing Task 7: October Net Worth and Monthly Balance are both R$ 1.635,00 (163500)
+    $summaryBefore = $summaryAction->execute(10, 2026);
+    expect($summaryBefore['total_assets'] - $summaryBefore['total_liabilities'])->toBe(163500);
+    expect($summaryBefore['accrual']['balance'])->toBe(163500);
+
+    // User edits Task 7 to move it from November to current month (Oct 10, after closing day 5)
+    $voidAction->execute($wrongRestaurantTx);
+    $this->recordExpense->execute(
+        $this->cardAccount,
+        $this->expenseCategory,
+        9000,
+        Carbon::create(2026, 10, 10),
+        'Restaurante'
+    );
+
+    // After editing Task 7: both October Net Worth and Monthly Balance must be R$ 1.545,00 (154500)
+    $summaryAfter = $summaryAction->execute(10, 2026);
+    expect($summaryAfter['total_assets'])->toBe(283500);
+    expect($summaryAfter['total_liabilities'])->toBe(129000);
+    expect($summaryAfter['total_assets'] - $summaryAfter['total_liabilities'])->toBe(154500);
+    expect($summaryAfter['accrual']['revenue'])->toBe(300000);
+    expect($summaryAfter['accrual']['expense'])->toBe(145500);
+    expect($summaryAfter['accrual']['balance'])->toBe(154500);
+
+    Carbon::setTestNow();
+});
+

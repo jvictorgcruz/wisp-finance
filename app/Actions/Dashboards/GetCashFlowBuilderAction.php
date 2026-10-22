@@ -35,8 +35,8 @@ class GetCashFlowBuilderAction
                 ? Carbon::createFromDate($year, $month, 1)->endOfMonth() 
                 : Carbon::today();
 
-            $startDate = $selectedDate->copy()->subDays(30);
-            $endDate = $selectedDate;
+            $startDate = $selectedDate->copy()->subDays(30)->startOfDay();
+            $endDate = $selectedDate->copy()->endOfDay();
 
             // 0. Starting Cash Balance (Asset accounts) minus past credit card commitments before startDate
             $initialAssetBalance = (int) ExpectedCashFlow::query()
