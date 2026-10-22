@@ -31,6 +31,7 @@ class DemoController extends Controller
             'email' => $email,
             'password' => $password,
             'is_demo' => true,
+            'has_seen_welcome_modal' => false,
         ]);
 
         Auth::login($user);

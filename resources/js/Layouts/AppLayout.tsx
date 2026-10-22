@@ -1,5 +1,5 @@
 import React from 'react';
-import { Head, router } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { useTranslation } from '@/Hooks/useTranslation';
 import LanguageSelector from '@/Components/Navigation/LanguageSelector';
 import UserMenu from '@/Components/Navigation/UserMenu';
@@ -7,6 +7,7 @@ import FlashNotifications from '@/Components/Common/FlashNotifications';
 
 import Sidebar from '@/Components/Navigation/Sidebar';
 import TransactionModal from '@/Components/Transactions/TransactionModal';
+import WelcomeModal from '@/Components/Onboarding/WelcomeModal';
 
 interface AppLayoutProps {
     title?: string;
@@ -15,7 +16,18 @@ interface AppLayoutProps {
 
 export default function AppLayout({ title, children }: AppLayoutProps) {
     const { t } = useTranslation();
+    const { props } = usePage<any>();
+    const authUser = props?.auth?.user;
+
     const [transactionModal, setTransactionModal] = React.useState<{ show: boolean; type?: string; transaction?: any }>({ show: false });
+    const isWelcomePending = Boolean(authUser && !authUser.has_seen_welcome_modal);
+    const [welcomeModalOpen, setWelcomeModalOpen] = React.useState<boolean>(isWelcomePending);
+
+    React.useEffect(() => {
+        if (authUser && !authUser.has_seen_welcome_modal) {
+            setWelcomeModalOpen(true);
+        }
+    }, [authUser?.has_seen_welcome_modal]);
 
     React.useEffect(() => {
         const handleOpenModal = (e: any) => setTransactionModal({ 
@@ -33,6 +45,13 @@ export default function AppLayout({ title, children }: AppLayoutProps) {
             <FlashNotifications />
             
             <Sidebar />
+
+            {welcomeModalOpen && (
+                <WelcomeModal 
+                    show={welcomeModalOpen} 
+                    onClose={() => setWelcomeModalOpen(false)} 
+                />
+            )}
 
             <TransactionModal 
                 show={transactionModal.show} 

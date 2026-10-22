@@ -28,6 +28,7 @@ class RegisterUserAction
                 'password' => Hash::make($data['password']),
                 'locale' => app()->getLocale(),
                 'is_demo' => $data['is_demo'] ?? false,
+                'has_seen_welcome_modal' => $data['has_seen_welcome_modal'] ?? false,
             ]);
 
             $ledger = Ledger::create([
