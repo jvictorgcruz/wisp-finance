@@ -74,6 +74,11 @@ const FinancialSelect = forwardRef<HTMLButtonElement, Props>(({
 
     const selectedItem = useMemo(() => items.find(i => i.id === value), [items, value]);
 
+    const formatName = (name?: string | null) => {
+        if (!name) return '';
+        return (name.startsWith('accounts.') || name.startsWith('categories.')) ? t(name) : name;
+    };
+
     const normalize = (str: string) => 
         str.toLowerCase()
            .normalize('NFD')
@@ -88,10 +93,14 @@ const FinancialSelect = forwardRef<HTMLButtonElement, Props>(({
 
         const filteredItems = searchQuery.trim() === '' 
             ? items 
-            : items.filter(item => 
-                normalize(item.name).includes(normalizedQuery) || 
-                (item.parent?.name && normalize(item.parent.name).includes(normalizedQuery))
-            );
+            : items.filter(item => {
+                const displayName = formatName(item.name);
+                const parentDisplayName = formatName(item.parent?.name);
+                return normalize(displayName).includes(normalizedQuery) || 
+                       normalize(item.name).includes(normalizedQuery) || 
+                       (parentDisplayName && normalize(parentDisplayName).includes(normalizedQuery)) ||
+                       (item.parent?.name && normalize(item.parent.name).includes(normalizedQuery));
+            });
 
         filteredItems.forEach(item => {
             if (item.parent?.name) {
@@ -105,7 +114,7 @@ const FinancialSelect = forwardRef<HTMLButtonElement, Props>(({
         });
 
         return { groups, orphans };
-    }, [items, searchQuery]);
+    }, [items, searchQuery, t]);
 
     const [highlightedIndex, setHighlightedIndex] = useState(0);
 
@@ -117,21 +126,21 @@ const FinancialSelect = forwardRef<HTMLButtonElement, Props>(({
             list.push({ name: t('transactions.modal.back'), type: 'back' });
             if (groupedItems.groups[selectedParentName]) {
                 groupedItems.groups[selectedParentName].forEach(item => {
-                    list.push({ id: item.id, name: item.name, type: 'item' });
+                    list.push({ id: item.id, name: formatName(item.name), type: 'item' });
                 });
             }
         } else {
             Object.entries(groupedItems.groups).forEach(([parentName, items]) => {
                 if (flat || searchQuery.trim() !== '') {
                     items.forEach(item => {
-                        list.push({ id: item.id, name: item.name, type: 'item' });
+                        list.push({ id: item.id, name: formatName(item.name), type: 'item' });
                     });
                 } else {
-                    list.push({ name: parentName, type: 'parent' });
+                    list.push({ name: formatName(parentName), type: 'parent' });
                 }
             });
             groupedItems.orphans.forEach(item => {
-                list.push({ id: item.id, name: item.name, type: 'item' });
+                list.push({ id: item.id, name: formatName(item.name), type: 'item' });
             });
         }
         return list;
@@ -216,6 +225,7 @@ const FinancialSelect = forwardRef<HTMLButtonElement, Props>(({
                     <FinancialSelectContent 
                         open={open}
                         t={t}
+                        formatName={formatName}
                         resetSelection={resetSelection}
                         searchInputRef={searchInputRef}
                         internalTriggerRef={internalTriggerRef}
@@ -256,6 +266,7 @@ interface GroupedItems {
 interface ContentProps {
     open: boolean;
     t: any;
+    formatName: (name?: string | null) => string;
     resetSelection: () => void;
     searchInputRef: React.RefObject<HTMLInputElement | null>;
     internalTriggerRef: React.RefObject<HTMLButtonElement | null>;
@@ -281,6 +292,7 @@ interface ContentProps {
 function FinancialSelectContent({ 
     open, 
     t, 
+    formatName,
     resetSelection, 
     searchInputRef, 
     internalTriggerRef,
@@ -327,10 +339,10 @@ function FinancialSelectContent({
                     <div className="flex items-center gap-3 text-left">
                         <FinancialAvatar account={selectedItem} size="sm" />
                         <div className="flex flex-col leading-tight min-w-0">
-                            <span className="font-bold text-slate-900 text-sm truncate">{selectedItem.name}</span>
+                            <span className="font-bold text-slate-900 text-sm truncate">{formatName(selectedItem.name)}</span>
                             {selectedItem.parent && (
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">
-                                    {selectedItem.parent.name}
+                                    {formatName(selectedItem.parent.name)}
                                 </span>
                             )}
                         </div>
@@ -339,7 +351,7 @@ function FinancialSelectContent({
                     <span className="text-slate-400 font-bold text-sm">{placeholder}</span>
                 )}
             </DropdownSelector.Trigger>
-            <DropdownSelector.Panel align="left" placement={placement} className="max-h-[400px] overflow-hidden flex flex-col p-0">
+            <DropdownSelector.Panel align="left" placement={placement} className="max-h-100 overflow-hidden flex flex-col p-0">
                 {/* Search Bar */}
                 <div className="p-3 border-b border-slate-50 bg-white sticky top-0 z-10">
                     <div className="relative group">
@@ -396,7 +408,7 @@ function FinancialSelectContent({
                                         itemsToRender.push(
                                             <div key={`label-${parentName}`} className="px-3 py-1 mt-2 mb-1">
                                                 <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">
-                                                    {parentName}
+                                                    {formatName(parentName)}
                                                 </span>
                                             </div>
                                         );
@@ -408,6 +420,7 @@ function FinancialSelectContent({
                                                 key={item.id} 
                                                 item={item} 
                                                 value={value} 
+                                                formatName={formatName}
                                                 isHighlighted={currentIndex === highlightedIndex}
                                             />
                                         );
@@ -440,7 +453,7 @@ function FinancialSelectContent({
                                             >
                                                 <LucideIcon name={representative.ui_metadata.icon || 'Folder'} className="w-4 h-4" />
                                             </div>
-                                            <span className="text-sm font-bold flex-1 text-left text-slate-700 truncate">{parentName}</span>
+                                            <span className="text-sm font-bold flex-1 text-left text-slate-700 truncate">{formatName(parentName)}</span>
                                             <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-primary transition-colors shrink-0" />
                                         </button>
                                     );
@@ -464,6 +477,7 @@ function FinancialSelectContent({
                                             key={item.id} 
                                             item={item} 
                                             value={value} 
+                                            formatName={formatName}
                                             isHighlighted={currentIndex === highlightedIndex}
                                         />
                                     );
@@ -496,7 +510,7 @@ function FinancialSelectContent({
                             itemsToRender.push(
                                 <div key="parent-label" className="px-3 py-1 mb-1">
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                                        {selectedParentName}
+                                        {formatName(selectedParentName)}
                                     </span>
                                 </div>
                             );
@@ -509,6 +523,7 @@ function FinancialSelectContent({
                                             key={item.id} 
                                             item={item} 
                                             value={value} 
+                                            formatName={formatName}
                                             isHighlighted={currentIndex === highlightedIndex}
                                         />
                                     );
@@ -534,7 +549,7 @@ function FinancialSelectContent({
     );
 }
 
-function DropDownItem({ item, value, isHighlighted }: { item: FinancialItem, value: number | null, isHighlighted?: boolean }) {
+function DropDownItem({ item, value, formatName, isHighlighted }: { item: FinancialItem, value: number | null, formatName?: (name?: string | null) => string, isHighlighted?: boolean }) {
     return (
         <DropdownSelector.Option 
             value={item.id}
@@ -548,7 +563,7 @@ function DropDownItem({ item, value, isHighlighted }: { item: FinancialItem, val
             {({ selected }) => (
                 <div className="flex items-center gap-3">
                     <FinancialAvatar account={item} size="sm" />
-                    <span className="text-sm font-bold flex-1 truncate">{item.name}</span>
+                    <span className="text-sm font-bold flex-1 truncate">{formatName ? formatName(item.name) : item.name}</span>
                     {selected && <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />}
                 </div>
             )}

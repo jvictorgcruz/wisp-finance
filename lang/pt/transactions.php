@@ -70,6 +70,7 @@ return [
         'projected_balance' => 'Saldo Projetado',
         'initial_balance' => 'Saldo Inicial',
         'cash_expenses' => 'Saídas de Caixa',
+        'cash_movement' => 'Movimentações de Caixa',
         'final_balance' => 'Saldo Final',
         'view_mode_help' => 'Visão de Caixa: mostra as movimentações reais de dinheiro na conta quando os pagamentos acontecem (ex: faturas de cartão nas datas de vencimento). Visão de Competência (DRE): registra as despesas e receitas no momento em que foram realizadas, independente de quando serão pagas.',
         'cash_view_help' => 'Visão de Caixa: Considera as entradas e saídas de dinheiro nas datas em que realmente ocorrem (ex: compras parceladas debitadas no vencimento de cada fatura).',

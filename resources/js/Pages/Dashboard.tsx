@@ -221,16 +221,16 @@ export default function Dashboard({ summary, transactions, currentFilters }: Pro
                                 trend={getTrendLabel(summary.cash?.trends?.initial_balance ?? summary.cash?.trends?.available ?? summary.trends.assets)}
                             />
                             <SummaryCard 
-                                title={t('transactions.dashboard.cash_expenses', { defaultValue: 'Saídas de Caixa' })}
-                                value={summary.cash?.expenses ?? summary.cash?.commitments ?? activeExpense}
-                                icon={ArrowDownCircle}
+                                title={t('transactions.dashboard.cash_movement', { defaultValue: 'Movimentações de Caixa' })}
+                                value={summary.cash?.balance ?? (activeRevenue - (summary.cash?.expenses ?? activeExpense))}
+                                icon={Activity}
                                 color="default"
-                                secondaryColor='expense'
-                                trend={getTrendLabel(summary.cash?.trends?.expenses ?? summary.cash?.trends?.commitments ?? activeTrends.expense)}
+                                secondaryColor={(summary.cash?.balance ?? (activeRevenue - (summary.cash?.expenses ?? activeExpense))) >= 0 ? 'income' : 'expense'}
+                                trend={getTrendLabel(summary.cash?.trends?.monthly_balance ?? summary.cash?.trends?.balance ?? null)}
                             />
                             <SummaryCard 
                                 title={thirdCashCardTitle}
-                                value={summary.cash?.closing_balance ?? summary.cash?.projected ?? ((summary.cash?.initial_balance ?? summary.total_assets) - (summary.cash?.expenses ?? activeExpense))}
+                                value={summary.cash?.closing_balance ?? summary.cash?.projected ?? ((summary.cash?.initial_balance ?? summary.total_assets) + (summary.cash?.balance ?? 0))}
                                 icon={Wallet}
                                 color="default"
                                 secondaryColor='primary'

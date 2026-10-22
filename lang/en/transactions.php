@@ -70,6 +70,7 @@ return [
         'projected_balance' => 'Projected Balance',
         'initial_balance' => 'Starting Balance',
         'cash_expenses' => 'Cash Outflows',
+        'cash_movement' => 'Cash Movements',
         'final_balance' => 'Closing Balance',
         'view_mode_help' => 'Cash Flow View: reflects cash moving in/out of accounts when payments actually clear (e.g. card invoices on due dates). Accrual Basis (P&L): records revenues and expenses when incurred, regardless of payment date.',
         'cash_view_help' => 'Cash Flow View: Tracks inflows and outflows on the exact dates payments occur (e.g. installment invoices on due dates).',
