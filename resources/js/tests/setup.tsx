@@ -20,3 +20,12 @@ global.ResizeObserver = class ResizeObserver {
   unobserve() {}
   disconnect() {}
 };
+
+global.IntersectionObserver = class IntersectionObserver {
+  constructor(public callback: any) {}
+  observe() {
+    this.callback?.([{ isIntersecting: true }]);
+  }
+  unobserve() {}
+  disconnect() {}
+} as any;

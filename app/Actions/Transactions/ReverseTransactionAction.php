@@ -16,11 +16,13 @@ class ReverseTransactionAction extends BaseFinancialAction
     public function execute(Transaction $original): Transaction
     {
         return DB::transaction(function () use ($original) {
+            $reversalDate = \Illuminate\Support\Carbon::parse($original->date);
+
             // 1. Create the reversal header
             $reversal = Transaction::create([
                 'ledger_id' => $original->ledger_id,
                 'created_by_user_id' => auth()->id(),
-                'date' => now(), // Reversal happens now
+                'date' => $reversalDate,
                 'description' => "REVERSAL: " . ($original->description ?? "Transaction #{$original->id}"),
                 'type' => $original->type,
                 'status' => TransactionStatus::ACTIVE,
@@ -31,12 +33,16 @@ class ReverseTransactionAction extends BaseFinancialAction
             // 2. Reverse Journal Entries
             // Debit becomes Credit, Credit becomes Debit
             foreach ($original->journalEntries as $entry) {
+                $entryDate = $entry->entry_date
+                    ? \Illuminate\Support\Carbon::parse($entry->entry_date)->toDateString()
+                    : $reversalDate->toDateString();
+
                 $this->createEntry(
                     $reversal,
                     $entry->account_id,
                     $entry->type === 'DEBIT' ? 'CREDIT' : 'DEBIT',
                     $entry->amount,
-                    now()->toDateString()
+                    $entryDate
                 );
             }
 

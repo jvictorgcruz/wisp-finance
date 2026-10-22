@@ -40,6 +40,16 @@ class User extends Authenticatable
         'current_ledger_id',
         'role',
         'is_demo',
+        'has_seen_welcome_modal',
+    ];
+
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'has_seen_welcome_modal' => false,
     ];
 
     /**
@@ -64,6 +74,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'role' => UserRole::class,
             'is_demo' => 'boolean',
+            'has_seen_welcome_modal' => 'boolean',
         ];
     }
 

@@ -31,8 +31,8 @@ class GetAccrualBasisBuilderAction
                 ? Carbon::createFromDate($year, $month, 1)->endOfMonth() 
                 : Carbon::today();
 
-            $startDate = $selectedDate->copy()->subDays(30);
-            $endDate = $selectedDate;
+            $startDate = $selectedDate->copy()->subDays(30)->startOfDay();
+            $endDate = $selectedDate->copy()->endOfDay();
 
             $monthStart = $selectedDate->copy()->startOfMonth();
             $monthEnd = $selectedDate->copy()->endOfMonth();

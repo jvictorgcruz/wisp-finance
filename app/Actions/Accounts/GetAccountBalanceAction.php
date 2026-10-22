@@ -34,7 +34,9 @@ class GetAccountBalanceAction
                 DB::raw('COALESCE(SUM(CASE WHEN journal_entries.type = "CREDIT" THEN amount ELSE 0 END), 0) as total_credit')
             )
             ->whereIn('account_id', $ids)
-            ->where('transactions.ledger_id', \App\Support\LedgerContext::currentId());
+            ->where('transactions.ledger_id', \App\Support\LedgerContext::currentId())
+            ->whereNull('transactions.reversed_by_id')
+            ->whereNull('transactions.reverses_id');
 
         if ($beforeDate) {
             $query->where('transactions.date', '<=', $beforeDate);

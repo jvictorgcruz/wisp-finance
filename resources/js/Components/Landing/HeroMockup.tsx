@@ -282,10 +282,22 @@ function useTransactionAnimation(isActive: boolean) {
     };
 }
 
-export default function HeroMockup() {
+export interface HeroMockupProps {
+    className?: string;
+    compact?: boolean;
+    autoPlayInModal?: boolean;
+    hideGlow?: boolean;
+}
+
+export default function HeroMockup({
+    className = '',
+    compact = false,
+    autoPlayInModal = false,
+    hideGlow = false,
+}: HeroMockupProps = {}) {
     const { t, locale } = useTranslation();
     const [activeSlide, setActiveSlide] = useState(0);
-    const [isIntersecting, setIsIntersecting] = useState(false);
+    const [isIntersecting, setIsIntersecting] = useState(autoPlayInModal);
     const [chartHoverIndex, setChartHoverIndex] = useState<number | null>(null);
     const [isUserPaused, setIsUserPaused] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -315,7 +327,7 @@ export default function HeroMockup() {
         return () => observer.disconnect();
     }, []);
 
-    const isAnimationActive = isIntersecting && !isUserPaused;
+    const isAnimationActive = (isIntersecting || autoPlayInModal) && !isUserPaused;
 
     const {
         selectedAccountType,
@@ -495,7 +507,7 @@ export default function HeroMockup() {
         return (
         <div 
             ref={containerRef}
-            className="relative animate-in fade-in zoom-in-95 duration-700 motion-reduce:animate-none motion-reduce:transition-none select-none w-full"
+            className={`relative animate-in fade-in zoom-in-95 duration-700 motion-reduce:animate-none motion-reduce:transition-none select-none w-full ${className}`}
             id={`tabpanel-${activeSlide}`}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
@@ -504,10 +516,18 @@ export default function HeroMockup() {
             role="region"
             aria-label={t('home.hero_carousel.step_dashboard')}
         >
-            <div className="absolute -top-20 -left-20 w-96 h-96 bg-primary/25 blur-[120px] rounded-full pointer-events-none" aria-hidden="true" />
-            <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-emerald-400/25 blur-[120px] rounded-full pointer-events-none" aria-hidden="true" />
+            {!compact && !hideGlow && (
+                <>
+                    <div className="absolute -top-20 -left-20 w-96 h-96 bg-primary/25 blur-[120px] rounded-full pointer-events-none" aria-hidden="true" />
+                    <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-emerald-400/25 blur-[120px] rounded-full pointer-events-none" aria-hidden="true" />
+                </>
+            )}
 
-            <div className="relative bg-white/90 backdrop-blur-xl rounded-[2.5rem] border border-white/80 p-4 sm:p-7 md:p-8 shadow-[0_32px_64px_-16px_rgba(15,23,42,0.12)] space-y-2.5 sm:space-y-6 overflow-hidden transition-all hover:shadow-[0_40px_80px_-16px_rgba(15,23,42,0.16)] min-h-0 sm:min-h-145 flex flex-col">
+            <div className={`relative bg-white/90 backdrop-blur-xl border overflow-hidden transition-all flex flex-col ${
+                compact 
+                    ? 'rounded-2xl sm:rounded-4xl border-slate-200/90 p-3.5 sm:p-6 md:p-7 shadow-sm space-y-2.5 sm:space-y-5 min-h-0 sm:min-h-140' 
+                    : 'rounded-[2.5rem] border-white/80 p-4 sm:p-7 md:p-8 shadow-[0_32px_64px_-16px_rgba(15,23,42,0.12)] space-y-2.5 sm:space-y-6 hover:shadow-[0_40px_80px_-16px_rgba(15,23,42,0.16)] min-h-0 sm:min-h-145'
+            }`}>
                 <div className="flex flex-wrap justify-center sm:flex-nowrap gap-2 sm:gap-3 pb-2 sm:pb-3.5 border-b border-slate-100 relative" role="tablist">
                     {slides.map((slide, index) => {
                         const isActive = activeSlide === index;
