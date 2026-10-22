@@ -4,7 +4,9 @@ namespace App\Actions\Dashboards;
 
 use App\Actions\Accounts\GetAccountBalanceAction;
 use App\Enums\AccountType;
+use App\Enums\TransactionType;
 use App\Models\Account;
+use App\Models\ExpectedCashFlow;
 use App\Models\JournalEntry;
 use App\Support\LedgerContext;
 
@@ -135,41 +137,64 @@ class GetDashboardSummaryAction
             return ($change > 0 ? '+' : '') . number_format($change, 1);
         };
 
+        // Filter for unpaid credit card flows (either no invoice and not paid, or invoice is unpaid)
+        $unpaidCardFlows = function ($q) {
+            $q->whereNull('credit_card_invoice_id')
+                ->where('status', '!=', 'PAID')
+                ->orWhereHas('invoice', fn ($inv) => $inv->unpaid());
+        };
+
+        // Filter for asset expense cash flows: direct EXPENSE or TRANSFER paying credit card
+        $assetExpenseFlows = function ($query) {
+            $query->whereHas('transaction', fn ($q) => $q->where('type', TransactionType::EXPENSE))
+                ->orWhere(function ($transferQuery) {
+                    $transferQuery->whereHas('transaction', function ($q) {
+                        $q->where('type', TransactionType::TRANSFER)
+                            ->whereHas('journalEntries.account', function ($accQuery) {
+                                $accQuery->where('type', AccountType::LIABILITY)
+                                    ->where('is_credit_card', true);
+                            });
+                    });
+                });
+        };
+
         // 4. Cash Flow Balances for Selected Month
-        // Starting cash balance before the selected month (Paid Assets - Credit card expenses due before monthStart)
-        $initialCashAssets = (int) \App\Models\ExpectedCashFlow::query()
+        // Starting cash balance before the selected month (Paid Assets - Unpaid credit card expenses due before monthStart)
+        $initialCashAssets = (int) ExpectedCashFlow::query()
             ->where('status', 'PAID')
             ->where('due_date', '<', $monthStart)
             ->whereHas('account', fn ($q) => $q->where('ledger_id', $ledgerId)->where('type', AccountType::ASSET))
             ->sum('amount');
 
-        $initialCashCards = (int) \App\Models\ExpectedCashFlow::query()
+        $initialCashCards = (int) ExpectedCashFlow::query()
             ->where('due_date', '<', $monthStart)
             ->whereHas('account', fn ($q) => $q->where('ledger_id', $ledgerId)->where('type', AccountType::LIABILITY)->where('is_credit_card', true))
             ->where('amount', '>', 0)
+            ->where($unpaidCardFlows)
             ->sum('amount');
 
         $startingCashBalance = $initialCashAssets - $initialCashCards;
 
         // Cash revenue and expenses in the selected month
-        $cashRevenue = (int) \App\Models\ExpectedCashFlow::query()
+        $cashRevenue = (int) ExpectedCashFlow::query()
             ->whereHas('account', fn ($q) => $q->where('ledger_id', $ledgerId)->where('type', AccountType::ASSET))
             ->whereBetween('due_date', [$monthStart, $monthEnd])
             ->where('amount', '>', 0)
-            ->whereHas('transaction', fn ($q) => $q->where('type', \App\Enums\TransactionType::INCOME))
+            ->whereHas('transaction', fn ($q) => $q->where('type', TransactionType::INCOME))
             ->sum('amount');
 
-        $cashAssetExpenses = (int) abs(\App\Models\ExpectedCashFlow::query()
+        $cashAssetExpenses = (int) abs(ExpectedCashFlow::query()
             ->whereHas('account', fn ($q) => $q->where('ledger_id', $ledgerId)->where('type', AccountType::ASSET))
             ->whereBetween('due_date', [$monthStart, $monthEnd])
             ->where('amount', '<', 0)
-            ->whereHas('transaction', fn ($q) => $q->where('type', \App\Enums\TransactionType::EXPENSE))
+            ->where($assetExpenseFlows)
             ->sum('amount'));
 
-        $cashCardExpenses = (int) \App\Models\ExpectedCashFlow::query()
+        $cashCardExpenses = (int) ExpectedCashFlow::query()
             ->whereHas('account', fn ($q) => $q->where('ledger_id', $ledgerId)->where('type', AccountType::LIABILITY)->where('is_credit_card', true))
             ->whereBetween('due_date', [$monthStart, $monthEnd])
             ->where('amount', '>', 0)
+            ->where($unpaidCardFlows)
             ->sum('amount');
 
         $monthlyCashExpense = $cashAssetExpenses + $cashCardExpenses;
@@ -177,38 +202,40 @@ class GetDashboardSummaryAction
         $closingCashBalance = $startingCashBalance + $monthlyCashBalance;
 
         // 5. Cash Flow Performance for Previous Month (for trends)
-        $prevInitialCashAssets = (int) \App\Models\ExpectedCashFlow::query()
+        $prevInitialCashAssets = (int) ExpectedCashFlow::query()
             ->where('status', 'PAID')
             ->where('due_date', '<', $prevMonthStart)
             ->whereHas('account', fn ($q) => $q->where('ledger_id', $ledgerId)->where('type', AccountType::ASSET))
             ->sum('amount');
 
-        $prevInitialCashCards = (int) \App\Models\ExpectedCashFlow::query()
+        $prevInitialCashCards = (int) ExpectedCashFlow::query()
             ->where('due_date', '<', $prevMonthStart)
             ->whereHas('account', fn ($q) => $q->where('ledger_id', $ledgerId)->where('type', AccountType::LIABILITY)->where('is_credit_card', true))
             ->where('amount', '>', 0)
+            ->where($unpaidCardFlows)
             ->sum('amount');
 
         $prevStartingCashBalance = $prevInitialCashAssets - $prevInitialCashCards;
 
-        $prevCashRevenue = (int) \App\Models\ExpectedCashFlow::query()
+        $prevCashRevenue = (int) ExpectedCashFlow::query()
             ->whereHas('account', fn ($q) => $q->where('ledger_id', $ledgerId)->where('type', AccountType::ASSET))
             ->whereBetween('due_date', [$prevMonthStart, $prevMonthEnd])
             ->where('amount', '>', 0)
-            ->whereHas('transaction', fn ($q) => $q->where('type', \App\Enums\TransactionType::INCOME))
+            ->whereHas('transaction', fn ($q) => $q->where('type', TransactionType::INCOME))
             ->sum('amount');
 
-        $prevCashAssetExpenses = (int) abs(\App\Models\ExpectedCashFlow::query()
+        $prevCashAssetExpenses = (int) abs(ExpectedCashFlow::query()
             ->whereHas('account', fn ($q) => $q->where('ledger_id', $ledgerId)->where('type', AccountType::ASSET))
             ->whereBetween('due_date', [$prevMonthStart, $prevMonthEnd])
             ->where('amount', '<', 0)
-            ->whereHas('transaction', fn ($q) => $q->where('type', \App\Enums\TransactionType::EXPENSE))
+            ->where($assetExpenseFlows)
             ->sum('amount'));
 
-        $prevCashCardExpenses = (int) \App\Models\ExpectedCashFlow::query()
+        $prevCashCardExpenses = (int) ExpectedCashFlow::query()
             ->whereHas('account', fn ($q) => $q->where('ledger_id', $ledgerId)->where('type', AccountType::LIABILITY)->where('is_credit_card', true))
             ->whereBetween('due_date', [$prevMonthStart, $prevMonthEnd])
             ->where('amount', '>', 0)
+            ->where($unpaidCardFlows)
             ->sum('amount');
 
         $prevMonthlyCashExpense = $prevCashAssetExpenses + $prevCashCardExpenses;

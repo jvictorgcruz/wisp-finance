@@ -55,6 +55,11 @@ class GetCashFlowBuilderAction
                         ->where('is_credit_card', true);
                 })
                 ->where('amount', '>', 0)
+                ->where(function ($q) {
+                    $q->whereNull('credit_card_invoice_id')
+                        ->where('status', '!=', 'PAID')
+                        ->orWhereHas('invoice', fn ($inv) => $inv->unpaid());
+                })
                 ->sum('amount');
 
             $initialBalance = $initialAssetBalance - $initialCardDeductions;
@@ -79,6 +84,11 @@ class GetCashFlowBuilderAction
                         ->where('is_credit_card', true);
                 })
                 ->where('amount', '>', 0)
+                ->where(function ($q) {
+                    $q->whereNull('credit_card_invoice_id')
+                        ->where('status', '!=', 'PAID')
+                        ->orWhereHas('invoice', fn ($inv) => $inv->unpaid());
+                })
                 ->selectRaw('due_date, SUM(amount) as total')
                 ->groupBy('due_date')
                 ->get();
@@ -145,13 +155,28 @@ class GetCashFlowBuilderAction
                 ->join('accounts', 'journal_entries.account_id', '=', 'accounts.id')
                 ->leftJoin('accounts as parents', 'accounts.parent_id', '=', 'parents.id')
                 ->where('transactions.ledger_id', $ledgerId)
-                ->whereBetween('expected_cash_flows.due_date', [$monthStart, $monthEnd])
                 ->where('accounts.type', AccountType::EXPENSE)
                 ->where('expected_cash_flows.amount', '>', 0)
                 ->whereHas('account', function ($query) use ($ledgerId) {
                     $query->where('ledger_id', $ledgerId)
                         ->where('type', AccountType::LIABILITY)
                         ->where('is_credit_card', true);
+                })
+                ->where(function ($q) use ($monthStart, $monthEnd) {
+                    $q->where(function ($unpaidQuery) use ($monthStart, $monthEnd) {
+                        $unpaidQuery->whereBetween('expected_cash_flows.due_date', [$monthStart, $monthEnd])
+                            ->where(function ($sub) {
+                                $sub->whereNull('expected_cash_flows.credit_card_invoice_id')
+                                    ->where('expected_cash_flows.status', '!=', 'PAID')
+                                    ->orWhereHas('invoice', fn ($inv) => $inv->unpaid());
+                            });
+                    })->orWhereHas('invoice', function ($inv) use ($monthStart, $monthEnd) {
+                        $inv->paid()->whereHas('expectedCashFlows', function ($payFlow) use ($monthStart, $monthEnd) {
+                            $payFlow->where('amount', '<', 0)
+                                ->where('status', 'PAID')
+                                ->whereBetween('due_date', [$monthStart, $monthEnd]);
+                        });
+                    });
                 })
                 ->selectRaw('
                     COALESCE(parents.id, accounts.id) as aggregate_id,

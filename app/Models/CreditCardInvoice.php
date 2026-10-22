@@ -87,15 +87,35 @@ class CreditCardInvoice extends Model
     }
 
     /**
+     * Scope a query to only include unpaid invoices (net balance > 0).
+     */
+    public function scopeUnpaid($query)
+    {
+        return $query->whereRaw('(SELECT COALESCE(SUM(ecf.amount), 0) FROM expected_cash_flows ecf WHERE ecf.credit_card_invoice_id = credit_card_invoices.id AND ecf.deleted_at IS NULL) > 0');
+    }
+
+    /**
+     * Scope a query to only include paid invoices (has items and net balance <= 0).
+     */
+    public function scopePaid($query)
+    {
+        return $query->whereRaw('(SELECT COALESCE(SUM(ecf.amount), 0) FROM expected_cash_flows ecf WHERE ecf.credit_card_invoice_id = credit_card_invoices.id AND ecf.deleted_at IS NULL) <= 0')
+            ->whereExists(function ($sub) {
+                $sub->selectRaw(1)
+                    ->from('expected_cash_flows as ecf')
+                    ->whereColumn('ecf.credit_card_invoice_id', 'credit_card_invoices.id')
+                    ->whereNull('ecf.deleted_at');
+            });
+    }
+
+    /**
      * Resolve the most relevant invoice for the card (unpaid or current).
      */
     public static function resolveActiveInvoice(CreditCardDetail $card): self
     {
         // 1. Try to find the oldest invoice that is not fully paid
         $unpaidInvoice = self::where('credit_card_detail_id', $card->id)
-            ->whereHas('expectedCashFlows', function ($query) {
-                $query->where('status', '!=', 'PAID');
-            })
+            ->unpaid()
             ->orderBy('reference_year_month', 'asc')
             ->first();
 
