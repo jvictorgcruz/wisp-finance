@@ -66,7 +66,7 @@ export default function TimelineChart({ data, loading }: Props) {
                         tickLine={false}
                         tick={{ fontSize: 10, fontWeight: 800, fill: '#94a3b8' }}
                         tickFormatter={(value) => `${(value / 100).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`}
-                        domain={['auto', 'auto']}
+                        domain={[(dataMin: number) => Math.min(0, dataMin), 'auto']}
                     />
                     <Tooltip content={<CustomTooltip />} />
                     <Area

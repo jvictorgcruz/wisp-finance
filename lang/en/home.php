@@ -7,6 +7,7 @@ return [
     'meta_description' => 'Wisp Finance is your personal finance companion. Track accounts, credit card invoices, and daily expenses with complete clarity and control.',
     'cta' => 'Create my account',
     'cta_secondary' => 'See how it works',
+    'cta_demo' => 'Try Demo',
     'hero_mockup' => [
         'net_worth' => 'Net Worth',
         'monthly_balance' => 'Monthly Balance',

@@ -7,6 +7,7 @@ return [
     'meta_description' => 'O Wisp Finance é seu assistente financeiro pessoal. Controle contas, faturas de cartão de crédito e despesas com total clareza e controle.',
     'cta' => 'Criar minha conta',
     'cta_secondary' => 'Ver como funciona',
+    'cta_demo' => 'Experimentar Demonstração',
     'hero_mockup' => [
         'net_worth' => 'Patrimônio Líquido',
         'monthly_balance' => 'Balanço Mensal',

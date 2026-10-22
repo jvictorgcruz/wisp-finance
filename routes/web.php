@@ -24,6 +24,14 @@ Route::prefix('{locale}')->where(['locale' => 'en|pt'])->middleware('set_locale'
 });
 
 Route::middleware('guest')->group(function () {
+    Route::get('/demo', [\App\Http\Controllers\Auth\DemoController::class, 'store'])
+        ->middleware('throttle:3,1')
+        ->name('demo');
+
+    Route::prefix('{locale}')->where(['locale' => 'en|pt'])->middleware(['set_locale', 'throttle:3,1'])->group(function () {
+        Route::get('demo', [\App\Http\Controllers\Auth\DemoController::class, 'store'])->name('demo.locale');
+    });
+
     Route::middleware('check_maintenance')->group(function () {
         Route::prefix('{locale}')->where(['locale' => 'en|pt'])->group(function () {
             Route::get('register', [RegisteredUserController::class, 'create'])->name('register.locale');

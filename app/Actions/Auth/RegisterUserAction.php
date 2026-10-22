@@ -27,6 +27,7 @@ class RegisterUserAction
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
                 'locale' => app()->getLocale(),
+                'is_demo' => $data['is_demo'] ?? false,
             ]);
 
             $ledger = Ledger::create([

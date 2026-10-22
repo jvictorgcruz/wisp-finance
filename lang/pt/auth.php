@@ -30,6 +30,10 @@ return [
     'reset_password_head' => 'Redefinir Senha',
     'new_password' => 'Nova Senha',
     'reset_password_button' => 'Redefinir Senha',
+    'demo_button' => 'Entrar como Visitante',
+    'demo_user_name' => 'Visitante',
+    'demo_mode_disabled' => 'O modo visitante está desativado no momento.',
+    'or_try_demo' => 'ou experimente sem cadastro',
 
     // Standard Laravel Auth Keys
     'failed' => 'Essas credenciais não coincidem com nossos registros.',

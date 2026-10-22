@@ -1,12 +1,14 @@
-import React from 'react';
-import { useForm, Link } from '@inertiajs/react';
+import React, { useState } from 'react';
+import { useForm, Link, usePage, router } from '@inertiajs/react';
 import AuthLayout from '@/Components/Auth/AuthLayout';
 import TextField from '@/Components/Common/TextField';
 import { User, Mail, Lock, UserPlus } from 'lucide-react';
 import { useTranslation } from '@/Hooks/useTranslation';
 
 export default function Register() {
+    const { demo_mode } = usePage<any>().props;
     const { t, localeRoute } = useTranslation();
+    const [isDemoLoading, setIsDemoLoading] = useState(false);
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
@@ -18,6 +20,13 @@ export default function Register() {
         e.preventDefault();
         post(localeRoute('/register'), {
             onFinish: () => reset('password', 'password_confirmation'),
+        });
+    };
+
+    const handleDemoLogin = () => {
+        setIsDemoLoading(true);
+        router.get(localeRoute('/demo'), {}, {
+            onFinish: () => setIsDemoLoading(false),
         });
     };
 
@@ -102,6 +111,32 @@ export default function Register() {
                         </>
                     )}
                 </button>
+
+                {demo_mode && (
+                    <div className="pt-2">
+                        <div className="relative flex py-2 items-center">
+                            <div className="grow border-t border-slate-200"></div>
+                            <span className="shrink mx-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                                {t('auth.or_try_demo')}
+                            </span>
+                            <div className="grow border-t border-slate-200"></div>
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={handleDemoLogin}
+                            disabled={isDemoLoading || processing}
+                            data-testid="demo-button"
+                            className="w-full h-11 mt-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+                        >
+                            {isDemoLoading ? (
+                                <div className="w-5 h-5 border-2 border-slate-400/30 border-t-slate-700 rounded-full animate-spin" />
+                            ) : (
+                                t('auth.demo_button')
+                            )}
+                        </button>
+                    </div>
+                )}
 
                 <p className="text-center text-sm text-slate-500">
                     {t('auth.already_registered')}{' '}

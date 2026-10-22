@@ -38,14 +38,16 @@ export default function SummaryCard({ title, value, icon: Icon, color, secondary
                         <h2 className={clsx("text-2xl font-extrabold tracking-tight", colorIconMap[color])}>
                             {formatCurrency(value)}
                         </h2>
-                        {trend && !trend.startsWith('0') && (
-                            <p className={clsx(
-                                "text-xs font-semibold flex items-center gap-1",
-                                trend.startsWith('+') ? "text-income" : "text-expense"
-                            )}>
-                                {trend}
-                            </p>
-                        )}
+                        <div className="h-4 flex items-center">
+                            {trend && !trend.startsWith('0') && (
+                                <p className={clsx(
+                                    "text-xs font-semibold flex items-center gap-1",
+                                    trend.startsWith('+') ? "text-income" : "text-expense"
+                                )}>
+                                    {trend}
+                                </p>
+                            )}
+                        </div>
                     </>
                 )}
             </div>

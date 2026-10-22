@@ -9,6 +9,7 @@ interface MockOptions {
     url?: string;
     errors?: Record<string, string>;
     data?: any;
+    demo_mode?: boolean;
 }
 
 /**
@@ -22,7 +23,8 @@ export const createInertiaMock = (options: MockOptions = {}) => {
         translations = {},
         url = '/',
         errors = {},
-        data = {}
+        data = {},
+        demo_mode = false,
     } = options;
 
     const setData = vi.fn();
@@ -60,6 +62,7 @@ export const createInertiaMock = (options: MockOptions = {}) => {
                 translations,
                 flash,
                 errors: {},
+                demo_mode,
             },
         })),
         Link: ({ children, href, ...props }: any) => React.createElement('a', { href, ...props }, children),

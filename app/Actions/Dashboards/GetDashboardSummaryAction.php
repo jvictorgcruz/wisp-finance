@@ -17,7 +17,7 @@ class GetDashboardSummaryAction
     /**
      * Get the summary for a specific month and year.
      * 
-     * @return array{total_assets: int, total_liabilities: int, monthly_revenue: int, monthly_expense: int, monthly_balance: int, trends: array}
+     * @return array{total_assets: int, total_liabilities: int, monthly_revenue: int, monthly_expense: int, monthly_balance: int, trends: array, accrual: array, cash: array}
      */
     public function execute(?int $month = null, ?int $year = null): array
     {
@@ -135,9 +135,90 @@ class GetDashboardSummaryAction
             return ($change > 0 ? '+' : '') . number_format($change, 1);
         };
 
+        // 4. Cash Flow Balances for Selected Month
+        // Starting cash balance before the selected month (Paid Assets - Credit card expenses due before monthStart)
+        $initialCashAssets = (int) \App\Models\ExpectedCashFlow::query()
+            ->where('status', 'PAID')
+            ->where('due_date', '<', $monthStart)
+            ->whereHas('account', fn ($q) => $q->where('ledger_id', $ledgerId)->where('type', AccountType::ASSET))
+            ->sum('amount');
+
+        $initialCashCards = (int) \App\Models\ExpectedCashFlow::query()
+            ->where('due_date', '<', $monthStart)
+            ->whereHas('account', fn ($q) => $q->where('ledger_id', $ledgerId)->where('type', AccountType::LIABILITY)->where('is_credit_card', true))
+            ->where('amount', '>', 0)
+            ->sum('amount');
+
+        $startingCashBalance = $initialCashAssets - $initialCashCards;
+
+        // Cash revenue and expenses in the selected month
+        $cashRevenue = (int) \App\Models\ExpectedCashFlow::query()
+            ->whereHas('account', fn ($q) => $q->where('ledger_id', $ledgerId)->where('type', AccountType::ASSET))
+            ->whereBetween('due_date', [$monthStart, $monthEnd])
+            ->where('amount', '>', 0)
+            ->whereHas('transaction', fn ($q) => $q->where('type', \App\Enums\TransactionType::INCOME))
+            ->sum('amount');
+
+        $cashAssetExpenses = (int) abs(\App\Models\ExpectedCashFlow::query()
+            ->whereHas('account', fn ($q) => $q->where('ledger_id', $ledgerId)->where('type', AccountType::ASSET))
+            ->whereBetween('due_date', [$monthStart, $monthEnd])
+            ->where('amount', '<', 0)
+            ->whereHas('transaction', fn ($q) => $q->where('type', \App\Enums\TransactionType::EXPENSE))
+            ->sum('amount'));
+
+        $cashCardExpenses = (int) \App\Models\ExpectedCashFlow::query()
+            ->whereHas('account', fn ($q) => $q->where('ledger_id', $ledgerId)->where('type', AccountType::LIABILITY)->where('is_credit_card', true))
+            ->whereBetween('due_date', [$monthStart, $monthEnd])
+            ->where('amount', '>', 0)
+            ->sum('amount');
+
+        $monthlyCashExpense = $cashAssetExpenses + $cashCardExpenses;
+        $monthlyCashBalance = $cashRevenue - $monthlyCashExpense;
+        $closingCashBalance = $startingCashBalance + $monthlyCashBalance;
+
+        // 5. Cash Flow Performance for Previous Month (for trends)
+        $prevInitialCashAssets = (int) \App\Models\ExpectedCashFlow::query()
+            ->where('status', 'PAID')
+            ->where('due_date', '<', $prevMonthStart)
+            ->whereHas('account', fn ($q) => $q->where('ledger_id', $ledgerId)->where('type', AccountType::ASSET))
+            ->sum('amount');
+
+        $prevInitialCashCards = (int) \App\Models\ExpectedCashFlow::query()
+            ->where('due_date', '<', $prevMonthStart)
+            ->whereHas('account', fn ($q) => $q->where('ledger_id', $ledgerId)->where('type', AccountType::LIABILITY)->where('is_credit_card', true))
+            ->where('amount', '>', 0)
+            ->sum('amount');
+
+        $prevStartingCashBalance = $prevInitialCashAssets - $prevInitialCashCards;
+
+        $prevCashRevenue = (int) \App\Models\ExpectedCashFlow::query()
+            ->whereHas('account', fn ($q) => $q->where('ledger_id', $ledgerId)->where('type', AccountType::ASSET))
+            ->whereBetween('due_date', [$prevMonthStart, $prevMonthEnd])
+            ->where('amount', '>', 0)
+            ->whereHas('transaction', fn ($q) => $q->where('type', \App\Enums\TransactionType::INCOME))
+            ->sum('amount');
+
+        $prevCashAssetExpenses = (int) abs(\App\Models\ExpectedCashFlow::query()
+            ->whereHas('account', fn ($q) => $q->where('ledger_id', $ledgerId)->where('type', AccountType::ASSET))
+            ->whereBetween('due_date', [$prevMonthStart, $prevMonthEnd])
+            ->where('amount', '<', 0)
+            ->whereHas('transaction', fn ($q) => $q->where('type', \App\Enums\TransactionType::EXPENSE))
+            ->sum('amount'));
+
+        $prevCashCardExpenses = (int) \App\Models\ExpectedCashFlow::query()
+            ->whereHas('account', fn ($q) => $q->where('ledger_id', $ledgerId)->where('type', AccountType::LIABILITY)->where('is_credit_card', true))
+            ->whereBetween('due_date', [$prevMonthStart, $prevMonthEnd])
+            ->where('amount', '>', 0)
+            ->sum('amount');
+
+        $prevMonthlyCashExpense = $prevCashAssetExpenses + $prevCashCardExpenses;
+        $prevMonthlyCashBalance = $prevCashRevenue - $prevMonthlyCashExpense;
+        $prevClosingCashBalance = $prevStartingCashBalance + $prevMonthlyCashBalance;
+
         return [
             'total_assets' => $totalAssets,
             'total_liabilities' => $totalLiabilities,
+            // Fallback for existing direct references
             'monthly_revenue' => $monthlyRevenue,
             'monthly_expense' => $monthlyExpense,
             'monthly_balance' => $monthlyBalance,
@@ -148,6 +229,41 @@ class GetDashboardSummaryAction
                 'revenue' => $calcTrend($monthlyRevenue, $prevRevenue),
                 'expense' => $calcTrend($monthlyExpense, $prevExpense),
                 'monthly_balance' => $calcTrend($monthlyBalance, $prevBalance),
+            ],
+            // Accrual view metrics
+            'accrual' => [
+                'revenue' => $monthlyRevenue,
+                'expense' => $monthlyExpense,
+                'balance' => $monthlyBalance,
+                'trends' => [
+                    'revenue' => $calcTrend($monthlyRevenue, $prevRevenue),
+                    'expense' => $calcTrend($monthlyExpense, $prevExpense),
+                    'monthly_balance' => $calcTrend($monthlyBalance, $prevBalance),
+                ],
+            ],
+            // Cash view metrics
+            'cash' => [
+                'initial_balance' => $startingCashBalance,
+                'expenses' => $monthlyCashExpense,
+                'closing_balance' => $closingCashBalance,
+                // Backward compatibility
+                'available' => $startingCashBalance,
+                'commitments' => $monthlyCashExpense,
+                'projected' => $closingCashBalance,
+                'revenue' => $cashRevenue,
+                'expense' => $monthlyCashExpense,
+                'balance' => $monthlyCashBalance,
+                'trends' => [
+                    'initial_balance' => $calcTrend($startingCashBalance, $prevStartingCashBalance),
+                    'expenses' => $calcTrend($monthlyCashExpense, $prevMonthlyCashExpense),
+                    'closing_balance' => $calcTrend($closingCashBalance, $prevClosingCashBalance),
+                    'available' => $calcTrend($startingCashBalance, $prevStartingCashBalance),
+                    'commitments' => $calcTrend($monthlyCashExpense, $prevMonthlyCashExpense),
+                    'projected' => $calcTrend($closingCashBalance, $prevClosingCashBalance),
+                    'revenue' => $calcTrend($cashRevenue, $prevCashRevenue),
+                    'expense' => $calcTrend($monthlyCashExpense, $prevMonthlyCashExpense),
+                    'monthly_balance' => $calcTrend($monthlyCashBalance, $prevMonthlyCashBalance),
+                ],
             ],
         ];
     }

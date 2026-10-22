@@ -30,6 +30,10 @@ return [
     'reset_password_head' => 'Reset Password',
     'new_password' => 'New Password',
     'reset_password_button' => 'Reset Password',
+    'demo_button' => 'Try as Visitor',
+    'demo_user_name' => 'Visitor',
+    'demo_mode_disabled' => 'Visitor mode is currently disabled.',
+    'or_try_demo' => 'or try without registration',
 
     // Standard Laravel Auth Keys
     'failed' => 'These credentials do not match our records.',

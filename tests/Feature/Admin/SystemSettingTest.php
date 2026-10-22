@@ -38,7 +38,7 @@ test('admin can view all settings', function () {
     $response->assertStatus(200);
     $response->assertInertia(fn ($page) => $page
         ->component('Admin/Settings/Index')
-        ->has('settings', 2)
+        ->has('settings', 3)
     );
 });
 
