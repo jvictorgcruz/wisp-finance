@@ -3,11 +3,14 @@ name: CI/CD Wisp Finance
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
   pull_request:
     branches: [ main ]
+    types: [ labeled ]
 
 jobs:
   laravel-tests:
+    if: github.event_name != 'pull_request' || github.event.label.name == 'run-tests' || contains(github.event.pull_request.labels.*.name, 'run-tests')
     runs-on: ubuntu-latest
     
     services:
