@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect } from 'vitest';
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import Login from './Login';
 import React from 'react';
 
@@ -117,5 +117,59 @@ describe('Login Page', () => {
         // Verify setData connectivity (UI -> Hook interaction)
         expect(setDataMock).toHaveBeenCalledWith('email', 'user@example.com');
         expect(setDataMock).toHaveBeenCalledWith('password', 'secret123');
+    });
+
+    it('should render demo button when demo_mode is enabled', () => {
+        vi.mocked(usePage).mockReturnValue({
+            url: '/en/login',
+            props: {
+                auth: { user: null },
+                demo_mode: true,
+                locale: 'en',
+                locales: { en: 'English', pt: 'Português' },
+                translations: {},
+                flash: {},
+                errors: {},
+            },
+        } as any);
+
+        useFormMock.mockReturnValue({
+            data: { email: '', password: '', remember: false },
+            setData: vi.fn(),
+            post: vi.fn(),
+            processing: false,
+            errors: {},
+            reset: vi.fn(),
+        } as any);
+
+        render(<Login />);
+        expect(screen.getByTestId('demo-button')).toBeInTheDocument();
+    });
+
+    it('should not render demo button when demo_mode is disabled', () => {
+        vi.mocked(usePage).mockReturnValue({
+            url: '/en/login',
+            props: {
+                auth: { user: null },
+                demo_mode: false,
+                locale: 'en',
+                locales: { en: 'English', pt: 'Português' },
+                translations: {},
+                flash: {},
+                errors: {},
+            },
+        } as any);
+
+        useFormMock.mockReturnValue({
+            data: { email: '', password: '', remember: false },
+            setData: vi.fn(),
+            post: vi.fn(),
+            processing: false,
+            errors: {},
+            reset: vi.fn(),
+        } as any);
+
+        render(<Login />);
+        expect(screen.queryByTestId('demo-button')).not.toBeInTheDocument();
     });
 });

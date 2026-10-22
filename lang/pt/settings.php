@@ -5,6 +5,8 @@ return [
     'subtitle' => 'Gerencie as configurações e parâmetros globais do sistema.',
     'maintenance_mode' => 'Modo de Manutenção',
     'maintenance_mode_desc' => 'Ative o modo de manutenção para restringir o acesso à aplicação para não-administradores.',
+    'demo_mode' => 'Modo Visitante',
+    'demo_mode_desc' => 'Permite que visitantes explorem o sistema instantaneamente sem cadastro prévio.',
     'setting_value' => 'Valor do Parâmetro',
     'setting_value_placeholder' => 'Digite o valor para este parâmetro...',
     'back' => 'Voltar ao Dashboard',

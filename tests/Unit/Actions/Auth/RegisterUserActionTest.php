@@ -33,6 +33,14 @@ test('it creates a user, ledger and default accounts successfully', function () 
     // Check if default accounts were created (called via LedgerObserver)
     $accountsCount = Account::withoutGlobalScopes()->where('ledger_id', $user->currentLedger()->id)->count();
     expect($accountsCount)->toBeGreaterThan(0);
+    expect($user->is_demo)->toBeFalse();
+});
+
+test('it creates a demo user when is_demo is passed', function () {
+    $demoData = array_merge($this->data, ['is_demo' => true]);
+    $user = $this->action->execute($demoData);
+
+    expect($user->is_demo)->toBeTrue();
 });
 
 test('it sets the session values after registration', function () {

@@ -76,6 +76,7 @@ test('filtering by invalid context returns validation errors', function () {
 });
 
 test('clear cache flushes the correct tag', function () {
+    Cache::spy();
     Cache::shouldReceive('supportsTags')->andReturn(true);
     Cache::shouldReceive('tags')
         ->once()

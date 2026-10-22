@@ -39,6 +39,7 @@ class User extends Authenticatable
         'locale',
         'current_ledger_id',
         'role',
+        'is_demo',
     ];
 
     /**
@@ -62,6 +63,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role' => UserRole::class,
+            'is_demo' => 'boolean',
         ];
     }
 

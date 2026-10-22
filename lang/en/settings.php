@@ -5,6 +5,8 @@ return [
     'subtitle' => 'Manage application-wide system parameters and configurations.',
     'maintenance_mode' => 'Maintenance Mode',
     'maintenance_mode_desc' => 'Toggle maintenance mode to restrict access to the application for non-administrators.',
+    'demo_mode' => 'Demo Mode',
+    'demo_mode_desc' => 'Allows visitors to explore the system instantly without prior registration.',
     'setting_value' => 'Parameter Value',
     'setting_value_placeholder' => 'Enter the message or value for this parameter...',
     'back' => 'Back to Dashboard',

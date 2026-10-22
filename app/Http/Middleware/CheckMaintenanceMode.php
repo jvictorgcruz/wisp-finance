@@ -14,12 +14,13 @@ class CheckMaintenanceMode
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  \Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
         $isMaintenanceActive = SettingManager::isActive('maintenance_mode');
-        $hasBypass = $request->user()?->isSuperAdmin() || FeatureManager::isAvailable('bypass_maintenance');
+        $isDemoAllowed = $request->user()?->is_demo && SettingManager::isActive('demo_mode');
+        $hasBypass = $request->user()?->isSuperAdmin() || FeatureManager::isAvailable('bypass_maintenance') || $isDemoAllowed;
 
         if ($isMaintenanceActive && !$hasBypass) {
             return Inertia::render('Maintenance')->toResponse($request)->setStatusCode(503);

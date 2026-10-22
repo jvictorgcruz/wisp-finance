@@ -57,6 +57,7 @@ class HandleInertiaRequests extends Middleware
 
         return array_merge(parent::share($request), [
             'features' => \App\Support\FeatureFlags\FeatureManager::allFlags(),
+            'demo_mode' => \App\Support\Settings\SettingManager::isActive('demo_mode'),
             'auth' => [
                 'user' => $user,
                 'ledgers' => $user ? $user->ledgers : [],
