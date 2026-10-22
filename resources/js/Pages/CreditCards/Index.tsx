@@ -7,7 +7,7 @@ import LucideIcon from '@/Components/Common/LucideIcon';
 import DropdownSelector from '@/Components/Common/DropdownSelector';
 import { Button } from '@/Components/Common/Button';
 import { useState } from 'react';
-import { router, Link } from '@inertiajs/react';
+import { router, Link, usePage } from '@inertiajs/react';
 import Modal from '@/Components/Common/Modal';
 import PaymentModal from './Invoices/components/PaymentModal';
 import { clsx, type ClassValue } from 'clsx';
@@ -30,6 +30,9 @@ interface CreditCardsProps {
 
 export default function CreditCards({ cards, root_categories, available_colors, available_icons, accounts }: CreditCardsProps) {
     const { t } = useTranslation();
+    const page = usePage<any>();
+    const financial_context = page?.props?.financial_context;
+    const paymentSourceAccounts = (financial_context?.accounts || []).filter((a: any) => a.type === 'asset');
     const [modal, setModal] = useState({
         show: false,
         mode: 'create' as 'create' | 'edit' | 'subaccount',
@@ -322,7 +325,7 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                     onClose={() => setPaymentModal(p => ({ ...p, show: false }))}
                     account={paymentModal.card}
                     invoice={paymentModal.invoice}
-                    sourceAccounts={accounts}
+                    sourceAccounts={paymentSourceAccounts}
                 />
             )}
         </AppLayout>

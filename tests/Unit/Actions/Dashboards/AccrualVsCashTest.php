@@ -2,11 +2,15 @@
 
 namespace Tests\Unit\Actions\Dashboards;
 
+use App\Actions\CreditCards\PayInvoiceAction;
 use App\Actions\Dashboards\GetAccrualBasisBuilderAction;
 use App\Actions\Dashboards\GetCashFlowBuilderAction;
 use App\Actions\Transactions\RecordExpenseAction;
+use App\Actions\Transactions\RecordIncomeAction;
+use App\Enums\AccountType;
 use App\Models\Account;
 use App\Models\CreditCardDetail;
+use App\Models\CreditCardInvoice;
 use App\Support\LedgerContext;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
@@ -22,7 +26,7 @@ beforeEach(function () {
 
     $this->cardAccount = Account::factory()->create([
         'ledger_id' => $this->ledger->id,
-        'type' => \App\Enums\AccountType::LIABILITY,
+        'type' => AccountType::LIABILITY,
         'is_credit_card' => true,
     ]);
     
@@ -35,7 +39,7 @@ beforeEach(function () {
 
     $this->expenseCategory = Account::factory()->create([
         'ledger_id' => $this->ledger->id,
-        'type' => \App\Enums\AccountType::EXPENSE,
+        'type' => AccountType::EXPENSE,
     ]);
 
     $this->recordExpense = new RecordExpenseAction();
@@ -84,7 +88,7 @@ test('it reflects 200 in 2x credit purchase: 200 in current month accrual and 10
     // Card with closing day 15 and due day 25
     $cardAccount = Account::factory()->create([
         'ledger_id' => $this->ledger->id,
-        'type' => \App\Enums\AccountType::LIABILITY,
+        'type' => AccountType::LIABILITY,
         'is_credit_card' => true,
     ]);
     CreditCardDetail::factory()->create([
@@ -133,7 +137,7 @@ test('it assigns installments to future months when purchase is after closing da
     // Card with closing day 10 and due day 17
     $cardAccount = Account::factory()->create([
         'ledger_id' => $this->ledger->id,
-        'type' => \App\Enums\AccountType::LIABILITY,
+        'type' => AccountType::LIABILITY,
         'is_credit_card' => true,
     ]);
     $cardDetail = CreditCardDetail::factory()->create([
@@ -193,6 +197,131 @@ test('it assigns installments to future months when purchase is after closing da
     $ecfs = \App\Models\ExpectedCashFlow::where('account_id', $cardAccount->id)->orderBy('id')->get();
     expect(Carbon::parse($ecfs[0]->due_date)->format('Y-m-d'))->toBe('2026-11-25');
     expect(Carbon::parse($ecfs[1]->due_date)->format('Y-m-d'))->toBe('2026-12-25');
+
+    Carbon::setTestNow();
+});
+
+test('it handles credit card invoice prepayment in cash flow dashboard and builder correctly', function () {
+    // Current date: October 2026
+    $octStart = Carbon::create(2026, 10, 1);
+    Carbon::setTestNow($octStart);
+
+    // 1. Bank Account (Asset) with 1,000.00 income
+    $bankAccount = Account::factory()->create([
+        'ledger_id' => $this->ledger->id,
+        'type' => AccountType::ASSET,
+    ]);
+
+    $revenueCategory = Account::factory()->create([
+        'ledger_id' => $this->ledger->id,
+        'type' => AccountType::REVENUE,
+    ]);
+
+    app(RecordIncomeAction::class)->execute(
+        $bankAccount,
+        $revenueCategory,
+        100000, // R$ 1.000,00
+        $octStart,
+        'Salário Outubro'
+    );
+
+    // 2. Card Account with closing day 10, due day 17
+    $cardAccount = Account::factory()->create([
+        'ledger_id' => $this->ledger->id,
+        'type' => AccountType::LIABILITY,
+        'is_credit_card' => true,
+    ]);
+    $cardDetail = CreditCardDetail::factory()->create([
+        'account_id' => $cardAccount->id,
+        'closing_day' => 10,
+        'due_day' => 17,
+        'invoice_control_enabled' => true,
+    ]);
+
+    // 3. Purchase on Oct 20 (after closing day 10) of R$ 300 in 2x (150 each)
+    $oct20 = Carbon::create(2026, 10, 20);
+    Carbon::setTestNow($oct20);
+
+    $this->recordExpense->execute(
+        $cardAccount,
+        $this->expenseCategory,
+        30000, // R$ 300,00
+        $oct20,
+        'Compra parcelada 2x',
+        [],
+        2
+    );
+
+    // Resolve the November invoice (Installment 1 is for Nov, due Nov 17)
+    $novInvoice = CreditCardInvoice::where('credit_card_detail_id', $cardDetail->id)
+        ->where('reference_year_month', '2026-11')
+        ->first();
+    expect($novInvoice)->not->toBeNull();
+    expect($novInvoice->total_amount)->toBe(15000);
+
+    // 4. On Oct 22, user prepays the November invoice in full (R$ 150,00) from Bank
+    $oct22 = Carbon::create(2026, 10, 22);
+    Carbon::setTestNow($oct22);
+
+    app(PayInvoiceAction::class)->execute(
+        $novInvoice,
+        $bankAccount,
+        15000,
+        $oct22
+    );
+
+    expect($novInvoice->fresh()->isPaid())->toBeTrue();
+
+    $summaryAction = app(\App\Actions\Dashboards\GetDashboardSummaryAction::class);
+    $cfBuilder = app(GetCashFlowBuilderAction::class);
+
+    // 5. Check October 2026 Dashboard Summary:
+    // Cash Revenue: 1,000.00 (100000)
+    // Cash Expense: 150.00 (15000) from the prepaid invoice
+    // Cash Balance: +850.00 (85000)
+    // Starting Balance: 0
+    // Closing Balance: 850.00 (85000)
+    $octSummary = $summaryAction->execute(10, 2026);
+    expect($octSummary['cash']['revenue'])->toBe(100000);
+    expect($octSummary['cash']['expense'])->toBe(15000);
+    expect($octSummary['cash']['balance'])->toBe(85000);
+    expect($octSummary['cash']['initial_balance'])->toBe(0);
+    expect($octSummary['cash']['closing_balance'])->toBe(85000);
+
+    // October Cash Flow Timeline & Categories
+    $octCf = $cfBuilder->execute(10, 2026);
+    expect($octCf['timeline']['2026-10-31'])->toBe(85000);
+    // Categories in October include the expense category of the prepaid card invoice (150.00)
+    $octExpenseCat = collect($octCf['categories'])->firstWhere('id', $this->expenseCategory->id);
+    expect($octExpenseCat)->not->toBeNull();
+    expect($octExpenseCat['total'])->toBe(15000);
+
+    // 6. Check November 2026 Dashboard Summary:
+    // Cash Revenue: 0
+    // Cash Expense: 0 (the 150 was already paid in Oct, so NO duplicate deduction!)
+    // Starting Balance: 850.00 (85000)
+    // Closing Balance: 850.00 (85000)
+    $novSummary = $summaryAction->execute(11, 2026);
+    expect($novSummary['cash']['revenue'])->toBe(0);
+    expect($novSummary['cash']['expense'])->toBe(0);
+    expect($novSummary['cash']['initial_balance'])->toBe(85000);
+    expect($novSummary['cash']['closing_balance'])->toBe(85000);
+
+    // November Cash Flow Timeline & Categories
+    $novCf = $cfBuilder->execute(11, 2026);
+    expect($novCf['timeline']['2026-11-30'])->toBe(85000);
+    // Categories in November should NOT have the prepaid expense
+    $novExpenseCat = collect($novCf['categories'])->firstWhere('id', $this->expenseCategory->id);
+    expect($novExpenseCat)->toBeNull();
+
+    // 7. Check December 2026 Dashboard Summary:
+    // Cash Expense: 150.00 (Installment 2, unpaid)
+    // Starting Balance: 850.00 (85000)
+    // Closing Balance: 700.00 (70000)
+    $decSummary = $summaryAction->execute(12, 2026);
+    expect($decSummary['cash']['expense'])->toBe(15000);
+    expect($decSummary['cash']['initial_balance'])->toBe(85000);
+    expect($decSummary['cash']['closing_balance'])->toBe(70000);
 
     Carbon::setTestNow();
 });
