@@ -107,6 +107,34 @@ export default function TransactionModal({ show, onClose, initialType, transacti
         }
     }, [show, initialType, transaction]);
 
+    const initialDateRef = useRef<string>(data.date);
+    useEffect(() => {
+        if (!show) {
+            initialDateRef.current = data.date;
+        }
+    }, [show]);
+
+    const isDirty = useMemo(() => {
+        if (transaction) {
+            return (
+                data.amount !== fromCents(transaction.amount) ||
+                data.date !== transaction.date ||
+                (data.description || '') !== (transaction.description || '') ||
+                data.source_account_id !== transaction.source_account_id ||
+                data.destination_account_id !== transaction.destination_account_id ||
+                (data.installments ?? 1) !== (transaction.installment_total ?? 1)
+            );
+        }
+        return (
+            data.amount > 0 ||
+            (data.description || '').trim() !== '' ||
+            data.source_account_id !== null ||
+            data.destination_account_id !== null ||
+            (data.installments ?? 1) !== 1 ||
+            data.date !== initialDateRef.current
+        );
+    }, [data, transaction]);
+
     const isSameAccount = data.source_account_id !== null && 
                         data.destination_account_id !== null && 
                         data.source_account_id === data.destination_account_id;
@@ -196,6 +224,7 @@ export default function TransactionModal({ show, onClose, initialType, transacti
             onClose={onClose} 
             title={transaction ? t('transactions.modal.edit_title') : t('transactions.modal.title')} 
             maxWidth="md"
+            isDirty={isDirty}
             afterLeave={() => {
                 reset();
                 clearErrors();
@@ -309,8 +338,8 @@ export default function TransactionModal({ show, onClose, initialType, transacti
                 <div className="flex items-center justify-end gap-3 mt-10">
                     <button
                         type="button"
-                        onClick={onClose}
-                        className="px-6 py-2.5 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors"
+                        data-modal-close
+                        className="px-6 py-2.5 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
                     >
                         {t('transactions.modal.cancel')}
                     </button>
