@@ -24,13 +24,60 @@ export default function Modal({
 }: ModalProps) {
     const { t } = useTranslation();
     const [confirmingDiscard, setConfirmingDiscard] = useState(false);
+    const [viewportState, setViewportState] = useState<{ height: number; offsetTop: number; isKeyboardOpen: boolean } | null>(null);
     const isEscapeClosingRef = useRef(false);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (!show) {
             setConfirmingDiscard(false);
+            setViewportState(null);
         }
     }, [show]);
+
+    useEffect(() => {
+        if (!show || typeof window === 'undefined' || !window.visualViewport) return;
+
+        const vv = window.visualViewport;
+        const scrollActiveIntoView = () => {
+            const container = scrollContainerRef.current;
+            const active = document.activeElement as HTMLElement | null;
+            if (container && active && container.contains(active) && typeof active.scrollIntoView === 'function') {
+                active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            }
+        };
+
+        const updateViewport = () => {
+            const isKeyboardOpen = vv.height < window.innerHeight * 0.85;
+            setViewportState({
+                height: vv.height,
+                offsetTop: vv.offsetTop,
+                isKeyboardOpen,
+            });
+            if (isKeyboardOpen) {
+                requestAnimationFrame(scrollActiveIntoView);
+            }
+        };
+
+        updateViewport();
+        vv.addEventListener('resize', updateViewport);
+        vv.addEventListener('scroll', updateViewport);
+
+        return () => {
+            vv.removeEventListener('resize', updateViewport);
+            vv.removeEventListener('scroll', updateViewport);
+        };
+    }, [show]);
+
+    const handleFocusCapture = useCallback((e: React.FocusEvent<HTMLDivElement>) => {
+        const target = e.target as HTMLElement | null;
+        if (!target || typeof target.scrollIntoView !== 'function') return;
+        setTimeout(() => {
+            if (scrollContainerRef.current?.contains(target)) {
+                target.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            }
+        }, 150);
+    }, []);
 
     useEffect(() => {
         if (!show) return;
@@ -93,6 +140,17 @@ export default function Modal({
         '2xl': 'sm:max-w-2xl',
     }[maxWidth];
 
+    const isKeyboardOpen = Boolean(viewportState?.isKeyboardOpen);
+    const viewportStyle: React.CSSProperties | undefined = viewportState
+        ? {
+              height: `${viewportState.height}px`,
+              top: `${viewportState.offsetTop}px`,
+          }
+        : undefined;
+    const panelMaxHeight = viewportState
+        ? `${Math.max(200, viewportState.height - (isKeyboardOpen ? 16 : 32))}px`
+        : undefined;
+
     return (
         <Transition show={show} as={Fragment} afterLeave={afterLeave}>
             <Dialog as="div" className="relative z-50" onClose={handleDialogClose}>
@@ -111,8 +169,12 @@ export default function Modal({
                     />
                 </TransitionChild>
 
-                <div className="fixed inset-0 z-50 overflow-hidden">
-                    <div className="flex h-full items-center justify-center p-4 text-center sm:p-6">
+                <div
+                    data-testid="modal-viewport-wrapper"
+                    className="fixed inset-x-0 top-0 bottom-0 z-50 overflow-hidden"
+                    style={viewportStyle}
+                >
+                    <div className={`flex h-full justify-center text-center ${isKeyboardOpen ? 'items-start p-2 sm:items-center sm:p-6' : 'items-center p-4 sm:p-6'}`}>
                         <TransitionChild
                             as={Fragment}
                             enter="ease-out duration-300"
@@ -122,7 +184,10 @@ export default function Modal({
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95"
                         >
-                            <DialogPanel className={`relative w-full max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-3rem)] bg-white rounded-3xl border-editorial text-left transform transition-all ${maxWidthClasses} flex flex-col overflow-hidden my-auto`}>
+                            <DialogPanel
+                                style={panelMaxHeight ? { maxHeight: panelMaxHeight } : undefined}
+                                className={`relative w-full max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-3rem)] bg-white rounded-3xl border-editorial text-left transform transition-all ${maxWidthClasses} flex flex-col overflow-hidden ${isKeyboardOpen ? 'my-0 sm:my-auto' : 'my-auto'}`}
+                            >
                                 <div className="px-6 py-4 border-b border-editorial flex items-center justify-between bg-white shrink-0 z-10 rounded-t-3xl">
                                     <DialogTitle as="h3" className="text-sm font-bold uppercase tracking-widest text-slate-500">
                                         {title}
@@ -138,8 +203,10 @@ export default function Modal({
                                 </div>
 
                                 <div
-                                    className="p-6 overflow-y-auto flex-1 min-h-0"
+                                    ref={scrollContainerRef}
+                                    className="p-6 overflow-y-auto overscroll-contain flex-1 min-h-0"
                                     onClick={handleContentClick}
+                                    onFocusCapture={handleFocusCapture}
                                 >
                                     {children}
                                 </div>

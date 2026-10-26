@@ -314,10 +314,22 @@ function FinancialSelectContent({
     flat,
     onClear
 }: ContentProps) {
-    // Auto-focus search input when panel opens
+    // Auto-focus search input when panel opens on desktop; on touch devices scroll trigger into view without forcing virtual keyboard
     useEffect(() => {
         if (open) {
             resetSelection();
+            const isTouchDevice =
+                typeof window !== 'undefined' &&
+                typeof window.matchMedia === 'function' &&
+                window.matchMedia('(pointer: coarse)').matches;
+
+            if (isTouchDevice) {
+                if (typeof internalTriggerRef.current?.scrollIntoView === 'function') {
+                    internalTriggerRef.current.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                }
+                return;
+            }
+
             setTimeout(() => {
                 searchInputRef.current?.focus();
             }, 50);
@@ -351,9 +363,9 @@ function FinancialSelectContent({
                     <span className="text-slate-400 font-bold text-sm">{placeholder}</span>
                 )}
             </DropdownSelector.Trigger>
-            <DropdownSelector.Panel align="left" placement={placement} className="max-h-100 overflow-hidden flex flex-col p-0">
+            <DropdownSelector.Panel align="left" placement={placement} className="max-h-64 sm:max-h-100 overflow-hidden! flex flex-col p-0">
                 {/* Search Bar */}
-                <div className="p-3 border-b border-slate-50 bg-white sticky top-0 z-10">
+                <div className="p-3 border-b border-slate-50 bg-white sticky top-0 z-10 shrink-0">
                     <div className="relative group">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 group-focus-within:text-primary transition-colors" />
                         <input 
@@ -378,7 +390,7 @@ function FinancialSelectContent({
                 </div>
 
                 {value && onClear && (
-                    <div className="p-1 border-b border-slate-50 bg-slate-50/50">
+                    <div className="p-1 border-b border-slate-50 bg-slate-50/50 shrink-0">
                         <button
                             type="button"
                             onClick={(e) => {
@@ -396,7 +408,7 @@ function FinancialSelectContent({
                     </div>
                 )}
 
-                <div ref={panelRef} className="p-2 overflow-y-auto flex-1 custom-scrollbar">
+                <div ref={panelRef} className="p-2 overflow-y-auto flex-1 min-h-0 overscroll-contain touch-pan-y custom-scrollbar">
                     {(() => {
                         let globalIndex = 0;
                         const itemsToRender: React.ReactNode[] = [];
