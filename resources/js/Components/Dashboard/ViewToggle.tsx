@@ -18,13 +18,13 @@ interface Props {
 
 export default function ViewToggle({ options, activeId, onChange }: Props) {
     return (
-        <div className="relative flex bg-surface-low p-1 rounded-xl border border-transparent items-center">
+        <div className="relative flex w-full sm:w-auto bg-surface-low p-1 rounded-xl border border-transparent items-center">
             {options.map((option) => (
                 <button
                     key={option.id}
                     onClick={() => onChange(option.id)}
                     className={clsx(
-                        'relative z-10 px-5 py-2 rounded-lg text-[10px] font-bold uppercase tracking-[0.12em] transition-all duration-300 outline-none cursor-pointer flex items-center gap-1.5',
+                        'relative z-10 flex-1 sm:flex-initial justify-center px-3 sm:px-5 py-2 rounded-lg text-[10px] font-bold uppercase tracking-[0.12em] transition-all duration-300 outline-none cursor-pointer flex items-center gap-1.5 whitespace-nowrap',
                         activeId === option.id 
                             ? 'text-primary' 
                             : 'text-slate-500 hover:text-slate-700'

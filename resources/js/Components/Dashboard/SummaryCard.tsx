@@ -22,23 +22,23 @@ const colorIconMap = {
 
 export default function SummaryCard({ title, value, icon: Icon, color, secondaryColor, loading, trend }: Props) {
     return (
-        <div className="bg-surface-lowest p-6 rounded-xl shadow-sm border border-transparent group">
-            <div className="flex items-center justify-between mb-4">
+        <div className="bg-surface-lowest p-5 sm:p-6 rounded-xl shadow-sm border border-transparent group min-w-0">
+            <div className="flex items-center justify-between gap-2 mb-4">
                 <span className={clsx("text-[10px] font-bold uppercase tracking-[0.15em]", colorIconMap[secondaryColor])}>
                     {title}
                 </span>
-                <Icon className={clsx("w-5 h-5", colorIconMap[secondaryColor])} />
+                <Icon className={clsx("w-5 h-5 shrink-0", colorIconMap[secondaryColor])} />
             </div>
             
-            <div className="space-y-1">
+            <div className="space-y-1 min-w-0">
                 {loading ? (
                     <div className="h-8 w-3/4 bg-surface-low animate-pulse rounded-lg" />
                 ) : (
                     <>
-                        <h2 className={clsx("text-2xl font-extrabold tracking-tight", colorIconMap[color])}>
+                        <h2 className={clsx("text-xl sm:text-2xl font-extrabold tracking-tight truncate", colorIconMap[color])}>
                             {formatCurrency(value)}
                         </h2>
-                        <div className="h-4 flex items-center">
+                        <div className="min-h-4 flex items-center">
                             {trend && !trend.startsWith('0') && (
                                 <p className={clsx(
                                     "text-xs font-semibold flex items-center gap-1",

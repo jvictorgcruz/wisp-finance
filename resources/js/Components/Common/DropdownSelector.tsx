@@ -142,7 +142,11 @@ DropdownSelector.Panel = function Panel({
     const DefaultComponent = mode === 'listbox' ? ListboxOptions : MenuItems;
     const ResolvedComponent = Component || DefaultComponent;
 
-    const anchor = `${placement} ${align === 'right' ? 'end' : 'start'}` as any;
+    const anchor = {
+        to: `${placement} ${align === 'right' ? 'end' : 'start'}` as any,
+        gap: 8,
+        padding: 12,
+    };
 
     return (
         <Transition
@@ -156,6 +160,7 @@ DropdownSelector.Panel = function Panel({
         >
             <ResolvedComponent
                 anchor={anchor}
+                modal={false}
                 className={cn(
                     "z-9999 overflow-hidden divide-y divide-surface-low rounded-xl bg-surface-lowest border-editorial focus:outline-none shadow-xl shadow-slate-900/5",
                     "w-(--button-width)",

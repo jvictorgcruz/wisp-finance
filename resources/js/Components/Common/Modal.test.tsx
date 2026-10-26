@@ -149,4 +149,39 @@ describe('Modal Component', () => {
         expect(screen.queryByTestId('discard-confirmation')).not.toBeInTheDocument();
         expect(onClose).not.toHaveBeenCalled();
     });
+
+    it('shifts modal to the top and constrains height when mobile virtual keyboard shrinks visualViewport', () => {
+        const listeners: Record<string, Array<() => void>> = {};
+        const mockVisualViewport = {
+            height: 800,
+            offsetTop: 0,
+            addEventListener: vi.fn((event: string, cb: () => void) => {
+                listeners[event] = listeners[event] || [];
+                listeners[event].push(cb);
+            }),
+            removeEventListener: vi.fn(),
+        };
+
+        Object.defineProperty(window, 'innerHeight', { value: 800, configurable: true, writable: true });
+        Object.defineProperty(window, 'visualViewport', { value: mockVisualViewport, configurable: true, writable: true });
+
+        render(
+            <Modal show={true} onClose={onClose} title="Mobile Keyboard Modal">
+                <input type="text" placeholder="Conta" />
+            </Modal>
+        );
+
+        const wrapper = screen.getByTestId('modal-viewport-wrapper');
+        expect(wrapper).toHaveStyle({ height: '800px', top: '0px' });
+
+        // Simulate mobile keyboard opening (visualViewport shrinks to 400px)
+        React.act(() => {
+            mockVisualViewport.height = 400;
+            mockVisualViewport.offsetTop = 10;
+            listeners['resize']?.forEach((cb) => cb());
+        });
+
+        expect(wrapper).toHaveStyle({ height: '400px', top: '10px' });
+        expect(wrapper.firstElementChild?.className).toContain('items-start');
+    });
 });

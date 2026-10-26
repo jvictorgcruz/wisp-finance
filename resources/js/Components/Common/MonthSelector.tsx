@@ -76,25 +76,25 @@ export default function MonthSelector({
     };
 
     return (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between sm:justify-start gap-2 sm:gap-3 w-full sm:w-auto">
             <button
                 type="button"
                 onClick={handlePrevMonth}
                 disabled={prevDisabled}
-                className="p-2.5 bg-white border border-slate-200 rounded-2xl text-slate-500 hover:text-primary hover:border-primary/30 hover:bg-slate-50 transition-all shadow-sm disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed cursor-pointer"
+                className="p-2.5 shrink-0 bg-white border border-slate-200 rounded-2xl text-slate-500 hover:text-primary hover:border-primary/30 hover:bg-slate-50 transition-all shadow-sm disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed cursor-pointer"
             >
                 <ChevronLeft className="w-5 h-5" />
             </button>
             
-            <Popover className="relative">
+            <Popover className="relative flex-1 sm:flex-initial min-w-0">
                 {({ open, close }) => (
                     <>
-                        <PopoverButton className="flex items-center gap-3 px-6 py-2.5 bg-white border border-slate-200 rounded-2xl shadow-sm min-w-[220px] justify-center hover:border-primary/30 hover:bg-slate-50 transition-all outline-none group cursor-pointer">
+                        <PopoverButton className="flex items-center gap-2 sm:gap-3 px-3 sm:px-6 py-2.5 bg-white border border-slate-200 rounded-2xl shadow-sm w-full sm:min-w-[220px] justify-center hover:border-primary/30 hover:bg-slate-50 transition-all outline-none group cursor-pointer">
                             <Calendar className="w-4 h-4 text-primary shrink-0 transition-transform group-hover:scale-110" />
-                            <span className="text-sm font-black capitalize tracking-tight text-slate-700">
+                            <span className="text-sm font-black capitalize tracking-tight text-slate-700 truncate">
                                 {label}
                             </span>
-                            <ChevronDown className={cn("w-4 h-4 text-slate-400 transition-transform duration-200", open && "rotate-180")} />
+                            <ChevronDown className={cn("w-4 h-4 shrink-0 text-slate-400 transition-transform duration-200", open && "rotate-180")} />
                         </PopoverButton>
 
                         <Transition
@@ -106,7 +106,7 @@ export default function MonthSelector({
                             leaveFrom="opacity-100 translate-y-0"
                             leaveTo="opacity-0 translate-y-1"
                         >
-                            <PopoverPanel className="absolute z-50 mt-3 left-1/2 -translate-x-1/2 w-72 bg-white rounded-3xl shadow-2xl border border-slate-100 p-3 overflow-hidden">
+                            <PopoverPanel className="absolute z-50 mt-3 left-1/2 -translate-x-1/2 w-72 max-w-[calc(100vw-2rem)] bg-white rounded-3xl shadow-2xl border border-slate-100 p-3 overflow-hidden">
                                 <div className="flex flex-col gap-2">
                                     {/* Header / Year Selector Toggle */}
                                     <div className="flex items-center justify-between px-2">
@@ -253,7 +253,7 @@ export default function MonthSelector({
                 type="button"
                 onClick={handleNextMonth}
                 disabled={nextDisabled}
-                className="p-2.5 bg-white border border-slate-200 rounded-2xl text-slate-500 hover:text-primary hover:border-primary/30 hover:bg-slate-50 transition-all shadow-sm disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed cursor-pointer"
+                className="p-2.5 shrink-0 bg-white border border-slate-200 rounded-2xl text-slate-500 hover:text-primary hover:border-primary/30 hover:bg-slate-50 transition-all shadow-sm disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed cursor-pointer"
             >
                 <ChevronRight className="w-5 h-5" />
             </button>

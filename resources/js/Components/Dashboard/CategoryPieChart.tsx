@@ -57,8 +57,8 @@ export default function CategoryPieChart({ data, loading, type = 'expense' }: Pr
     };
 
     return (
-        <div className="flex flex-col md:flex-row items-center gap-12">
-            <div className="relative w-48 h-48 flex items-center justify-center">
+        <div className="flex flex-col md:flex-row items-center gap-6 md:gap-12">
+            <div className="relative w-48 h-48 shrink-0 flex items-center justify-center">
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                         <Pie
@@ -88,14 +88,14 @@ export default function CategoryPieChart({ data, loading, type = 'expense' }: Pr
                 </div>
             </div>
 
-            <div className="flex-1 space-y-4 w-full">
+            <div className="flex-1 space-y-4 w-full min-w-0">
                 {chartData.map((item, index) => (
-                    <div key={item.id} className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color || shades[index % shades.length] }} />
-                            <span className="text-sm font-semibold text-slate-700">{item.name}</span>
+                    <div key={item.id} className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: item.color || shades[index % shades.length] }} />
+                            <span className="text-sm font-semibold text-slate-700 truncate">{item.name}</span>
                         </div>
-                        <span className="text-sm font-bold text-slate-900">
+                        <span className="text-sm font-bold text-slate-900 shrink-0">
                             {Math.round((item.total / total) * 100)}%
                         </span>
                     </div>

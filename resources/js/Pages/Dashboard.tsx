@@ -197,7 +197,7 @@ export default function Dashboard({ summary, transactions, currentFilters }: Pro
                         </h2>
                     </div>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full md:w-auto">
                         <MonthSelector date={selectedDate} onChange={setSelectedDate} />
                         <ViewToggle 
                             options={toggleOptions} 
@@ -208,7 +208,7 @@ export default function Dashboard({ summary, transactions, currentFilters }: Pro
                 </div>
             </PageHeader>
 
-            <div className="space-y-12 pb-10">
+            <div className="space-y-8 md:space-y-12 pb-10">
                 <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {viewMode === 'cash' ? (
                         <>
@@ -267,8 +267,8 @@ export default function Dashboard({ summary, transactions, currentFilters }: Pro
                     )}
                 </section>
 
-                <section className="bg-surface-lowest p-8 rounded-xl shadow-sm border border-transparent">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
+                <section className="bg-surface-lowest p-5 sm:p-8 rounded-xl shadow-sm border border-transparent overflow-hidden">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 sm:mb-8 gap-4">
                         <div>
                             <h3 className="text-xl font-bold tracking-tight text-slate-900">
                                 {viewMode === 'cash' ? t('transactions.dashboard.cash_flow_evolution', { defaultValue: 'Evolução de Fluxo de Caixa' }) : t('transactions.dashboard.net_worth_evolution')}
@@ -320,9 +320,9 @@ export default function Dashboard({ summary, transactions, currentFilters }: Pro
                     </div>
                 </div>
 
-                <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div className="bg-surface-lowest p-8 rounded-xl shadow-sm border border-transparent">
-                        <h3 className="text-xl font-bold tracking-tight text-slate-900 mb-8">
+                <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+                    <div className="bg-surface-lowest p-5 sm:p-8 rounded-xl shadow-sm border border-transparent overflow-hidden">
+                        <h3 className="text-xl font-bold tracking-tight text-slate-900 mb-6 sm:mb-8">
                             Receitas por Categoria
                         </h3>
                         <CategoryPieChart 
@@ -331,8 +331,8 @@ export default function Dashboard({ summary, transactions, currentFilters }: Pro
                             type="revenue"
                         />
                     </div>
-                    <div className="bg-surface-lowest p-8 rounded-xl shadow-sm border border-transparent">
-                        <h3 className="text-xl font-bold tracking-tight text-slate-900 mb-8">
+                    <div className="bg-surface-lowest p-5 sm:p-8 rounded-xl shadow-sm border border-transparent overflow-hidden">
+                        <h3 className="text-xl font-bold tracking-tight text-slate-900 mb-6 sm:mb-8">
                             {t('transactions.dashboard.expenses_by_category')}
                         </h3>
                         <CategoryPieChart 
