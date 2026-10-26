@@ -228,6 +228,11 @@ export default function Index({ settings }: SettingsProps) {
                 onClose={() => !processing && setEditingSetting(null)}
                 title={t(`settings.edit_setting`)}
                 maxWidth='2xl'
+                isDirty={
+                    !!editingSetting &&
+                    (formActive !== editingSetting.is_active ||
+                        formValue !== (editingSetting.value || ''))
+                }
             >
                 <div className="space-y-8">
                     {editingSetting && (
@@ -283,9 +288,10 @@ export default function Index({ settings }: SettingsProps) {
 
                     <div className="flex gap-3 justify-end pt-4">
                         <button
-                            onClick={() => setEditingSetting(null)}
+                            type="button"
+                            data-modal-close
                             disabled={processing}
-                            className="px-6 py-3 rounded-xl font-bold text-sm text-slate-400 hover:text-slate-600 transition-colors"
+                            className="px-6 py-3 rounded-xl font-bold text-sm text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
                         >
                             {t('settings.cancel')}
                         </button>

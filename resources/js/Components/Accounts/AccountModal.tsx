@@ -182,6 +182,47 @@ export default function AccountModal({
         }));
     };
 
+    const isDirty = React.useMemo(() => {
+        if (mode === 'edit' && account) {
+            const initialIcon = account.ui_metadata?.icon || '';
+            const initialColor = account.ui_metadata?.color || '#3b82f6';
+            const baseDirty =
+                data.name !== account.name ||
+                (data.ui_metadata?.icon || '') !== initialIcon ||
+                (data.ui_metadata?.color || '#3b82f6') !== initialColor;
+
+            if (data.parent_Key === 'credit_card' || account.is_credit_card) {
+                return (
+                    baseDirty ||
+                    data.credit_card_details.limit !== fromCents(account.credit_card_details?.limit ?? 0) ||
+                    data.credit_card_details.closing_day !== (account.credit_card_details?.closing_day ?? 10) ||
+                    data.credit_card_details.due_day !== (account.credit_card_details?.due_day ?? 17) ||
+                    data.credit_card_details.invoice_control_enabled !== (account.credit_card_details?.invoice_control_enabled ?? true)
+                );
+            }
+            return baseDirty;
+        }
+
+        if (mode === 'subaccount' && parentAccount) {
+            const initialColor = parentAccount.ui_metadata?.color || '#3b82f6';
+            return (
+                data.name.trim() !== '' ||
+                (data.ui_metadata?.icon || '') !== '' ||
+                (data.ui_metadata?.color || '#3b82f6') !== initialColor
+            );
+        }
+
+        return (
+            data.name.trim() !== '' ||
+            (data.ui_metadata?.icon || '') !== '' ||
+            (data.ui_metadata?.color || '#3b82f6') !== '#3b82f6' ||
+            (data.credit_card_details?.limit ?? 0) > 0 ||
+            (data.credit_card_details?.closing_day ?? 10) !== 10 ||
+            (data.credit_card_details?.due_day ?? 17) !== 17 ||
+            (data.credit_card_details?.invoice_control_enabled ?? true) !== true
+        );
+    }, [mode, account, parentAccount, data]);
+
     const initials = data.name ? data.name.substring(0, 3).toUpperCase() : '';
     const title = customTitle || (mode === 'edit' 
         ? t('accounts.modal.title_edit') 
@@ -194,7 +235,7 @@ export default function AccountModal({
             : t('accounts.modal.title_create')));
 
     return (
-        <Modal show={show} onClose={onClose} title={title} maxWidth="md">
+        <Modal show={show} onClose={onClose} title={title} maxWidth="md" isDirty={isDirty}>
             <form onSubmit={handleSubmit} className="space-y-8">
                 
                 {/* Real-time Preview */}
@@ -432,8 +473,8 @@ export default function AccountModal({
                 <div className="flex items-center justify-end gap-3 pt-6 border-t border-slate-50">
                     <button
                         type="button"
-                        onClick={onClose}
-                        className="px-6 py-2.5 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors"
+                        data-modal-close
+                        className="px-6 py-2.5 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
                     >
                         {t('accounts.modal.cancel')}
                     </button>

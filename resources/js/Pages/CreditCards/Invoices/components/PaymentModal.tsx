@@ -67,12 +67,29 @@ export default function PaymentModal({ show, onClose, account, invoice, sourceAc
     }
   };
 
+  const initialDateRef = useRef<string>(data.date);
+  useEffect(() => {
+    if (!show) {
+      initialDateRef.current = data.date;
+    }
+  }, [show]);
+
+  const initialAmount = fromCents(invoice.total_amount - invoice.paid_amount);
+  const isDirty = React.useMemo(() => {
+    return (
+      data.source_account_id !== null ||
+      data.amount !== initialAmount ||
+      data.date !== initialDateRef.current
+    );
+  }, [data, initialAmount]);
+
   return (
     <Modal 
       show={show} 
       onClose={onClose} 
       title={t('credit_cards.invoices.pay_invoice')}
       maxWidth="md"
+      isDirty={isDirty}
       afterLeave={() => {
         reset();
         clearErrors();
@@ -116,8 +133,8 @@ export default function PaymentModal({ show, onClose, account, invoice, sourceAc
         <div className="flex items-center justify-end gap-3 mt-10">
             <button
                 type="button"
-                onClick={onClose}
-                className="px-6 py-2.5 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors"
+                data-modal-close
+                className="px-6 py-2.5 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
             >
                 {t('transactions.modal.cancel')}
             </button>

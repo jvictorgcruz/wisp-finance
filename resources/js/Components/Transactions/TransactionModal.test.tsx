@@ -1,20 +1,26 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import TransactionModal from './TransactionModal';
 import React from 'react';
+import { useForm } from '@inertiajs/react';
+
+let mockFormData = {
+    amount: 0,
+    date: '2026-04-30',
+    description: '',
+    source_account_id: null as number | null,
+    destination_account_id: null as number | null,
+    installments: 1,
+};
 
 // Mock Inertia
 vi.mock('@inertiajs/react', () => ({
     useForm: vi.fn(() => ({
-        data: {
-            amount: 0,
-            date: '2026-04-30',
-            description: '',
-            source_account_id: null,
-            destination_account_id: null,
-        },
+        data: mockFormData,
         setData: vi.fn(),
         post: vi.fn(),
+        put: vi.fn(),
+        delete: vi.fn(),
         processing: false,
         errors: {},
         reset: vi.fn(),
@@ -39,6 +45,18 @@ vi.mock('@/Hooks/useTranslation', () => ({
 }));
 
 describe('TransactionModal', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+        mockFormData = {
+            amount: 0,
+            date: '2026-04-30',
+            description: '',
+            source_account_id: null,
+            destination_account_id: null,
+            installments: 1,
+        };
+    });
+
     it('renders the modal when show is true', () => {
         render(<TransactionModal show={true} onClose={() => {}} />);
         expect(screen.getByText('transactions.modal.title')).toBeTruthy();
@@ -52,5 +70,31 @@ describe('TransactionModal', () => {
         
         // After switching to Income, source label should change
         expect(screen.getByText('transactions.modal.source_label.income')).toBeTruthy();
+    });
+
+    it('closes directly when clicking Cancel if no fields were modified', () => {
+        const handleClose = vi.fn();
+        render(<TransactionModal show={true} onClose={handleClose} />);
+
+        fireEvent.click(screen.getByText('transactions.modal.cancel'));
+        expect(handleClose).toHaveBeenCalledTimes(1);
+    });
+
+    it('prompts for discard confirmation when clicking X or Cancel if user entered data', () => {
+        const handleClose = vi.fn();
+        mockFormData = {
+            ...mockFormData,
+            description: 'Supermercado',
+            amount: 150,
+        };
+
+        render(<TransactionModal show={true} onClose={handleClose} />);
+
+        fireEvent.click(screen.getByText('transactions.modal.cancel'));
+        expect(handleClose).not.toHaveBeenCalled();
+        expect(screen.getByTestId('discard-confirmation')).toBeInTheDocument();
+
+        fireEvent.click(screen.getByText('common.discard'));
+        expect(handleClose).toHaveBeenCalledTimes(1);
     });
 });

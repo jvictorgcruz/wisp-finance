@@ -124,7 +124,7 @@ const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(({
                             leaveFrom="opacity-100 translate-y-0"
                             leaveTo="opacity-0 translate-y-1"
                         >
-                            <PopoverPanel className="absolute z-60 mt-2 w-[320px] bg-white rounded-3xl shadow-2xl border border-slate-100 p-5 focus:outline-none">
+                            <PopoverPanel anchor="bottom start" className="z-9999 mt-2 w-[320px] bg-white rounded-3xl shadow-2xl border border-slate-100 p-5 focus:outline-none">
                                 {/* Calendar Header */}
                                 <div className="flex items-center justify-between mb-6">
                                     <button 

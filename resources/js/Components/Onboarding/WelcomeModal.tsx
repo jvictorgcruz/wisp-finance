@@ -13,6 +13,23 @@ interface WelcomeModalProps {
 export default function WelcomeModal({ show, onClose }: WelcomeModalProps) {
     const { t } = useTranslation();
     const hasDismissedRef = useRef(false);
+    const isEscapeClosingRef = useRef(false);
+
+    React.useEffect(() => {
+        if (!show) return;
+
+        const handleKeyDownCapture = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                isEscapeClosingRef.current = true;
+                queueMicrotask(() => {
+                    isEscapeClosingRef.current = false;
+                });
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDownCapture, true);
+        return () => window.removeEventListener('keydown', handleKeyDownCapture, true);
+    }, [show]);
 
     if (!show) {
         return null;
@@ -29,9 +46,16 @@ export default function WelcomeModal({ show, onClose }: WelcomeModalProps) {
         onClose();
     };
 
+    const handleDialogClose = () => {
+        if (!isEscapeClosingRef.current) {
+            return;
+        }
+        handleDismiss();
+    };
+
     return (
         <Transition show={show} as={Fragment}>
-            <Dialog open={show} as="div" className="relative z-50" onClose={handleDismiss}>
+            <Dialog open={show} as="div" className="relative z-50" onClose={handleDialogClose}>
                 <TransitionChild
                     as={Fragment}
                     enter="ease-out duration-300"
@@ -44,8 +68,8 @@ export default function WelcomeModal({ show, onClose }: WelcomeModalProps) {
                     <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md transition-opacity" />
                 </TransitionChild>
 
-                <div className="fixed inset-0 z-50 overflow-y-auto">
-                    <div className="flex min-h-full items-center justify-center p-2.5 sm:p-4 md:p-6 text-center">
+                <div className="fixed inset-0 z-50 overflow-hidden">
+                    <div className="flex h-full items-center justify-center p-2.5 sm:p-4 md:p-6 text-center">
                         <TransitionChild
                             as={Fragment}
                             enter="ease-out duration-300"
@@ -55,7 +79,7 @@ export default function WelcomeModal({ show, onClose }: WelcomeModalProps) {
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95"
                         >
-                            <DialogPanel className="relative w-full max-w-2xl md:max-w-3xl bg-white rounded-3xl border border-slate-200/90 shadow-2xl text-left transform transition-all flex flex-col overflow-hidden my-auto">
+                            <DialogPanel className="relative w-full max-w-2xl md:max-w-3xl max-h-[calc(100dvh-1.25rem)] sm:max-h-[calc(100dvh-2rem)] md:max-h-[calc(100dvh-3rem)] bg-white rounded-3xl border border-slate-200/90 shadow-2xl text-left transform transition-all flex flex-col overflow-hidden my-auto">
                                 {/* Header / Close Button */}
                                 <div className="absolute top-3.5 right-3.5 z-20">
                                     <button 
@@ -67,7 +91,7 @@ export default function WelcomeModal({ show, onClose }: WelcomeModalProps) {
                                     </button>
                                 </div>
 
-                                <div className="p-3 sm:p-5 md:p-6 flex flex-col items-center text-center space-y-3 sm:space-y-4">
+                                <div className="p-3 sm:p-5 md:p-6 overflow-y-auto flex-1 min-h-0 flex flex-col items-center text-center space-y-3 sm:space-y-4">
                                     {/* Headline and Subtitle */}
                                     <div className="pt-1 text-center w-full px-6 space-y-1">
                                         <h2 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight">
