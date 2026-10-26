@@ -125,7 +125,6 @@ function useAccountAnimation(isActive: boolean) {
 
     return {
         selectedAccountType,
-        setSelectedAccountType,
         clickingAccountType,
         typedAccountName,
         typedAccountLimit,
@@ -269,7 +268,6 @@ function useTransactionAnimation(isActive: boolean) {
 
     return {
         selectedTransactionType,
-        setSelectedTransactionType,
         clickingTransactionType,
         typedTransactionDesc,
         typedTransactionAmount,
@@ -331,7 +329,6 @@ export default function HeroMockup({
 
     const {
         selectedAccountType,
-        setSelectedAccountType,
         clickingAccountType,
         typedAccountName,
         typedAccountLimit,
@@ -343,7 +340,6 @@ export default function HeroMockup({
 
     const {
         selectedTransactionType,
-        setSelectedTransactionType,
         clickingTransactionType,
         typedTransactionDesc,
         typedTransactionAmount,
@@ -594,7 +590,6 @@ export default function HeroMockup({
                                 </span>
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 text-center w-full">
                                     <div 
-                                        onClick={() => setSelectedAccountType('bank')}
                                         className={`p-2 sm:p-2.5 rounded-xl border-2 transition-all duration-200 cursor-pointer min-w-0 flex flex-row sm:flex-col items-center justify-start sm:justify-center gap-2 sm:gap-1 active:scale-90 ${
                                             clickingAccountType === 'bank'
                                                 ? 'scale-90 bg-blue-100 border-blue-400 shadow-inner'
@@ -611,7 +606,6 @@ export default function HeroMockup({
                                         </span>
                                     </div>
                                     <div 
-                                        onClick={() => setSelectedAccountType('investment')}
                                         className={`p-2 sm:p-2.5 rounded-xl border-2 transition-all duration-200 cursor-pointer min-w-0 flex flex-row sm:flex-col items-center justify-start sm:justify-center gap-2 sm:gap-1 active:scale-90 ${
                                             clickingAccountType === 'investment'
                                                 ? 'scale-90 bg-purple-100 border-purple-400 shadow-inner'
@@ -628,7 +622,6 @@ export default function HeroMockup({
                                         </span>
                                     </div>
                                     <div 
-                                        onClick={() => setSelectedAccountType('card')}
                                         className={`p-2 sm:p-2.5 rounded-xl border-2 transition-all duration-200 cursor-pointer min-w-0 flex flex-row sm:flex-col items-center justify-start sm:justify-center gap-2 sm:gap-1 active:scale-90 ${
                                             clickingAccountType === 'card'
                                                 ? 'scale-90 bg-purple-100 border-purple-400 ring-2 ring-purple-400/40 shadow-inner'
@@ -645,7 +638,6 @@ export default function HeroMockup({
                                         </span>
                                     </div>
                                     <div 
-                                        onClick={() => setSelectedAccountType('debt')}
                                         className={`p-2 sm:p-2.5 rounded-xl border-2 transition-all duration-200 cursor-pointer min-w-0 flex flex-row sm:flex-col items-center justify-start sm:justify-center gap-2 sm:gap-1 active:scale-90 ${
                                             clickingAccountType === 'debt'
                                                 ? 'scale-90 bg-rose-100 border-rose-400 shadow-inner'
@@ -718,7 +710,6 @@ export default function HeroMockup({
                                 <div className="grid grid-cols-3 gap-1.5 bg-slate-100 p-1.5 rounded-xl text-xs font-bold w-full text-center">
                                     <button 
                                         type="button"
-                                        onClick={() => setSelectedTransactionType('expense')}
                                         className={`py-2 px-1 rounded-lg truncate transition-all duration-200 cursor-pointer block text-center active:scale-90 ${
                                             clickingTransactionType === 'expense'
                                                 ? 'scale-90 bg-rose-200 shadow-inner'
@@ -732,7 +723,6 @@ export default function HeroMockup({
                                     </button>
                                     <button 
                                         type="button"
-                                        onClick={() => setSelectedTransactionType('income')}
                                         className={`py-2 px-1 rounded-lg truncate transition-all duration-200 cursor-pointer block text-center active:scale-90 ${
                                             clickingTransactionType === 'income'
                                                 ? 'scale-90 bg-emerald-200 shadow-inner'
@@ -746,7 +736,6 @@ export default function HeroMockup({
                                     </button>
                                     <button 
                                         type="button"
-                                        onClick={() => setSelectedTransactionType('transfer')}
                                         className={`py-2 px-1 rounded-lg truncate transition-all duration-200 cursor-pointer block text-center active:scale-90 ${
                                             clickingTransactionType === 'transfer'
                                                 ? 'scale-90 bg-blue-200 shadow-inner'

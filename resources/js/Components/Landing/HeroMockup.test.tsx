@@ -104,6 +104,24 @@ describe('HeroMockup Carousel Component', () => {
         }
     });
 
+    it('does not allow manually switching account type or transaction type by clicking buttons', () => {
+        vi.useFakeTimers();
+        try {
+            render(<HeroMockup />);
+
+            // Clicking Bank type before animation selects Card should not reveal form fields
+            fireEvent.click(screen.getByText('home.hero_carousel.type_bank'));
+            expect(screen.queryByText('home.hero_carousel.card_name_label')).toBeNull();
+
+            // Switch to transaction tab and click Income before animation selects Expense
+            fireEvent.click(screen.getByText('home.hero_carousel.step_transaction'));
+            fireEvent.click(screen.getByText('home.hero_carousel.income'));
+            expect(screen.queryByText('home.hero_carousel.save_transaction')).toBeNull();
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
     it('advances automatically every 3000ms', () => {
         vi.useFakeTimers();
         try {
