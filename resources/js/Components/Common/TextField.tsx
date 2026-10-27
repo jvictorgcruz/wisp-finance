@@ -40,6 +40,7 @@ const TextField = forwardRef<HTMLInputElement, Props>(({
                 
                 <input
                     {...props}
+                    inputMode={props.inputMode ?? (props.type === 'number' ? 'numeric' : undefined)}
                     ref={ref}
                     data-testid={`input-${props.id}`}
                     onChange={(e) => onChange?.(e.target.value)}

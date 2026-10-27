@@ -60,6 +60,7 @@ describe('TransactionModal', () => {
     it('renders the modal when show is true', () => {
         render(<TransactionModal show={true} onClose={() => {}} />);
         expect(screen.getByText('transactions.modal.title')).toBeTruthy();
+        expect(screen.getByPlaceholderText('R$ 0,00')).toHaveAttribute('inputmode', 'numeric');
     });
 
     it('switches tabs correctly', () => {

@@ -55,6 +55,7 @@ const CurrencyInput = forwardRef<HTMLInputElement, Props>(({
                 <input
                     ref={ref}
                     type="text"
+                    inputMode="numeric"
                     autoFocus={autoFocus}
                     value={displayValue}
                     onChange={handleChange}
