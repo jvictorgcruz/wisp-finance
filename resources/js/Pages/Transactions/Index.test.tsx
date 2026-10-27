@@ -105,4 +105,11 @@ describe('Transactions Index Page', () => {
         
         expect(screen.getByText('transactions.empty.title')).toBeInTheDocument();
     });
+
+    it('keeps action menu button visible on mobile screens without requiring hover', () => {
+        const { container } = render(<Index transactions={mockTransactions} filters={mockFilters} />);
+
+        const actionWrappers = container.querySelectorAll('.opacity-100.lg\\:opacity-0');
+        expect(actionWrappers.length).toBe(mockTransactions.data.length);
+    });
 });

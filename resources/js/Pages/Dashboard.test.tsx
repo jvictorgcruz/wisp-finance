@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import Dashboard from './Dashboard';
 import { describe, it, expect, vi } from 'vitest';
@@ -121,6 +121,21 @@ describe('Dashboard Page', () => {
         
         expect(cashToggles.length).toBeGreaterThan(0);
         expect(accrualToggles.length).toBeGreaterThan(0);
+        expect(accrualToggles[0]).toHaveClass('truncate');
+        expect(accrualToggles[0].closest('button')).toHaveClass('min-w-0');
+    });
+
+    it('opens the tooltip on mobile tap of the info icon in ViewToggle without switching view mode', () => {
+        render(<Dashboard summary={summary} transactions={[]} currentFilters={currentFilters} />);
+
+        const accrualInfoBtn = screen.getByTestId('info-accrual');
+
+        // Simulate mobile tap sequence: touchstart -> synthetic mouseenter -> click
+        fireEvent.touchStart(accrualInfoBtn);
+        fireEvent.mouseEnter(accrualInfoBtn);
+        fireEvent.click(accrualInfoBtn);
+
+        expect(screen.getByText('transactions.dashboard.accrual_view_help')).toBeInTheDocument();
     });
 });
 

@@ -68,9 +68,9 @@ export default function InvoiceSummary({ invoice, isActive }: Props) {
   const payPercentage = Math.min(100, Math.round((invoice.paid_amount / invoice.total_amount) * 100) || 0);
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm space-y-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="space-y-4">
+    <div className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-8 shadow-sm space-y-5 sm:space-y-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 sm:gap-6">
+            <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center gap-3">
                     <div className={cn("px-3 py-1 rounded-full border text-[9px] font-black uppercase tracking-widest flex items-center gap-2", statusConfig.bg, statusConfig.color, statusConfig.borderColor)}>
                         <statusConfig.icon className="w-3 h-3" />
@@ -82,18 +82,18 @@ export default function InvoiceSummary({ invoice, isActive }: Props) {
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
                         {t('credit_cards.invoices.open_balance')}
                     </p>
-                    <div className="flex items-baseline gap-2">
-                        <span className="text-2xl font-bold text-slate-300">R$</span>
-                        <h2 className="text-5xl font-black tracking-tighter text-slate-900">
+                    <div className="flex items-baseline gap-1.5 sm:gap-2">
+                        <span className="text-xl sm:text-2xl font-bold text-slate-300">R$</span>
+                        <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-slate-900">
                             {formatCurrency(remaining, false)}
                         </h2>
                     </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-10 md:border-l md:border-slate-100 md:pl-10">
+            <div className="grid grid-cols-2 gap-4 sm:gap-10 pt-4 md:pt-0 border-t md:border-t-0 md:border-l border-slate-100 md:pl-10">
                 <div className="space-y-1">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 sm:mb-2">
                         {t('credit_cards.invoices.due_date')}
                     </p>
                     <p className="text-sm font-bold text-slate-900">
@@ -101,7 +101,7 @@ export default function InvoiceSummary({ invoice, isActive }: Props) {
                     </p>
                 </div>
                 <div className="space-y-1">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 sm:mb-2">
                         {t('credit_cards.invoices.closing_date')}
                     </p>
                     <p className="text-sm font-bold text-slate-500">

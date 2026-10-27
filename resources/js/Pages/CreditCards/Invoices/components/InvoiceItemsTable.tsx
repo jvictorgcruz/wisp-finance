@@ -31,13 +31,13 @@ export default function InvoiceItemsTable({ items }: Props) {
   const { t, locale } = useTranslation();
 
   return (
-    <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200 bg-white shadow-sm">
       <table className="w-full text-left border-collapse">
-        <thead>
+        <thead className="hidden sm:table-header-group">
           <tr className="bg-slate-50/50 border-b border-slate-200">
-            <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('credit_cards.invoices.table_date')}</th>
-            <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('credit_cards.invoices.table_description')}</th>
-            <th className="px-8 py-5 text-right text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('credit_cards.invoices.table_amount')}</th>
+            <th className="px-4 sm:px-8 py-4 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('credit_cards.invoices.table_date')}</th>
+            <th className="px-4 sm:px-8 py-4 sm:py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('credit_cards.invoices.table_description')}</th>
+            <th className="px-4 sm:px-8 py-4 sm:py-5 text-right text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('credit_cards.invoices.table_amount')}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100">
@@ -48,52 +48,57 @@ export default function InvoiceItemsTable({ items }: Props) {
             
             return (
               <tr key={item.id} className="group hover:bg-slate-50/50 transition-all duration-200">
-                <td className="px-8 py-5">
+                <td className="hidden sm:table-cell sm:px-8 sm:py-5 whitespace-nowrap">
                     <span className="text-xs font-bold text-slate-400 group-hover:text-slate-600 transition-colors">
                         {formatDate(item.due_date, locale)}
                     </span>
                 </td>
-                <td className="px-8 py-5">
-                  <div className="flex items-center gap-4">
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center border ${isNegative ? 'bg-emerald-50 border-emerald-100 text-emerald-500' : 'bg-slate-50 border-slate-100 text-slate-400'}`}>
+                <td className="px-4 sm:px-8 py-3.5 sm:py-5">
+                  <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                    <div className={`w-8 h-8 shrink-0 rounded-lg flex items-center justify-center border ${isNegative ? 'bg-emerald-50 border-emerald-100 text-emerald-500' : 'bg-slate-50 border-slate-100 text-slate-400'}`}>
                         {isPayment ? <ArrowDownLeft className="w-4 h-4" /> : (isRefund ? <ArrowDownLeft className="w-4 h-4" /> : <ArrowUpRight className="w-4 h-4" />)}
                     </div>
-                    <div className="text-sm font-bold text-slate-700 group-hover:text-primary transition-colors">
-                        {(() => {
-                            if (item.transaction?.description) return item.transaction.description;
-                            
-                            // Fallback logic similar to Transactions Index
-                            if (item.transaction) {
-                                const type = item.transaction.type;
-                                const entries = item.transaction.journal_entries || [];
-                                const debitEntry = entries.find(e => e.type === 'DEBIT');
-                                const creditEntry = entries.find(e => e.type === 'CREDIT');
+                    <div className="min-w-0 flex flex-col">
+                        <div className="text-sm font-bold text-slate-700 group-hover:text-primary transition-colors truncate">
+                            {(() => {
+                                if (item.transaction?.description) return item.transaction.description;
+                                
+                                // Fallback logic similar to Transactions Index
+                                if (item.transaction) {
+                                    const type = item.transaction.type;
+                                    const entries = item.transaction.journal_entries || [];
+                                    const debitEntry = entries.find(e => e.type === 'DEBIT');
+                                    const creditEntry = entries.find(e => e.type === 'CREDIT');
 
-                                if (type === 'TRANSFER') {
-                                    const from = creditEntry?.account?.name || '—';
-                                    const to = debitEntry?.account?.name || '—';
-                                    return `${from} → ${to}`;
+                                    if (type === 'TRANSFER') {
+                                        const from = creditEntry?.account?.name || '—';
+                                        const to = debitEntry?.account?.name || '—';
+                                        return `${from} → ${to}`;
+                                    }
+
+                                    // For Expenses, the category is the Debit side
+                                    // For Income, the category is the Credit side
+                                    const categoryName = type === 'INCOME' ? creditEntry?.account?.name : debitEntry?.account?.name;
+                                    return categoryName || '—';
                                 }
 
-                                // For Expenses, the category is the Debit side
-                                // For Income, the category is the Credit side
-                                const categoryName = type === 'INCOME' ? creditEntry?.account?.name : debitEntry?.account?.name;
-                                return categoryName || '—';
-                            }
-
-                            return '—';
-                        })()}
-                        {item.installment_total && item.installment_total > 1 && (
-                            <span className="ml-1.5 text-slate-400 font-medium">
-                                ({item.installment_number}/{item.installment_total})
-                            </span>
-                        )}
+                                return '—';
+                            })()}
+                            {item.installment_total && item.installment_total > 1 && (
+                                <span className="ml-1.5 text-slate-400 font-medium">
+                                    ({item.installment_number}/{item.installment_total})
+                                </span>
+                            )}
+                        </div>
+                        <span className="sm:hidden text-[10px] font-bold text-slate-400 mt-0.5">
+                            {formatDate(item.due_date, locale)}
+                        </span>
                     </div>
                   </div>
                 </td>
-                <td className={`px-8 py-5 text-right font-black tracking-tight ${isNegative ? 'text-emerald-500' : 'text-slate-900'}`}>
+                <td className={`px-4 sm:px-8 py-3.5 sm:py-5 text-right font-black tracking-tight whitespace-nowrap ${isNegative ? 'text-emerald-500' : 'text-slate-900'}`}>
                   <div className="flex flex-col items-end">
-                    <span className="text-base">
+                    <span className="text-sm sm:text-base">
                         {isNegative ? '-' : ''} {formatCurrency(Math.abs(item.amount))}
                     </span>
                     {isRefund && (
@@ -114,7 +119,7 @@ export default function InvoiceItemsTable({ items }: Props) {
           
           {items.length === 0 && (
             <tr>
-              <td colSpan={3} className="px-8 py-20 text-center">
+              <td colSpan={3} className="px-4 sm:px-8 py-16 sm:py-20 text-center">
                 <div className="flex flex-col items-center gap-4 opacity-30">
                     <CreditCard className="w-12 h-12 text-slate-300" />
                     <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 italic">

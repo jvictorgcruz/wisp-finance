@@ -6,7 +6,7 @@ interface PageHeaderProps {
 
 const PageHeader = ({ children }: PageHeaderProps) => {
     return (
-        <div className="sticky top-16 z-20 bg-surface -mx-8 lg:-mx-10 px-8 lg:px-10 pt-8 pb-2 mb-8">
+        <div className="relative lg:sticky lg:top-16 z-30 bg-surface -mx-4 sm:-mx-6 lg:-mx-10 px-4 sm:px-6 lg:px-10 pt-4 sm:pt-6 lg:pt-8 pb-2 mb-4 sm:mb-8">
             {children}
         </div>
     );

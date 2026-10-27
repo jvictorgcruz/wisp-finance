@@ -92,26 +92,26 @@ export default function AccountRow({
 
     const renderContent = (open?: boolean) => (
         <div className={cn(
-            "flex items-center justify-between p-4 transition-all duration-200 group/row",
+            "flex items-center justify-between p-3 sm:p-4 transition-all duration-200 group/row gap-2",
             isRoot 
                 ? "bg-surface/40 hover:bg-slate-100/80 border-b border-slate-100" 
-                : "bg-white ml-8 border-l border-slate-200"
+                : "bg-white ml-4 sm:ml-8 border-l border-slate-200"
         )}>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 sm:gap-4 min-w-0">
                 
                 <FinancialAvatar 
                     account={account} 
                     size="sm" 
-                    className={cn(!account.ui_metadata?.color && typeColorClass)}
+                    className={cn("shrink-0", !account.ui_metadata?.color && typeColorClass)}
                 />
                 
-                <div className="flex flex-col">
-                    <div className="flex items-center gap-2">
+                <div className="flex flex-col min-w-0">
+                    <div className="flex items-center gap-2 min-w-0">
                         <Link 
                             href={`/transactions?${(account.type === 'asset' || account.type === 'liability') ? 'account_id' : 'category_id'}=${account.id}`}
                             onClick={(e) => e.stopPropagation()}
                             className={cn(
-                                "font-bold text-slate-900 hover:text-primary transition-colors cursor-pointer", 
+                                "font-bold text-slate-900 hover:text-primary transition-colors cursor-pointer truncate", 
                                 isRoot ? "text-sm text-slate-700" : "text-xs"
                             )}
                         >
@@ -130,8 +130,8 @@ export default function AccountRow({
             </div>
 
             <div className={cn(
-                "flex items-center",
-                isRoot ? "gap-10" : "gap-2"
+                "flex items-center shrink-0",
+                isRoot ? "gap-2 sm:gap-10" : "gap-1.5 sm:gap-2"
             )}>
                 <div className="text-right">
                     {isRoot && (
@@ -140,7 +140,7 @@ export default function AccountRow({
                         </span>
                     )}
                     <div className={cn(
-                        "tracking-tight",
+                        "tracking-tight whitespace-nowrap",
                         isRoot ? "text-lg font-black" : "text-sm font-bold opacity-80",
                         account.balance >= 0 ? "text-slate-900" : "text-rose-600"
                     )}>
@@ -154,13 +154,13 @@ export default function AccountRow({
                 </div>
 
                 <div className={cn(
-                    "flex items-center justify-end gap-2",
-                    isRoot ? "w-14 min-w-10" : "w-10 min-w-10"
+                    "flex items-center justify-end gap-1 sm:gap-2",
+                    isRoot ? "w-8 sm:w-14 min-w-8 sm:min-w-10" : "w-8 sm:w-10 min-w-8 sm:min-w-10"
                 )}> 
                     
                     {/* Action Menu for Child Accounts */}
                     {!isRoot && (
-                        <div className="opacity-0 group-hover/row:opacity-100 transition-all">
+                        <div className="opacity-100 lg:opacity-0 lg:group-hover/row:opacity-100 focus-within:opacity-100 transition-all">
                             <DropdownSelector>
                                 <DropdownSelector.Trigger 
                                     showChevron={false}
