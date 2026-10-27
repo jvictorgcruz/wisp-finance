@@ -81,30 +81,30 @@ export default function Index({ category_tree, available_icons, available_colors
             
             <>
                 <PageHeader>
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="space-y-1">
-                            <h2 className="text-2xl font-black tracking-tight text-slate-900">
+                            <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
                                 {t('categories.page.title')}
                             </h2>
-                            <p className="text-sm text-slate-500 font-medium">
+                            <p className="text-xs sm:text-sm text-slate-500 font-medium">
                                 {t('categories.page.description')}
                             </p>
                         </div>
                         <button 
                             onClick={handleCreate}
-                            className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-primary/90 transition-all cursor-pointer w-fit"
+                            className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-primary/90 transition-all cursor-pointer w-full sm:w-fit"
                         >
-                            <Plus className="w-4 h-4" />
+                            <Plus className="w-4 h-4 shrink-0" />
                             {t('categories.page.create_btn')}
                         </button>
                     </div>
 
                     {/* Tabs Filter */}
-                    <div className="flex items-center gap-2 bg-slate-100 mt-4 p-1 rounded-2xl w-fit mb-4">
+                    <div className="flex items-center gap-2 bg-slate-100 mt-4 p-1 rounded-2xl w-full sm:w-fit mb-2 sm:mb-4">
                         <button
                             onClick={() => setActiveTab('expense')}
                             className={cn(
-                                "px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
+                                "flex-1 sm:flex-initial px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
                                 activeTab === 'expense' 
                                     ? "bg-white text-slate-900 border border-slate-200" 
                                     : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
@@ -115,7 +115,7 @@ export default function Index({ category_tree, available_icons, available_colors
                         <button
                             onClick={() => setActiveTab('revenue')}
                             className={cn(
-                                "px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
+                                "flex-1 sm:flex-initial px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
                                 activeTab === 'revenue' 
                                     ? "bg-white text-slate-900 border border-slate-200" 
                                     : "text-slate-500 hover:text-slate-700 hover:bg-white/50"

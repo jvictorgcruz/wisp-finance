@@ -18,7 +18,7 @@ interface Props {
 export default function TimelineChart({ data, loading }: Props) {
     if (loading) {
         return (
-            <div className="w-full h-80 bg-surface-low rounded-xl animate-pulse" />
+            <div className="w-full h-56 sm:h-80 bg-surface-low rounded-xl animate-pulse" />
         );
     }
 
@@ -41,7 +41,7 @@ export default function TimelineChart({ data, loading }: Props) {
     };
 
     return (
-        <div className="w-full h-80">
+        <div className="w-full h-56 sm:h-80">
             <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                     data={data}

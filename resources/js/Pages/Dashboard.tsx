@@ -190,14 +190,14 @@ export default function Dashboard({ summary, transactions, currentFilters }: Pro
             <Head title={t('transactions.dashboard.title')} />
 
             <PageHeader>
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-4 min-w-0">
                     <div>
-                        <h2 className="text-2xl font-black tracking-tight text-slate-900">
+                        <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
                             {t('transactions.dashboard.title')}
                         </h2>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full md:w-auto">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-4 w-full md:w-auto min-w-0">
                         <MonthSelector date={selectedDate} onChange={setSelectedDate} />
                         <ViewToggle 
                             options={toggleOptions} 
@@ -208,8 +208,8 @@ export default function Dashboard({ summary, transactions, currentFilters }: Pro
                 </div>
             </PageHeader>
 
-            <div className="space-y-8 md:space-y-12 pb-10">
-                <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="space-y-5 sm:space-y-8 md:space-y-12 pb-6 sm:pb-10 min-w-0">
+                <section className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-6">
                     {viewMode === 'cash' ? (
                         <>
                             <SummaryCard 
@@ -267,13 +267,13 @@ export default function Dashboard({ summary, transactions, currentFilters }: Pro
                     )}
                 </section>
 
-                <section className="bg-surface-lowest p-5 sm:p-8 rounded-xl shadow-sm border border-transparent overflow-hidden">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 sm:mb-8 gap-4">
+                <section className="bg-surface-lowest p-4 sm:p-8 rounded-xl shadow-sm border border-transparent overflow-hidden">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-4 sm:mb-8 gap-2 sm:gap-4">
                         <div>
-                            <h3 className="text-xl font-bold tracking-tight text-slate-900">
+                            <h3 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
                                 {viewMode === 'cash' ? t('transactions.dashboard.cash_flow_evolution', { defaultValue: 'Evolução de Fluxo de Caixa' }) : t('transactions.dashboard.net_worth_evolution')}
                             </h3>
-                            <p className="text-slate-500 text-sm">
+                            <p className="text-slate-500 text-xs sm:text-sm">
                                 {t('transactions.dashboard.last_30_days')}
                             </p>
                         </div>
@@ -290,8 +290,8 @@ export default function Dashboard({ summary, transactions, currentFilters }: Pro
                     />
                 </section>
 
-                <div className="space-y-8">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-5 sm:space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-6">
                         <SummaryCard 
                             title={t('transactions.dashboard.revenue')}
                             value={activeRevenue}
@@ -320,7 +320,7 @@ export default function Dashboard({ summary, transactions, currentFilters }: Pro
                     </div>
                 </div>
 
-                <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+                <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
                     <div className="bg-surface-lowest p-5 sm:p-8 rounded-xl shadow-sm border border-transparent overflow-hidden">
                         <h3 className="text-xl font-bold tracking-tight text-slate-900 mb-6 sm:mb-8">
                             Receitas por Categoria

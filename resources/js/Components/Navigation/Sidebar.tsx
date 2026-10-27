@@ -29,13 +29,15 @@ interface NavLinkProps {
     active?: boolean;
     children: React.ReactNode;
     icon: React.ElementType;
+    onClick?: () => void;
 }
 
-const NavLink = ({ href, active, children, icon: Icon }: NavLinkProps) => (
+const NavLink = ({ href, active, children, icon: Icon, onClick }: NavLinkProps) => (
     <Link
         href={href}
+        onClick={onClick}
         className={cn(
-            "flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 group",
+            "flex items-center gap-3 px-3 py-2.5 lg:py-2 rounded-xl transition-all duration-200 group",
             active 
                 ? "bg-primary/10 text-primary font-semibold" 
                 : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
@@ -54,6 +56,12 @@ export default function Sidebar() {
     const { auth } = props;
     const { t, locale } = useTranslation();
     const [isOpen, setIsOpen] = React.useState(false);
+
+    React.useEffect(() => {
+        const handleCloseSidebar = () => setIsOpen(false);
+        window.addEventListener('open-transaction-modal', handleCloseSidebar);
+        return () => window.removeEventListener('open-transaction-modal', handleCloseSidebar);
+    }, []);
 
     const navLinks = [
         { name: t('home.nav.dashboard'), href: '/dashboard', icon: LayoutDashboard },
@@ -80,9 +88,10 @@ export default function Sidebar() {
             {/* Mobile Toggle */}
             <button 
                 onClick={() => setIsOpen(!isOpen)}
-                className="lg:hidden fixed top-4 right-4 z-50 p-2 bg-white rounded-lg border border-slate-100"
+                aria-label="Toggle Menu"
+                className="lg:hidden fixed top-2.5 right-4 z-50 p-2 bg-white rounded-xl border border-slate-100 shadow-xs text-slate-700"
             >
-                {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
 
             {/* Sidebar Container */}
@@ -90,8 +99,8 @@ export default function Sidebar() {
                 "fixed inset-y-0 left-0 z-40 w-64 bg-surface-lowest border-r border-surface-low flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0",
                 isOpen ? "translate-x-0" : "-translate-x-full"
             )}>
-                <div className="h-20 flex items-center px-6">
-                    <Link href="/" className="group">
+                <div className="h-14 lg:h-20 flex items-center px-6">
+                    <Link href="/" onClick={() => setIsOpen(false)} className="group">
                         <Logo imageSize={6} />
                     </Link>
                 </div>
@@ -118,6 +127,7 @@ export default function Sidebar() {
                                 key={link.name} 
                                 {...link}
                                 active={url === link.href || url.startsWith(link.href)}
+                                onClick={() => setIsOpen(false)}
                             >
                                 {link.name}
                             </NavLink>
@@ -142,6 +152,7 @@ export default function Sidebar() {
                                     key={link.name}
                                     {...link}
                                     active={url.startsWith(link.href)}
+                                    onClick={() => setIsOpen(false)}
                                 >
                                     {link.name}
                                 </NavLink>
@@ -152,6 +163,7 @@ export default function Sidebar() {
                                     key={link.name}
                                     {...link}
                                     active={url.startsWith(link.href)}
+                                    onClick={() => setIsOpen(false)}
                                 >
                                     {link.name}
                                 </NavLink>

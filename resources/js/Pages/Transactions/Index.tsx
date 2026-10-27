@@ -233,25 +233,25 @@ export default function Index({ transactions, filters }: Props) {
 
             <PageHeader>
                 {/* Header */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+                <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 sm:gap-6 mb-4 sm:mb-8">
                     <div className="space-y-1">
-                        <h2 className="text-2xl font-black tracking-tight text-slate-900">
+                        <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
                             {t('transactions.page.title')}
                         </h2>
-                        <p className="text-sm text-slate-500 font-medium">
+                        <p className="text-xs sm:text-sm text-slate-500 font-medium">
                             {getFilterLabel() || t('transactions.page.subtitle')}
                         </p>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2.5 sm:gap-3 w-full md:w-auto">
                         <Button 
                             variant="outline" 
                             onClick={() => setShowFilters(!showFilters)}
                             className={cn(
-                                "px-6 py-2.5 rounded-xl flex items-center gap-2 transition-all",
+                                "flex-1 md:flex-initial justify-center px-4 sm:px-6 py-2.5 rounded-xl flex items-center gap-2 transition-all",
                                 showFilters ? "bg-primary/5 border-primary/20 text-primary shadow-sm" : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
                             )}
                         >
-                            <Filter className={cn("w-4 h-4", showFilters ? "text-primary" : "text-slate-400")} />
+                            <Filter className={cn("w-4 h-4 shrink-0", showFilters ? "text-primary" : "text-slate-400")} />
                             <span className="text-sm font-bold">
                                 {t('transactions.filters.title')}
                             </span>
@@ -263,9 +263,9 @@ export default function Index({ transactions, filters }: Props) {
                         </Button>
                         <button 
                             onClick={() => window.dispatchEvent(new CustomEvent('open-transaction-modal'))}
-                            className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-primary/90 transition-all cursor-pointer whitespace-nowrap"
+                            className="flex-1 md:flex-initial justify-center bg-primary text-white px-4 sm:px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-primary/90 transition-all cursor-pointer whitespace-nowrap"
                         >
-                            <Plus className="w-4 h-4" />
+                            <Plus className="w-4 h-4 shrink-0" />
                             {t('transactions.modal.cta')}
                         </button>
                     </div>
@@ -280,7 +280,7 @@ export default function Index({ transactions, filters }: Props) {
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 -translate-y-4"
                 >
-                    <div className="bg-white p-6 rounded-3xl border-editorial mb-4 flex flex-col gap-6 shadow-sm">
+                    <div className="bg-white p-4 sm:p-6 rounded-3xl border-editorial mb-4 flex flex-col gap-4 sm:gap-6 shadow-sm">
                         {/* Search Row */}
                         <div className="relative">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" />
@@ -294,12 +294,12 @@ export default function Index({ transactions, filters }: Props) {
                                     }
                                 }}
                                 placeholder={t('transactions.modal.search_placeholder')}
-                                className="w-full bg-slate-50 border-none rounded-2xl pl-12 pr-4 h-14 text-sm font-medium focus:ring-2 focus:ring-primary/20 transition-all"
+                                className="w-full bg-slate-50 border-none rounded-2xl pl-12 pr-4 h-12 sm:h-14 text-sm font-medium focus:ring-2 focus:ring-primary/20 transition-all"
                             />
                         </div>
 
                         {/* Row 2: Dates and Actions */}
-                        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-4 sm:gap-6 items-end">
                             <div className="md:col-span-3">
                                 <DatePicker 
                                     label={t('transactions.filters.date_from')}
@@ -320,7 +320,7 @@ export default function Index({ transactions, filters }: Props) {
                                     minDate={localFilters.date_from || undefined}
                                 />
                             </div>
-                            <div className="md:col-span-6 flex gap-3">
+                            <div className="sm:col-span-2 md:col-span-6 flex gap-3">
                                 <Button 
                                     variant="outline" 
                                     className="h-12 flex-1 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 border border-slate-200"
@@ -351,7 +351,7 @@ export default function Index({ transactions, filters }: Props) {
                         </div>
 
                         {/* Row 3: Selectors */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                             <AccountSelect 
                                 label={t('transactions.filters.account')}
                                 placeholder={t('transactions.filters.all_accounts')}
@@ -359,7 +359,7 @@ export default function Index({ transactions, filters }: Props) {
                                 value={localFilters.account_id ? parseInt(localFilters.account_id) : null}
                                 onChange={(val) => setLocalFilters(prev => ({ ...prev, account_id: val.toString() }))}
                                 onClear={() => setLocalFilters(prev => ({ ...prev, account_id: null }))}
-                                className="h-14"
+                                className="h-12 sm:h-14"
                                 containerClassName="space-y-0"
                                 placement="bottom"
                             />
@@ -370,7 +370,7 @@ export default function Index({ transactions, filters }: Props) {
                                 value={localFilters.category_id ? parseInt(localFilters.category_id) : null}
                                 onChange={(val) => setLocalFilters(prev => ({ ...prev, category_id: val.toString() }))}
                                 onClear={() => setLocalFilters(prev => ({ ...prev, category_id: null }))}
-                                className="h-14"
+                                className="h-12 sm:h-14"
                                 containerClassName="space-y-0"
                                 placement="bottom"
                             />
@@ -380,36 +380,37 @@ export default function Index({ transactions, filters }: Props) {
             </PageHeader>
 
                 {/* Groups */}
-                <div className="space-y-12">
+                <div className="space-y-6 sm:space-y-12">
                     {sortedDates.length > 0 ? (
                         sortedDates.map(date => (
                             <section key={date}>
-                                <div className="flex items-center gap-4 mb-6">
+                                <div className="flex items-center gap-4 mb-3 sm:mb-6">
                                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                                         {getRelativeDateLabel(date)}
                                     </h3>
                                     <div className="h-px grow bg-slate-200" />
                                 </div>
                                 
-                                <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden divide-y divide-slate-100">
+                                <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 overflow-hidden divide-y divide-slate-100">
                                     {groupedTransactions[date].map(transaction => (
                                         <div 
                                             key={transaction.id}
                                             className={cn(
-                                                "group flex items-center gap-6 p-5 transition-all duration-200",
+                                                "group flex items-center gap-3 sm:gap-6 p-3.5 sm:p-5 transition-all duration-200",
                                                 transaction.status === 'ACTIVE' ? "hover:bg-slate-50/50" : "opacity-40 grayscale pointer-events-none"
                                             )}
                                         >
                                                 <FinancialAvatar 
                                                     account={(transaction.category || transaction.account) as any} 
-                                                    size="lg" 
+                                                    size="md" 
+                                                    className="sm:w-12 sm:h-12 shrink-0"
                                                     icon={transaction.type === 'TRANSFER' ? 'RefreshCcw' : undefined}
                                                 />
                                                 
-                                                <div className="grow flex items-center justify-between gap-6">
-                                                    <div className="flex flex-col">
-                                                         <div className="flex items-center gap-2">
-                                                            <span className="font-bold text-slate-900 group-hover:text-primary transition-colors">
+                                                <div className="grow min-w-0 flex items-center justify-between gap-2 sm:gap-6">
+                                                    <div className="flex flex-col min-w-0 flex-1 gap-0.5">
+                                                         <div className="flex items-center gap-2 min-w-0">
+                                                            <span className="font-bold text-sm sm:text-base text-slate-900 group-hover:text-primary transition-colors truncate">
                                                                 {transaction.description || (
                                                                     transaction.type === 'TRANSFER' ? (
                                                                         `${t(transaction.other_account)} → ${t(transaction.main_account)}`
@@ -419,27 +420,27 @@ export default function Index({ transactions, filters }: Props) {
                                                                 )}
                                                             </span>
                                                          </div>
-                                                        <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                                                        <div className="flex items-center gap-1 text-[10px] text-slate-400 font-bold uppercase tracking-wider min-w-0">
                                                             {transaction.status === 'REVERSED' ? (
                                                                 <span className="text-rose-500 bg-rose-50 px-1.5 py-0.5 rounded-md border border-rose-100">
                                                                     ESTORNADO
                                                                 </span>
                                                             ) : transaction.type === 'TRANSFER' ? (
-                                                                <>
-                                                                    {t(transaction.other_account)}
-                                                                    <ChevronRight className="w-3 h-3" />
-                                                                    {t(transaction.main_account)}
-                                                                </>
+                                                                <span className="flex items-center gap-1 truncate">
+                                                                    <span className="truncate">{t(transaction.other_account)}</span>
+                                                                    <ChevronRight className="w-3 h-3 shrink-0" />
+                                                                    <span className="truncate">{t(transaction.main_account)}</span>
+                                                                </span>
                                                             ) : (
-                                                                t(transaction.main_account)
+                                                                <span className="truncate">{t(transaction.main_account)}</span>
                                                             )}
                                                         </div>
                                                     </div>
                                                     
-                                                    <div className="flex items-center gap-6">
-                                                        <div className="flex flex-col items-end gap-1 justify-center">
+                                                    <div className="flex items-center gap-1.5 sm:gap-6 shrink-0">
+                                                        <div className="flex flex-col items-end gap-0.5 sm:gap-1 justify-center">
                                                                 <span className={cn(
-                                                                    "text-lg font-black tracking-tight",
+                                                                    "text-sm sm:text-lg font-black tracking-tight whitespace-nowrap",
                                                                     transaction.type === 'INCOME' ? "text-emerald-600" : 
                                                                     transaction.type === 'EXPENSE' ? "text-rose-600" : 
                                                                     "text-slate-900"
@@ -448,12 +449,12 @@ export default function Index({ transactions, filters }: Props) {
                                                                     {formatCurrency(Math.abs(transaction.amount))}
                                                                 </span>
                                                             {transaction.running_balance !== null && (
-                                                                <span className="text-[10px] font-bold text-slate-400">
+                                                                <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 whitespace-nowrap">
                                                                     {t('transactions.table.running_balance')}: {formatCurrency(transaction.running_balance)}
                                                                 </span>
                                                             )}
                                                             {transaction.type !== 'TRANSFER' && (
-                                                                 <span className="py-0.5 bg-slate-50 text-[9px] font-black rounded-full text-slate-400 uppercase tracking-widest px-2 border border-slate-100/50">
+                                                                 <span className="py-0.5 bg-slate-50 text-[8px] sm:text-[9px] font-black rounded-full text-slate-400 uppercase tracking-wider sm:tracking-widest px-2 border border-slate-100/50 max-w-[130px] sm:max-w-none truncate">
                                                                     {t(transaction.other_account)}
                                                                     {transaction.installment_total && transaction.installment_total > 1 && (
                                                                         <span className="ml-1">
@@ -465,11 +466,11 @@ export default function Index({ transactions, filters }: Props) {
                                                         </div>
 
                                                         {/* Action Menu */}
-                                                        <div className="w-10">
-                                                            <DropdownSelector className="opacity-0 group-hover:opacity-100 transition-all">
+                                                        <div className="w-8 sm:w-10 flex justify-end -mr-1 sm:mr-0">
+                                                            <DropdownSelector className="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 focus-within:opacity-100 transition-all">
                                                                 <DropdownSelector.Trigger 
                                                                     showChevron={false}
-                                                                    className="p-2 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-600 transition-colors cursor-pointer border-transparent shadow-none!"
+                                                                    className="p-1.5 sm:p-2 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-600 transition-colors cursor-pointer border-transparent shadow-none!"
                                                                 >
                                                                     <MoreVertical className="w-5 h-5" />
                                                                 </DropdownSelector.Trigger>
@@ -519,7 +520,7 @@ export default function Index({ transactions, filters }: Props) {
 
                 {/* Pagination */}
                 {transactions.last_page > 1 && (
-                    <div className="mt-16 flex items-center justify-between py-6 border-t border-slate-100">
+                    <div className="mt-8 sm:mt-16 flex flex-col sm:flex-row items-center justify-between gap-4 py-6 border-t border-slate-100">
                         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
                             {t('transactions.pagination.showing', {
                                 from: transactions.from,

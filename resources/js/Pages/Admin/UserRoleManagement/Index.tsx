@@ -82,36 +82,36 @@ export default function UserRoleManagement({ users, availableRoles }: UserRoleMa
             </PageHeader>
 
             <div className="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
-                <div className="">
+                <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="border-b border-slate-50 bg-slate-50/50 font-bold text-xs uppercase tracking-widest text-slate-400">
-                                <th className="px-8 py-5 font-black">{t('admin.user') || 'User'}</th>
-                                <th className="px-8 py-5 font-black">{t('admin.current_role') || 'Current Role'}</th>
-                                <th className="px-8 py-5 font-black text-right">{t('admin.actions') || 'Assign Role'}</th>
+                                <th className="px-4 md:px-8 py-4 md:py-5 font-black">{t('admin.user') || 'User'}</th>
+                                <th className="px-4 md:px-8 py-4 md:py-5 font-black">{t('admin.current_role') || 'Current Role'}</th>
+                                <th className="px-4 md:px-8 py-4 md:py-5 font-black text-right">{t('admin.actions') || 'Assign Role'}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
                             {users.map((user) => (
                                 <tr key={user.id} className="group hover:bg-slate-50/30 transition-colors">
-                                    <td className="px-8 py-6">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-2xl bg-linear-to-br from-slate-100 to-slate-200 flex items-center justify-center font-black text-slate-500 shadow-sm border border-white">
+                                    <td className="px-4 md:px-8 py-4 md:py-6">
+                                        <div className="flex items-center gap-3 md:gap-4">
+                                            <div className="w-10 h-10 shrink-0 rounded-2xl bg-linear-to-br from-slate-100 to-slate-200 flex items-center justify-center font-black text-slate-500 shadow-sm border border-white">
                                                 {user.name.charAt(0).toUpperCase()}
                                             </div>
-                                            <div>
-                                                <div className="font-bold text-slate-900">{user.name}</div>
-                                                <div className="text-xs text-slate-400 font-medium tracking-tight">{user.email}</div>
+                                            <div className="min-w-0">
+                                                <div className="font-bold text-slate-900 truncate">{user.name}</div>
+                                                <div className="text-xs text-slate-400 font-medium tracking-tight truncate">{user.email}</div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-8 py-6">
+                                    <td className="px-4 md:px-8 py-4 md:py-6 whitespace-nowrap">
                                         <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest border border-transparent ${getRoleColor(user.role)}`}>
                                             {getRoleIcon(user.role)}
                                             {getRoleLabel(user.role)}
                                         </div>
                                     </td>
-                                    <td className="px-8 py-6 text-right">
+                                    <td className="px-4 md:px-8 py-4 md:py-6 text-right">
                                         <div className="flex items-center justify-end gap-2">
                                             {availableRoles.map((role) => (
                                                 <button

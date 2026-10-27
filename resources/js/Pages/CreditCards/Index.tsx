@@ -77,26 +77,26 @@ export default function CreditCards({ cards, root_categories, available_colors, 
     return (
         <AppLayout title={t('home.nav.cards')}>
             <PageHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="space-y-1">
-                        <h2 className="text-2xl font-black tracking-tight text-slate-900">
+                        <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
                             {t('home.nav.cards')}
                         </h2>
-                        <p className="text-sm text-slate-500 font-medium">
+                        <p className="text-xs sm:text-sm text-slate-500 font-medium">
                             {t('accounts.page.subtitle')}
                         </p>
                     </div>
                     <button 
                         onClick={openCreate}
-                        className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-primary/90 transition-all cursor-pointer"
+                        className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-primary/90 transition-all cursor-pointer w-full sm:w-auto"
                     >
-                        <Plus className="w-4 h-4" />
+                        <Plus className="w-4 h-4 shrink-0" />
                         {t('accounts.page.create_card_btn')}
                     </button>
                 </div>
             </PageHeader>
 
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 pt-8">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 pt-2 sm:pt-8">
                     {cards.map(card => {
                         const currentInvoice = card.credit_card_details?.current_invoice;
                         const openInvoiceAmount = currentInvoice 
@@ -106,13 +106,13 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                         return (
                         <div 
                             key={card.id}
-                            className="bg-white p-6 rounded-3xl flex flex-col gap-6 transition-all border-editorial hover:border-slate-200"
+                            className="bg-white p-5 sm:p-6 rounded-3xl flex flex-col gap-5 sm:gap-6 transition-all border-editorial hover:border-slate-200"
                         >
-                            <div className="flex justify-between items-start">
-                                <div className="flex items-center gap-4">
-                                    <FinancialAvatar account={card} size="md" />
-                                    <div>
-                                        <h3 className="font-bold text-lg text-slate-900 leading-tight">{card.name}</h3>
+                            <div className="flex justify-between items-start gap-3">
+                                <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                                    <FinancialAvatar account={card} size="md" className="shrink-0" />
+                                    <div className="min-w-0">
+                                        <h3 className="font-bold text-base sm:text-lg text-slate-900 leading-tight truncate">{card.name}</h3>
                                         <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 opacity-60 leading-none mt-1">
                                             {card.type === 'liability' ? 'Cartão de Crédito' : 'Conta'}
                                         </p>
@@ -166,14 +166,14 @@ export default function CreditCards({ cards, root_categories, available_colors, 
                             </div>
 
                             {card.credit_card_details?.invoice_control_enabled ? (
-                                <div className="flex flex-col gap-6 flex-1">
+                                <div className="flex flex-col gap-5 sm:gap-6 flex-1">
                                     <div>
                                         <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">
                                             {t('accounts.page.current_bill')}
                                         </p>
                                         <div className="flex items-baseline gap-1">
-                                            <span className="text-xl font-bold text-slate-900">R$</span>
-                                            <span className="text-4xl font-black tracking-tighter text-slate-900">
+                                            <span className="text-lg sm:text-xl font-bold text-slate-900">R$</span>
+                                            <span className="text-3xl sm:text-4xl font-black tracking-tighter text-slate-900">
                                                 {formatCurrency(openInvoiceAmount).replace('R$', '').trim()}
                                             </span>
                                         </div>

@@ -59,14 +59,14 @@ export default function CategoryRow({
 
     const renderContent = (open?: boolean) => (
         <div className={cn(
-            "flex items-center justify-between p-4 transition-all duration-200 group/row",
+            "flex items-center justify-between p-3 sm:p-4 transition-all duration-200 group/row gap-2",
             isRoot 
                 ? "bg-surface/40 hover:bg-surface/60 border-b border-slate-100" 
-                : "bg-white ml-8 border-l border-slate-200"
+                : "bg-white ml-4 sm:ml-8 border-l border-slate-200"
         )}>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 sm:gap-4 min-w-0">
                 <div 
-                    className={cn("w-9 h-9 min-w-[36px] rounded-xl flex items-center justify-center transition-colors overflow-hidden", typeColorClass)}
+                    className={cn("w-9 h-9 min-w-[36px] shrink-0 rounded-xl flex items-center justify-center transition-colors overflow-hidden", typeColorClass)}
                     style={customColor ? { 
                         backgroundColor: `${customColor}15`, 
                         color: customColor 
@@ -91,8 +91,8 @@ export default function CategoryRow({
                     )}
                 </div>
                 
-                <div className="flex flex-col">
-                    <h5 className={cn("font-bold text-slate-900", isRoot ? "text-sm" : "text-xs")}>
+                <div className="flex flex-col min-w-0">
+                    <h5 className={cn("font-bold text-slate-900 truncate", isRoot ? "text-sm" : "text-xs")}>
                         {category.name}
                     </h5>
                     {hasChildren && (
@@ -104,10 +104,10 @@ export default function CategoryRow({
 
             </div>
 
-            <div className="flex items-center gap-4">
-                <div className="flex items-center justify-end gap-2"> 
+            <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+                <div className="flex items-center justify-end gap-1.5 sm:gap-2"> 
                     
-                    <div className="opacity-0 group-hover/row:opacity-100 transition-all">
+                    <div className="opacity-100 lg:opacity-0 lg:group-hover/row:opacity-100 focus-within:opacity-100 transition-all">
                         <DropdownSelector>
                             <DropdownSelector.Trigger 
                                 showChevron={false}
