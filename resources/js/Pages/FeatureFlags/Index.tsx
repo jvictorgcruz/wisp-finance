@@ -113,6 +113,7 @@ export default function FeatureFlags({ flags, filters, expires_at, errors }: Pro
                         <input
                             id="ledger_id"
                             type="number"
+                            inputMode="numeric"
                             value={filterData.ledger_id}
                             onChange={e => setFilterData({ ...filterData, ledger_id: e.target.value })}
                             className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block px-4 py-2.5 transition-colors"
